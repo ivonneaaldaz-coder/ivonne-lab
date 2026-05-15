@@ -46,6 +46,8 @@ a { color: inherit; text-decoration: none; }
 .hero-title { font-family: var(--font-serif); font-size: 54px; font-weight: 400; color: var(--text); line-height: 1.0; letter-spacing: -0.5px; margin-bottom: 1rem; }
 .hero-title em { font-style: italic; color: var(--accent); }
 .hero-desc { font-size: 15px; color: var(--text2); line-height: 1.7; max-width: 440px; margin-bottom: 2.5rem; }
+.hero-link { color: var(--accent); border-bottom: 0.5px solid var(--accent2); transition: border-color 0.18s; }
+.hero-link:hover { border-color: var(--accent); }
 
 /* STATS */
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 0.5px solid var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 3rem; }
@@ -57,9 +59,7 @@ a { color: inherit; text-decoration: none; }
 .content { max-width: 680px; margin: 0 auto; padding: 0 1.5rem 6rem; width: 100%; flex: 1; }
 
 .section { margin-bottom: 0; }
-.section-header { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 1rem; border-bottom: 0.5px solid var(--border); margin-bottom: 0; }
-.section-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text3); }
-.section-meta { font-size: 10px; color: var(--text3); }
+
 
 .item { display: grid; grid-template-columns: 1fr auto; gap: 1rem; padding: 1.75rem 0; border-bottom: 0.5px solid var(--border); align-items: center; text-decoration: none; color: inherit; position: relative; transition: all 0.2s; }
 .item::before { content: ''; position: absolute; left: -1.5rem; top: 0; bottom: 0; width: 1.5px; background: var(--accent); opacity: 0; transition: opacity 0.2s; }
@@ -100,10 +100,11 @@ a { color: inherit; text-decoration: none; }
 <body>
 
 <nav class="site-nav">
-  <a class="nav-name" href="https://ivonnealdaz.com">Ivonne Aldaz</a>
+  <a class="nav-name" href="/">Ivonne Aldaz</a>
   <div class="nav-links">
-    <a class="nav-link" href="https://ivonnealdaz.com/start-here">About</a>
-    <a class="nav-link" href="https://bywhitespace.com" target="_blank">Whitespace</a>
+    <a class="nav-link active" href="/">Lab</a>
+    <a class="nav-link" href="/field-notes">Field Notes</a>
+    <a class="nav-link" href="/ask">Ask</a>
     <a class="nav-cta" href="mailto:hello@ivonnealdaz.com">Work with me</a>
   </div>
 </nav>
@@ -114,7 +115,7 @@ a { color: inherit; text-decoration: none; }
     <div class="hero-timestamp"><div class="live-dot"></div><span id="timestamp">Updated May 2026</span></div>
   </div>
   <h1 class="hero-title">Ivonne Aldaz<br>— <em>Lab.</em></h1>
-  <p class="hero-desc">Things built, made, written, and shipped — across brand strategy, art, and whatever else refuses to stay in one category. This platform included.</p>
+  <p class="hero-desc">Things built, made, written, and shipped — across brand strategy, art, and whatever else refuses to stay in one category. <a href="/entry" class="hero-link">This platform included. →</a></p>
 
   <div class="stats">
     <div class="stat">
@@ -138,14 +139,10 @@ a { color: inherit; text-decoration: none; }
 
 <div class="content">
   <div class="section">
-    <div class="section-header">
-      <span class="section-label">The log</span>
-      <span class="section-meta">The log</span>
-    </div>
     <a class="item" href="/field-notes">
       <div class="item-left">
         <div class="item-title">Field Notes</div>
-        <div class="item-desc">Every<i>ish</i> project, residency, exhibition, talk, and report — in one place.</div>
+        <div class="item-desc">Every project, residency, exhibition, talk, and report — logged in one place.</div>
       </div>
       <div class="item-right">
         <span class="item-badge" id="notes-badge">14 entries</span>
@@ -154,15 +151,11 @@ a { color: inherit; text-decoration: none; }
     </a>
   </div>
 
-  <div class="section" style="margin-top: 2rem;">
-    <div class="section-header">
-      <span class="section-label">AI agent</span>
-      <span class="section-meta">AI agent</span>
-    </div>
+  <div class="section">
     <a class="item" href="/ask">
       <div class="item-left">
         <div class="item-title">Ask me anything</div>
-        <div class="item-desc">Trained on my actual CV. Ask about the work, the practice, availability.</div>
+        <div class="item-desc">Trained on my actual CV. Ask about the work, the practice, availability, the path.</div>
       </div>
       <div class="item-right">
         <span class="item-badge live">Live</span>
