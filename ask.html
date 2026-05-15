@@ -169,7 +169,7 @@ EDUCATION
 MBA St. Mary's University 2017. Masters International Business & Economics FH Schmalkalden Germany 2018. BA Forensic Science St. Mary's 2014. Certifications: Yoga Teacher 200hr, Meditation Teacher 100hr, ML & AI with Python (Harvard), Product Design (Google), YC Startup School.
 
 AVAILABILITY
-It depends on what you need. Whitespace takes on focused 3-month engagements for brand strategy, positioning, GTM, and narrative — best fit is founders and growing brands. For art, workshops, or other creative collaborations, reach out directly and we can figure out what makes sense. Contact: hello@ivonnealdaz.com;
+Whitespace takes on focused 3-month engagements. Contact: hello@ivonnealdaz.com`;
 
 let messages = [];
 
@@ -185,12 +185,11 @@ function escHtml(s) {
 function addMsg(role, content, thinking=false) {
   const wrap = document.getElementById('messages');
   const div = document.createElement('div');
-  div.className = `msg ${role}`;
+  div.className = 'msg ' + role;
   if (thinking) div.id = 'thinking-el';
-  div.innerHTML = `
-    <div class="msg-label">${role === 'user' ? 'you' : 'ivonne'}</div>
-    <div class="msg-divider"></div>
-    <div class="msg-text">${thinking ? '<div class="thinking"><span></span><span></span><span></span></div>' : escHtml(content)}</div>`;
+  const label = role === 'user' ? 'you' : 'ivonne';
+  const body = thinking ? '<div class="thinking"><span></span><span></span><span></span></div>' : escHtml(content);
+  div.innerHTML = '<div class="msg-label">' + label + '</div><div class="msg-divider"></div><div class="msg-text">' + body + '</div>';
   wrap.appendChild(div);
   div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   return div;
