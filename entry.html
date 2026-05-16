@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CV AI Agent — Ivonne Aldaz Lab</title>
+<title>CV Agent — Ivonne Aldaz Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -57,10 +57,11 @@ a { color: inherit; text-decoration: none; }
 .block-text { font-size: 15px; color: var(--text2); line-height: 1.8; }
 .block-text p + p { margin-top: 1rem; }
 
-.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 0.5px solid var(--border); border-radius: 2px; overflow: hidden; margin-top: 0.5rem; }
-.detail-cell { background: var(--bg2); padding: 1rem 1.25rem; }
-.detail-cell-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
-.detail-cell-value { font-size: 13px; color: var(--text); }
+.detail-list { border: 0.5px solid var(--border); border-radius: 2px; overflow: hidden; margin-top: 0.5rem; }
+.detail-row { display: grid; grid-template-columns: 100px 1fr; gap: 1rem; background: var(--bg2); padding: 0.875rem 1.25rem; border-bottom: 0.5px solid var(--border); }
+.detail-row:last-child { border-bottom: none; }
+.detail-row-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); padding-top: 2px; }
+.detail-row-value { font-size: 13px; color: var(--text); line-height: 1.6; }
 
 .process-steps { display: flex; flex-direction: column; gap: 0; margin-top: 0.5rem; }
 .process-step { display: grid; grid-template-columns: 32px 1fr; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); align-items: start; }
@@ -85,13 +86,33 @@ a { color: inherit; text-decoration: none; }
 .footer-link { font-size: 11px; letter-spacing: 0.08em; color: var(--text3); transition: color 0.18s; }
 .footer-link:hover { color: var(--text2); }
 
-@media (max-width: 520px) {
-  .site-nav { padding: 1rem 1.25rem; }
-  .nav-links { gap: 1rem; }
+
   .page { padding: 2.5rem 1.25rem 4rem; }
   .entry-title { font-size: 30px; }
   .detail-grid { grid-template-columns: 1fr; }
 }
+
+
+  body { padding-bottom: 80px; }
+}
+@media (min-width: 521px) { .bottom-nav { display: none; } }
+.bottom-nav a {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  text-decoration: none;
+  transition: color 0.18s;
+  padding: 4px 0;
+}
+.bottom-nav a.active { color: var(--accent); }
+.bottom-nav a:hover { color: var(--text2); }
+.bottom-nav svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 </style>
 </head>
 <body>
@@ -118,7 +139,7 @@ a { color: inherit; text-decoration: none; }
     <span class="entry-date">May 2026</span>
   </div>
 
-  <h1 class="entry-title">CV AI agent —<br><em>Ask Ivonne</em></h1>
+  <h1 class="entry-title">CV agent —<br><em>Ask Ivonne</em></h1>
 
   <p class="entry-lede">Parsed a 10-tab Google Sheet of personal CV data and vibecoded it into a navigable interactive profile + an AI agent that answers questions about the work. Built with Claude, zero templates, no design tools.</p>
 
@@ -134,22 +155,22 @@ a { color: inherit; text-decoration: none; }
 
     <div>
       <div class="block-label">What I built</div>
-      <div class="detail-grid">
-        <div class="detail-cell">
-          <div class="detail-cell-label">Part 1</div>
-          <div class="detail-cell-value">Interactive CV — tabbed, filterable, fully linked. All 10 sections navigable in one page.</div>
+      <div class="detail-list">
+        <div class="detail-row">
+          <div class="detail-row-label">Part 1</div>
+          <div class="detail-row-value">Interactive CV — tabbed, filterable, fully linked. All 10 sections navigable in one page.</div>
         </div>
-        <div class="detail-cell">
-          <div class="detail-cell-label">Part 2</div>
-          <div class="detail-cell-value">AI agent — answers questions about the work in first person, sourced from actual CV data.</div>
+        <div class="detail-row">
+          <div class="detail-row-label">Part 2</div>
+          <div class="detail-row-value">AI agent — answers questions about the work in first person, sourced from actual CV data.</div>
         </div>
-        <div class="detail-cell">
-          <div class="detail-cell-label">Stack</div>
-          <div class="detail-cell-value">Vanilla HTML, CSS, JS. Anthropic API. No frameworks, no templates.</div>
+        <div class="detail-row">
+          <div class="detail-row-label">Stack</div>
+          <div class="detail-row-value">Vanilla HTML, CSS, JS. Anthropic API. No frameworks, no templates.</div>
         </div>
-        <div class="detail-cell">
-          <div class="detail-cell-label">Deployed</div>
-          <div class="detail-cell-value">GitHub + Vercel. Live at ivonne-lab.vercel.app/ask</div>
+        <div class="detail-row">
+          <div class="detail-row-label">Deployed</div>
+          <div class="detail-row-value">GitHub + Vercel. Live at ivonne-lab.vercel.app/ask</div>
         </div>
       </div>
     </div>
@@ -205,7 +226,7 @@ a { color: inherit; text-decoration: none; }
 </div>
 
 <footer class="site-footer">
-  <span class="footer-note">Field Notes — CV AI Agent</span>
+  <span class="footer-note">Field Notes — CV Agent</span>
   <div class="footer-links">
     <a class="footer-link" href="https://bywhitespace.com" target="_blank">Whitespace</a>
     <a class="footer-link" href="https://goodworldliving.com" target="_blank">Good World Living</a>
@@ -213,5 +234,24 @@ a { color: inherit; text-decoration: none; }
   </div>
 </footer>
 
+
+<nav class="bottom-nav">
+  <a href="/">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Lab
+  </a>
+  <a href="/field-notes" class="">
+    <svg viewBox="0 0 24 24"><path d="M9 12h6M9 8h6M9 16h4M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    Notes
+  </a>
+  <a href="/ask" class="">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Ask
+  </a>
+  <a href="mailto:hello@ivonnealdaz.com">
+    <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 4l8 9 8-9"/></svg>
+    Contact
+  </a>
+</nav>
 </body>
 </html>

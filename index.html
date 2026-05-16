@@ -49,11 +49,6 @@ a { color: inherit; text-decoration: none; }
 .hero-link { color: var(--accent); border-bottom: 0.5px solid var(--accent2); transition: border-color 0.18s; }
 .hero-link:hover { border-color: var(--accent); }
 
-/* STATS */
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 0.5px solid var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 3rem; }
-.stat { background: var(--bg2); padding: 1rem 1.25rem; }
-.stat-num { font-family: var(--font-serif); font-size: 28px; font-weight: 400; color: var(--text); line-height: 1; margin-bottom: 4px; }
-.stat-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); }
 
 /* CONTENT */
 .content { max-width: 680px; margin: 0 auto; padding: 0 1.5rem 6rem; width: 100%; flex: 1; }
@@ -84,9 +79,7 @@ a { color: inherit; text-decoration: none; }
 .footer-link { font-size: 11px; letter-spacing: 0.08em; color: var(--text3); transition: color 0.18s; }
 .footer-link:hover { color: var(--text2); }
 
-@media (max-width: 520px) {
-  .site-nav { padding: 1rem 1.25rem; }
-  .nav-links { gap: 1rem; }
+
   .hero { padding: 2.5rem 1.25rem 1.5rem; }
   .hero-title { font-size: 38px; }
   .stats { grid-template-columns: repeat(2, 1fr); }
@@ -95,6 +88,28 @@ a { color: inherit; text-decoration: none; }
   .item::before { display: none; }
   .item:hover { padding-left: 0; }
 }
+
+
+  body { padding-bottom: 80px; }
+}
+@media (min-width: 521px) { .bottom-nav { display: none; } }
+.bottom-nav a {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  text-decoration: none;
+  transition: color 0.18s;
+  padding: 4px 0;
+}
+.bottom-nav a.active { color: var(--accent); }
+.bottom-nav a:hover { color: var(--text2); }
+.bottom-nav svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 </style>
 </head>
 <body>
@@ -116,11 +131,6 @@ a { color: inherit; text-decoration: none; }
   </div>
   <h1 class="hero-title">Ivonne Aldaz<br>— <em>Lab.</em></h1>
   <p class="hero-desc">Things built, made, written, and shipped — across brand strategy, art, and whatever else refuses to stay in one category. <a href="/entry" class="hero-link">This platform included. →</a></p>
-
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-num">12+</div>
-      <div class="stat-label">Years active</div>
     </div>
     <div class="stat">
       <div class="stat-num" id="entry-count">14</div>
@@ -155,7 +165,7 @@ a { color: inherit; text-decoration: none; }
     <a class="item" href="/ask">
       <div class="item-left">
         <div class="item-title">Ask me anything</div>
-        <div class="item-desc">Trained on my actual CV. Ask about the work, availability, the path.</div>
+        <div class="item-desc">Trained on my actual CV. Ask about the work, the practice, availability, the path.</div>
       </div>
       <div class="item-right">
         <span class="item-badge live">Live</span>
@@ -181,5 +191,24 @@ const now = new Date()
 const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 document.getElementById('timestamp').textContent = 'Updated ' + months[now.getMonth()] + ' ' + now.getFullYear()
 </script>
+
+<nav class="bottom-nav">
+  <a href="/" class="active">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Lab
+  </a>
+  <a href="/field-notes">
+    <svg viewBox="0 0 24 24"><path d="M9 12h6M9 8h6M9 16h4M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+    Notes
+  </a>
+  <a href="/ask">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Ask
+  </a>
+  <a href="mailto:hello@ivonnealdaz.com">
+    <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 4l8 9 8-9"/></svg>
+    Contact
+  </a>
+</nav>
 </body>
 </html>
