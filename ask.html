@@ -9,16 +9,10 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #0d0d0b;
-  --bg2: #151513;
-  --bg3: #1c1c19;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.12);
-  --text: #eeebe3;
-  --text2: #96938c;
-  --text3: #52504c;
-  --accent: #c4ad8a;
-  --accent2: #7a6a52;
+  --bg: #0d0d0b; --bg2: #151513; --bg3: #1c1c19;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+  --text: #eeebe3; --text2: #96938c; --text3: #52504c;
+  --accent: #c4ad8a; --accent2: #7a6a52;
   --font-serif: 'EB Garamond', Georgia, serif;
   --font-sans: 'DM Sans', system-ui, sans-serif;
 }
@@ -33,6 +27,7 @@ a { color: inherit; text-decoration: none; }
 .nav-link.active { color: var(--accent); }
 .nav-cta { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); border: 0.5px solid var(--accent2); padding: 5px 14px; border-radius: 1px; transition: all 0.18s; }
 .nav-cta:hover { background: rgba(196,173,138,0.08); }
+.bottom-nav { display: none; }
 .page { max-width: 640px; margin: 0 auto; padding: 4rem 1.5rem 5rem; flex: 1; display: flex; flex-direction: column; }
 .page-eyebrow { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text3); margin-bottom: 0.75rem; }
 .page-title { font-family: var(--font-serif); font-size: 42px; font-weight: 400; color: var(--text); line-height: 1.1; margin-bottom: 0.75rem; letter-spacing: -0.5px; }
@@ -70,75 +65,41 @@ a { color: inherit; text-decoration: none; }
 .footer-links { display: flex; gap: 20px; }
 .footer-link { font-size: 11px; letter-spacing: 0.08em; color: var(--text3); transition: color 0.18s; }
 .footer-link:hover { color: var(--text2); }
-
-  .page { padding: 2.5rem 1.25rem 4rem; }
-  .page-title { font-size: 32px; }
-}
-
-
-  body { padding-bottom: 80px; }
-}
-
-/* MOBILE */
-
-
-/* MOBILE */
 @media (max-width: 520px) {
   .site-nav { display: none; }
   .bottom-nav {
-    display: flex;
-    flex-direction: row;
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: rgba(13,13,11,0.96);
-    backdrop-filter: blur(12px);
-    border-top: 0.5px solid var(--border2);
-    z-index: 200;
+    display: flex; flex-direction: row;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(13,13,11,0.96); backdrop-filter: blur(12px);
+    border-top: 0.5px solid var(--border2); z-index: 200;
     padding: 0.6rem 0 calc(0.6rem + env(safe-area-inset-bottom));
   }
-  .bottom-nav a {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    font-family: var(--font-sans);
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text3);
-    text-decoration: none;
-    transition: color 0.18s;
-    padding: 4px 0;
-  }
+  .bottom-nav a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; font-family: var(--font-sans); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); text-decoration: none; transition: color 0.18s; padding: 4px 0; }
   .bottom-nav a.active { color: var(--accent); }
   .bottom-nav svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
   body { padding-bottom: 72px; }
+  .page { padding: 2.5rem 1.25rem 2rem; }
+  .page-title { font-size: 32px; }
+  .site-footer { display: none; }
 }
-@media (min-width: 521px) { 
- }
 </style>
 </head>
 <body>
-
 <nav class="site-nav">
   <a class="nav-name" href="/">Ivonne Aldaz</a>
   <div class="nav-links">
-    <a class="nav-link" href="/field-notes">Field Notes</a>
     <a class="nav-link" href="/">Lab</a>
+    <a class="nav-link" href="/field-notes">Field Notes</a>
     <a class="nav-link active" href="/ask">Ask</a>
-    <a class="nav-link" href="https://ivonnealdaz.com/start-here">About</a>
     <a class="nav-cta" href="mailto:hello@ivonnealdaz.com">Work with me</a>
   </div>
 </nav>
-
 <div class="page">
   <div>
     <div class="page-eyebrow">Ivonne Aldaz</div>
     <h1 class="page-title">Ask me <em>anything.</em></h1>
     <p class="page-desc">About the work, the practice, the path. Trained on my actual CV — not a script.</p>
   </div>
-
   <div class="suggested-wrap" id="suggestions">
     <button class="suggested-btn" onclick="ask(this.textContent)">What kind of brands do you work with?</button>
     <button class="suggested-btn" onclick="ask(this.textContent)">Tell me about your art practice</button>
@@ -147,13 +108,10 @@ a { color: inherit; text-decoration: none; }
     <button class="suggested-btn" onclick="ask(this.textContent)">What is Whitespace?</button>
     <button class="suggested-btn" onclick="ask(this.textContent)">What have you built recently?</button>
   </div>
-
   <div class="messages" id="messages"></div>
-
   <div class="input-area">
     <div class="input-row">
-      <input class="input-field" id="user-input" type="text" placeholder="Ask something..." autocomplete="off"
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}" />
+      <input class="input-field" id="user-input" type="text" placeholder="Ask something..." autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}" />
       <button class="send-btn" id="send-btn" onclick="sendMessage()" aria-label="Send">
         <svg viewBox="0 0 14 14"><path d="M1 7L13 1L7 13L6.5 7.5L1 7Z"/></svg>
       </button>
@@ -161,69 +119,24 @@ a { color: inherit; text-decoration: none; }
     <div class="input-hint">Answers drawn from Ivonne's actual CV · Powered by Claude</div>
   </div>
 </div>
-
 <footer class="site-footer">
   <span class="footer-note">An AI agent built with Claude.</span>
   <div class="footer-links">
     <a class="footer-link" href="https://bywhitespace.com" target="_blank">Whitespace</a>
     <a class="footer-link" href="https://goodworldliving.com" target="_blank">Good World Living</a>
-    <a class="footer-link" href="https://ivonnealdaz.com/gallery" target="_blank">Gallery</a>
     <a class="footer-link" href="mailto:hello@ivonnealdaz.com">Contact</a>
   </div>
 </footer>
-
+<nav class="bottom-nav">
+  <a href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Lab</a>
+  <a href="/field-notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M9 8h6M9 16h4M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>Notes</a>
+  <a href="/ask" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Ask</a>
+  <a href="mailto:hello@ivonnealdaz.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4zM4 4l8 9 8-9"/></svg>Contact</a>
+</nav>
 <script>
-const SYSTEM = `You are an AI agent representing Ivonne Aldaz — brand strategist, artist, and creative director. Speak in first person with her voice: direct, minimal, warm but not effusive. No filler, no over-explanation. Max 3–4 sentences unless genuinely more is needed. Never say "Great question!" or "Certainly!". Answer only from the verified information below. If something isn't covered, say so simply.
-
-ABOUT
-Ivonne Aldaz is a multidisciplinary artist, brand strategist, and creative director based in San Antonio, TX. Runs Whitespace (bywhitespace.com) and Good World Living (goodworldliving.com).
-
-WORK
-- Whitespace — Founder, 2017–present. Strategy and creative studio. 3-month sprint engagements: positioning, narrative strategy, GTM systems, content. For founders, startups, growing brands.
-- TrueLoyal (formerly TINT) — Head of Brand Insights (Global), 2023–2025. Led insights across 30+ enterprise brands: Purina, ARM & HAMMER, Hero Cosmetics, First Response, Batiste, Gaia Herbs, Flexitol, Veggies Made Great. USA, EU, India.
-- TINT — Senior Marketing Manager 2022–2023. Led rebrand post-acquisition. Produced State of UGC, SOSUGC, SOCPM reports. Spoke at Adweek Social Media Week.
-- TINT — Marketing Manager 2020–2022. Grew Future of Marketing newsletter 7K→50K subscribers, open rates 8%→25%. Launched Future of Marketing podcast.
-- Patel Gaines — VP of Marketing (2017), Director of Marketing (2014). Rebranded one of the fastest-growing commercial real estate law firms in the US.
-- Clara y Yema — Brand & GTM, 2026. Helping launch an eco-friendly chicken farm in the Riviera Maya. Built first version of the website, developing go-to-market strategy.
-
-OTHER VENTURES
-- Good World Living — Founder, 2023–. Lifestyle platform: art, travel, intentional living.
-- Art Haus — Co-Founder, 2025–. Pop-up creative studio, San Antonio.
-
-CLIENTS: Nestlé, Unilever, Purina, ARM & HAMMER, Hero Cosmetics, First Response, Batiste, Gaia Herbs, Sir Kensington's.
-
-COMMUNITY
-- Alliance Française San Antonio — Events Committee member, 2026
-- Centro de Artes Committee — San Antonio Arts Commission, 2026
-
-ART PRACTICE
-Painting (acrylic, watercolor) and handbuilt ceramics — no molds, no wheel. Work explores memory, place, absence, restraint.
-Exhibitions: UTSA "The Time Beneath" June 2026; The Dominion March 2026 — sold two paintings; Torre Delle Arti Bellagio March 2024.
-Residencies: Casa D'Arte Lake Como July–Aug 2025; NG Art Residency Provence Sept 2024; La Roane France May 2023.
-
-SPEAKING
-University of Portland School of Business (2024, twice), Adweek Social Media Week, San Antonio Startup Week (multiple), Poppulo, Hootsuite, Upfluence, IC Summits, Clubhouse. Hosted Future of Marketing Podcast 2020–2024.
-
-WRITING
-Whitespace blog, Good World Living travel series, State of UGC reports 2021–2023, 100+ Future of Marketing newsletter issues. Cited by Forbes, Adweek, Digiday.
-
-EDUCATION
-MBA St. Mary's University 2017. Masters International Business & Economics FH Schmalkalden Germany 2018. BA Forensic Science St. Mary's 2014. Certifications: Yoga Teacher 200hr, Meditation Teacher 100hr, ML & AI with Python (Harvard), Product Design (Google), YC Startup School.
-
-AVAILABILITY
-Whitespace takes on focused 3-month engagements. Contact: hello@ivonnealdaz.com`;
-
 let messages = [];
-
-function ask(text) {
-  document.getElementById('user-input').value = text;
-  sendMessage();
-}
-
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
+function ask(text) { document.getElementById('user-input').value = text; sendMessage(); }
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function addMsg(role, content, thinking=false) {
   const wrap = document.getElementById('messages');
   const div = document.createElement('div');
@@ -236,73 +149,31 @@ function addMsg(role, content, thinking=false) {
   div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   return div;
 }
-
 async function sendMessage() {
   const input = document.getElementById('user-input');
   const btn = document.getElementById('send-btn');
   const q = input.value.trim();
   if (!q) return;
-
   document.getElementById('suggestions').style.display = 'none';
   input.value = '';
   btn.disabled = true;
-
   addMsg('user', q);
   messages.push({ role: 'user', content: q });
   const thinking = addMsg('assistant', '', true);
-
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 400,
-        system: SYSTEM,
-        messages: messages
-      })
+      body: JSON.stringify({ messages })
     });
-
     const data = await res.json();
     thinking.remove();
-
-    if (data.error) {
-      addMsg('assistant', 'Something went wrong — try again in a moment.');
-    } else {
-      const reply = data.content[0].text;
-      messages.push({ role: 'assistant', content: reply });
-      addMsg('assistant', reply);
-    }
-  } catch(e) {
-    thinking.remove();
-    addMsg('assistant', 'Something went wrong — try again in a moment.');
-  }
-
+    if (data.error) { addMsg('assistant', 'Something went wrong — try again in a moment.'); }
+    else { const reply = data.content[0].text; messages.push({ role: 'assistant', content: reply }); addMsg('assistant', reply); }
+  } catch(e) { thinking.remove(); addMsg('assistant', 'Something went wrong — try again in a moment.'); }
   btn.disabled = false;
   input.focus();
 }
 </script>
-
-
-
-
-<nav class="bottom-nav">
-  <a href="/">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-    Lab
-  </a>
-  <a href="/field-notes">
-    <svg viewBox="0 0 24 24"><path d="M9 12h6M9 8h6M9 16h4M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
-    Notes
-  </a>
-  <a href="/ask" class="active">
-    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    Ask
-  </a>
-  <a href="mailto:hello@ivonnealdaz.com">
-    <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 4l8 9 8-9"/></svg>
-    Contact
-  </a>
-</nav>
 </body>
 </html>
