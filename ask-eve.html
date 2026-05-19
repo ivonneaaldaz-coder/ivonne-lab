@@ -253,18 +253,16 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
 
 
 @media (max-width: 520px) {
-  /* Icons — visible, centered, high enough */
+  /* Icons — mobile only, centered vertically */
   #icon-grid {
-    display: grid !important;
-    grid-template-columns: repeat(3, 72px);
-    gap: 12px;
-    position: fixed !important;
-    top: 28% !important;
+    grid-template-columns: repeat(3, 72px) !important;
+    gap: 12px !important;
+    position: absolute !important;
+    top: 30% !important;
     left: 50% !important;
-    transform: translate(-50%, -50%) !important;
+    transform: translateX(-50%) !important;
     width: auto !important;
     bottom: auto !important;
-    z-index: 20;
   }
   .d-icon { width: 72px; }
 
@@ -793,9 +791,13 @@ function activateIcon(ico){
   else if(action==='browser') openBrowser(target, title);
   else if(action==='external') window.open(target,'_blank');
 }
-// Desktop double-click
+// Desktop double-click AND single click (with short delay to distinguish from drag)
 document.querySelectorAll('.d-icon').forEach(ico => {
-  ico.addEventListener('dblclick', e => { e.preventDefault(); activateIcon(ico); });
+  ico.addEventListener('dblclick', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    activateIcon(ico);
+  });
 });
 
 document.addEventListener('mousemove',e=>{
