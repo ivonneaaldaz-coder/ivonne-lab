@@ -1,333 +1,294 @@
-<
-// Desktop double-click to open icons
-document.querySelectorAll('.d-icon').forEach(function(ico){
-  ico.addEventListener('dblclick', function(e){
-    e.preventDefault();
-    e.stopPropagation();
-    if(icoDragSt && icoDragSt.moved) return;
-    activateIcon(ico);
-  });
-});
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ask Eve — Ivonne Aldaz Lab</title>
+<title>Ask Eve — Ivonne Aldaz</title>
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --sky:#0a0a12;
-  --navy:#1a1aff;--silver:#2a2a2a;--white:#fff;--black:#e0e0e0;
-  --dark:#1a1a1a;--mid:#666;--input:#1a1a1a;--input-text:#e0e0e0;
-  --accent:#1DB954;
-  --win-bg:#1e1e1e;--win-border:#3a3a3a;
+  --bg:#0a0a12;--win:#1e1e1e;--border:#3a3a3a;--border-light:#555;
+  --text:#e0e0e0;--dim:#888;--dimmer:#444;
+  --accent:#1DB954;--navy:#000080;
   --font:'VT323',monospace;
 }
-html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--font);color:var(--black);-webkit-font-smoothing:antialiased;}
-/* SKY */
-#sky-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
-#sky-click{position:fixed;inset:0;z-index:3;cursor:crosshair;pointer-events:none;}
-#sky-click.starmode{pointer-events:all;}
-#star-hint{position:fixed;top:10px;right:12px;color:rgba(255,255,255,0.45);font-family:var(--font);font-size:13px;z-index:300;pointer-events:all;letter-spacing:0.05em;text-shadow:1px 1px 2px rgba(0,0,0,0.8);cursor:pointer;}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:var(--font);color:var(--text);}
 
-/* DESKTOP */
+/* ── NIGHT SKY ── */
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none;}
+#star-hint{position:fixed;top:10px;right:12px;z-index:50;color:rgba(255,255,255,0.4);font-size:13px;letter-spacing:.05em;cursor:pointer;text-align:right;pointer-events:all;text-shadow:1px 1px 2px #000;}
+#star-hint:hover{color:rgba(255,255,255,0.7);}
+#star-hint span{text-decoration:underline;text-underline-offset:2px;}
+#star-count-display{font-size:11px;color:rgba(255,255,255,0.22);margin-top:2px;}
+#star-tooltip{position:fixed;display:none;background:rgba(5,5,20,.93);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.8);font-size:13px;padding:4px 10px;z-index:999;pointer-events:none;max-width:180px;line-height:1.4;}
+
+/* ── GRAIN ── */
+#grain{position:fixed;inset:0;z-index:1;opacity:.025;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* ── DESKTOP ── */
 #desktop{width:100vw;height:calc(100vh - 32px);position:relative;z-index:2;}
-#icon-grid{position:absolute;top:10px;left:10px;display:grid;grid-template-columns:72px;gap:4px;z-index:20;}
-.d-icon{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;width:72px;padding:4px 2px;border:1px solid transparent;color:#fff;text-shadow:1px 1px 2px rgba(0,0,0,0.9);text-align:center;user-select:none;position:relative;}
-.d-icon:hover,.d-icon.sel{background:rgba(0,0,180,0.5);border:1px dotted rgba(255,255,255,0.6);}
-.d-icon .ico{font-size:26px;line-height:1.3;}
-.d-icon span{font-size:12px;line-height:1.2;word-break:break-word;}
 
+/* ── ICONS ── */
+#icons{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:4px;z-index:20;width:74px;}
+.ico{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px;border:1px solid transparent;color:#fff;text-shadow:1px 1px 2px #000;text-align:center;user-select:none;cursor:pointer;width:74px;}
+.ico:hover,.ico.sel{background:rgba(0,0,180,.5);border:1px dotted rgba(255,255,255,.6);}
+.ico .em{font-size:26px;line-height:1.3;}
+.ico .lb{font-size:12px;line-height:1.2;word-break:break-word;}
+@keyframes pulse-green{0%,100%{box-shadow:0 0 0 0 rgba(29,185,84,0);}50%{box-shadow:0 0 8px 4px rgba(29,185,84,.45);}}
+#ico-chat{animation:pulse-green 2.5s ease-in-out infinite;border-radius:3px;}
 
+/* ── SPOTIFY PIN ── */
+#sp-pin{position:fixed;bottom:32px;right:0;width:320px;height:80px;z-index:300;border-top:1px solid rgba(255,255,255,.08);border-left:1px solid rgba(255,255,255,.08);}
+#sp-pin iframe{display:block;width:100%;height:100%;border:none;}
 
+/* ── WINDOWS ── */
+.win{position:absolute;background:var(--win);border:1px solid var(--border);box-shadow:4px 4px 10px rgba(0,0,0,.7);display:flex;flex-direction:column;min-width:200px;min-height:80px;overflow:hidden;resize:both;}
+.win.on{z-index:200;}
+.win.off .tbar{background:linear-gradient(to right,#1a1a1a,#252525);}
 
+/* title bar */
+.tbar{background:linear-gradient(to right,#0d0d1a,#1a1a35);padding:2px 4px;display:flex;align-items:center;justify-content:space-between;height:22px;cursor:move;flex-shrink:0;user-select:none;}
+.tbar-title{color:#fff;font-size:15px;overflow:hidden;white-space:nowrap;pointer-events:none;display:flex;align-items:center;gap:4px;}
+.tbar-btns{display:flex;gap:2px;flex-shrink:0;}
+.tbtn{width:16px;height:14px;background:#2a2a2a;border:1px solid #555;font-family:Arial,sans-serif;font-size:9px;font-weight:700;cursor:pointer;color:#ccc;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;flex-shrink:0;}
+.tbtn:active{background:#1a1a1a;}
 
-
-/* WINDOW */
-.win{position:absolute;background:var(--win-bg);border:1px solid var(--win-border);box-shadow:4px 4px 8px rgba(0,0,0,0.6);display:flex;flex-direction:column;min-width:180px;min-height:60px;overflow:hidden;}
-.win.focused{z-index:200;}
-.win.unfocused .tbar{background:linear-gradient(to right,#1a1a1a,#2a2a2a);}
-.tbar{background:linear-gradient(to right,#121212,#1a1a2e);padding:2px 4px;display:flex;align-items:center;justify-content:space-between;cursor:move;height:22px;flex-shrink:0;user-select:none;}
-.tbar-txt{color:#fff;font-size:15px;display:flex;align-items:center;gap:4px;overflow:hidden;pointer-events:none;white-space:nowrap;}
-.tbar-ctrl{display:flex;gap:2px;flex-shrink:0;}
-.tbtn{width:16px;height:14px;background:#333;border:1px solid #555;font-size:9px;font-family:Arial,sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#ccc;padding:0;line-height:1;}
-.tbtn:active{border-color:var(--dark) var(--white) var(--white) var(--dark);}
-.mbar{background:#252525;border-bottom:1px solid #333;padding:1px 2px;display:flex;flex-shrink:0;position:relative;z-index:10;}
-.mi{font-size:15px;padding:1px 8px;cursor:pointer;position:relative;color:#ccc;}
-.mi:hover,.mi.open{background:#1DB954;color:#000;}
-.dd{display:none;position:absolute;top:100%;left:0;background:#1e1e1e;border:1px solid #333;z-index:9999;min-width:180px;box-shadow:4px 4px 12px rgba(0,0,0,0.8);}
+/* menu bar */
+.mbar{background:#202020;border-bottom:1px solid #333;padding:1px 2px;display:flex;flex-shrink:0;position:relative;z-index:10;}
+.mi{font-size:15px;padding:1px 8px;cursor:pointer;position:relative;color:#bbb;}
+.mi:hover,.mi.open{background:var(--accent);color:#000;}
+.dd{display:none;position:absolute;top:100%;left:0;background:#1e1e1e;border:1px solid #3a3a3a;z-index:9999;min-width:180px;box-shadow:4px 8px 16px rgba(0,0,0,.8);}
 .mi.open .dd{display:block;}
 .di{font-size:15px;padding:4px 16px;cursor:pointer;white-space:nowrap;display:block;color:#ccc;text-decoration:none;}
-.di:hover{background:#1DB954;color:#000;}
-.di.dis{color:var(--mid);cursor:default;}
-.di.dis:hover{background:none;color:var(--mid);}
-.dsep{border-top:1px solid var(--mid);border-bottom:1px solid var(--white);margin:2px 0;}
+.di:hover{background:var(--accent);color:#000;}
+.di.grey{color:#555;cursor:default;}
+.di.grey:hover{background:none;color:#555;}
+.dsep{border-top:1px solid #333;margin:2px 0;}
 
-/* CHAT */
+/* ── CHAT WINDOW ── */
 .chat-hdr{display:flex;align-items:center;gap:10px;padding:7px 10px 5px;background:#181818;border-bottom:1px solid #333;flex-shrink:0;}
-
-.chat-hdr-info{flex:1;}
-.chat-name{font-size:17px;font-weight:700;color:#1DB954;}
-.chat-status{font-size:13px;color:#666;}
-.chat-area{flex:1;overflow-y:auto;background:#121212;border:none;margin:4px 6px 2px;padding:8px;font-size:16px;}
-.chat-area::-webkit-scrollbar{width:16px;}
-.chat-area::-webkit-scrollbar-track{background:var(--silver);}
-.chat-area::-webkit-scrollbar-thumb{background:var(--silver);border:2px solid;border-color:var(--white) var(--mid) var(--mid) var(--white);}
-.mrow{margin-bottom:10px;animation:fi 0.15s ease;}
+.chat-hdr-info .chat-name{font-size:17px;font-weight:700;color:var(--accent);}
+.chat-hdr-info .chat-status{font-size:13px;color:#555;}
+.chat-area{flex:1;overflow-y:auto;background:#111;margin:4px 6px 2px;padding:8px;font-size:16px;border:1px solid #2a2a2a;}
+.chat-area::-webkit-scrollbar{width:12px;}
+.chat-area::-webkit-scrollbar-track{background:#1a1a1a;}
+.chat-area::-webkit-scrollbar-thumb{background:#333;border:2px solid #1a1a1a;}
+.mrow{margin-bottom:10px;animation:fi .15s ease;}
 @keyframes fi{from{opacity:0}to{opacity:1}}
 .mhead{font-size:13px;color:#555;margin-bottom:2px;}
-.hu{color:#aaa;font-weight:700;}
-.he{color:#1DB954;font-weight:700;}
+.hu{color:#a06060;font-weight:700;}
+.he{color:var(--accent);font-weight:700;}
 .mbody{font-size:16px;line-height:1.45;padding-left:8px;border-left:2px solid transparent;color:#ccc;}
-.mrow.user .mbody{border-left-color:#e0e0e0;color:#fff;}
-.mrow.eve .mbody{border-left-color:#1DB954;}
-.typing{color:var(--mid);font-size:14px;animation:pulse 1s infinite;}
-@keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
-.rr{display:flex;gap:5px;margin-top:4px;padding-left:8px;}
-.rx{font-size:15px;cursor:pointer;opacity:0.4;transition:opacity 0.15s;user-select:none;}
+.mrow.user .mbody{border-left-color:#a06060;color:#ddd;}
+.mrow.eve .mbody{border-left-color:var(--accent);}
+.typing-txt{color:#555;font-size:14px;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+.rx-row{display:flex;gap:5px;margin-top:4px;padding-left:8px;}
+.rx{font-size:14px;cursor:pointer;opacity:.35;transition:opacity .15s;user-select:none;}
 .rx:hover{opacity:1;}
-.prompts-wrap{margin:2px 6px 3px;background:#181818;border-top:1px solid #333;padding:5px 7px;flex-shrink:0;}
-.plbl{font-size:12px;color:#555;margin-bottom:4px;}
+.prompts{margin:2px 6px 3px;background:#181818;border-top:1px solid #2a2a2a;padding:5px 7px;flex-shrink:0;}
+.prompts-lbl{font-size:12px;color:#555;margin-bottom:4px;}
 .pgrid{display:flex;flex-wrap:wrap;gap:3px;}
-.pbtn{font-family:var(--font);font-size:13px;background:#2a2a2a;border:1px solid #444;padding:2px 8px;cursor:pointer;color:#ccc;border-radius:2px;}
-.pbtn:hover{background:#1DB954;color:#000;}
-.iarea{padding:3px 6px 5px;flex-shrink:0;background:#181818;border-top:1px solid #333;}
+.pbtn{font-family:var(--font);font-size:13px;background:#2a2a2a;border:1px solid #444;padding:2px 8px;cursor:pointer;color:#bbb;border-radius:2px;}
+.pbtn:hover{background:var(--accent);color:#000;}
+.iarea{padding:3px 6px 5px;flex-shrink:0;background:#181818;border-top:1px solid #2a2a2a;}
 .irow{display:flex;gap:4px;align-items:center;margin-bottom:2px;}
-.ilbl{font-size:15px;color:#1DB954;font-weight:700;white-space:nowrap;}
-.ifield{flex:1;background:#2a2a2a;border:1px solid #444;padding:3px 6px;font-family:var(--font);font-size:16px;outline:none;color:#fff;border-radius:2px;}
+.ilbl{font-size:15px;color:var(--accent);font-weight:700;white-space:nowrap;}
+.ifield{flex:1;background:#111;border:1px solid #3a3a3a;padding:3px 6px;font-family:var(--font);font-size:16px;outline:none;color:#fff;border-radius:2px;}
+.ifield:focus{border-color:var(--accent);}
 .ihint{font-size:12px;color:#444;text-align:center;}
-.sbtn{background:#1DB954;border:none;padding:3px 14px;font-family:var(--font);font-size:15px;cursor:pointer;color:#000;border-radius:2px;}
+.sbtn{background:var(--accent);border:none;padding:3px 14px;font-family:var(--font);font-size:15px;cursor:pointer;color:#000;border-radius:2px;}
 .sbtn:hover{background:#1ed760;}
-.sbtn:active{border-color:var(--dark) var(--white) var(--white) var(--dark);}
-.sbtn:disabled{color:var(--mid);}
+.sbtn:disabled{background:#2a2a2a;color:#555;cursor:default;}
 
-/* NOTES APP */
-.notes-shell{flex:1;display:flex;overflow:hidden;}
-.notes-sidebar{width:130px;flex-shrink:0;background:#181818;border-right:1px solid #333;display:flex;flex-direction:column;overflow-y:auto;}
-.ns-header{padding:6px 8px;font-size:13px;color:#555;border-bottom:1px solid #333;}
-.ns-cat{padding:5px 10px;font-size:15px;cursor:pointer;border-bottom:0.5px solid #2a2a2a;color:#aaa;}
-.ns-cat:hover,.ns-cat.active{background:rgba(29,185,84,0.15);}
-.ns-cat.active{font-weight:700;color:#1DB954;}
-.notes-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.notes-list{flex:1;overflow-y:auto;background:#121212;border-right:1px solid #2a2a2a;}
-.note-item{padding:8px 10px;border-bottom:0.5px solid #2a2a2a;cursor:pointer;}
-.note-item:hover,.note-item.active{background:rgba(29,185,84,0.1);}
-.note-item.active{border-left:3px solid #1DB954;}
-.note-title{font-size:15px;font-weight:700;color:#ccc;}
-.note-preview{font-size:13px;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;}
-.note-date{font-size:11px;color:#555;}
-.note-viewer{flex:1;padding:12px;overflow-y:auto;background:#0d0d0d;font-size:16px;line-height:1.7;white-space:pre-wrap;font-family:var(--font);color:#ccc;}
-.note-viewer h2{font-size:18px;margin-bottom:8px;color:#1DB954;}
-.note-viewer .ntag{display:inline-block;background:rgba(0,0,180,0.1);padding:1px 7px;font-size:12px;margin-right:4px;margin-bottom:6px;color:var(--navy);}
-
-/* FIELD NOTES WINDOW */
-.fn-shell{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.fn-filters{padding:4px 8px;background:#181818;border-bottom:1px solid #333;display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;}
-.fn-btn{font-family:var(--font);font-size:12px;background:#2a2a2a;border:1px solid #444;padding:1px 8px;cursor:pointer;color:#aaa;border-radius:2px;}
-.fn-btn.active{background:#1DB954;color:#000;border-color:#1DB954;}
-.fn-list{flex:1;overflow-y:auto;background:#121212;}
-.fn-entry{display:grid;grid-template-columns:80px 1fr;gap:8px;padding:10px 12px;border-bottom:0.5px solid #222;cursor:default;}
-.fn-entry:hover{background:#1a1a1a;}
-.fn-date{font-size:12px;color:#555;padding-top:2px;}
-.fn-title{font-size:16px;font-weight:700;color:#ddd;}
-.fn-title a{color:#1DB954;text-decoration:none;}
-.fn-title a:hover{text-decoration:underline;}
-.fn-desc{font-size:13px;color:#777;line-height:1.4;margin-top:2px;}
-.fn-tags{margin-top:4px;display:flex;gap:3px;flex-wrap:wrap;}
-.fn-tag{font-size:10px;padding:1px 6px;border:1px solid;font-family:var(--font);}
-.tag-built{color:#3a7fa8;border-color:#3a7fa8;}
-.tag-art{color:#a87a3a;border-color:#a87a3a;}
-.tag-brand{color:#4a8a3a;border-color:#4a8a3a;}
-.tag-writing{color:#8a3a6a;border-color:#8a3a6a;}
-.tag-talk{color:#5a3a8a;border-color:#5a3a8a;}
-.tag-community{color:#3a8a7a;border-color:#3a8a7a;}
-
-/* MUSIC WINDOW */
-.music-body{flex:1;overflow:hidden;display:flex;flex-direction:column;padding:8px;background:#191414;}
-.music-now{padding:10px;margin-bottom:8px;color:#fff;border-bottom:1px solid #333;}
-.music-now-lbl{font-size:12px;color:#1DB954;margin-bottom:2px;}
-.music-title{font-size:17px;color:#fff;}
-.music-sub{font-size:13px;color:#b3b3b3;}
+/* ── MUSIC ── */
+.music-body{flex:1;display:flex;flex-direction:column;padding:8px;background:#191414;overflow:hidden;}
+.music-hdr{padding:8px 0 8px;color:#fff;border-bottom:1px solid #2a2a2a;margin-bottom:8px;}
+.music-hdr .now-lbl{font-size:12px;color:var(--accent);margin-bottom:2px;}
+.music-hdr .now-title{font-size:17px;}
+.music-hdr .now-sub{font-size:13px;color:#888;}
+.music-hdr .now-sub a{color:var(--accent);}
 .sp-embed{flex:1;min-height:200px;}
 .sp-embed iframe{width:100%;height:100%;border:none;}
 
-/* CALENDAR */
-.cal-body{flex:1;padding:12px;display:flex;flex-direction:column;gap:8px;background:#181818;}
-.cal-h{font-size:18px;color:#1DB954;margin-bottom:4px;}
+/* ── CALENDAR ── */
+.cal-body{flex:1;padding:12px;display:flex;flex-direction:column;gap:10px;background:#181818;}
+.cal-h{font-size:18px;color:var(--accent);}
 .cal-desc{font-size:15px;color:#888;line-height:1.55;}
-.cal-link{display:inline-block;background:#1DB954;border:none;padding:5px 16px;font-family:var(--font);font-size:15px;cursor:pointer;text-decoration:none;color:#000;border-radius:2px;}
-.cal-link:hover{background:#d4d0c8;}
+.cal-link{display:inline-block;background:var(--accent);border:none;padding:5px 16px;font-family:var(--font);font-size:15px;cursor:pointer;text-decoration:none;color:#000;border-radius:2px;}
+.cal-link:hover{background:#1ed760;}
 
-/* SOCIALS */
-.soc-body{flex:1;padding:8px;display:flex;flex-direction:column;gap:5px;overflow-y:auto;background:#181818;}
-.soc-row{display:flex;align-items:center;gap:10px;padding:6px 8px;border:1px solid #333;text-decoration:none;color:#ccc;cursor:pointer;}
-.soc-row:hover{background:#1DB954;color:#000;}
-.soc-ico{font-size:20px;width:26px;text-align:center;display:flex;align-items:center;justify-content:center;}
-/* Modern 2026 SVG-style icons via unicode/emoji substitutes */
+/* ── SOCIALS ── */
+.soc-body{flex:1;padding:8px;display:flex;flex-direction:column;gap:5px;background:#181818;overflow-y:auto;}
+.soc-row{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid #2a2a2a;text-decoration:none;color:#ccc;cursor:pointer;}
+.soc-row:hover{background:var(--accent);color:#000;}
+.soc-row:hover svg{stroke:#000;fill:#000;}
+.soc-ico{width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.soc-ico svg{width:18px;height:18px;}
 .soc-name{font-size:16px;flex:1;}
-.soc-handle{font-size:13px;color:var(--mid);margin-left:auto;}
+.soc-handle{font-size:13px;color:#555;margin-left:auto;}
 .soc-row:hover .soc-handle{color:#000;}
 
-/* STAR WINDOW */
-.star-body{flex:1;padding:12px;overflow-y:auto;background:rgba(5,5,20,0.95);}
-.star-body p{font-size:15px;margin-bottom:8px;line-height:1.6;color:rgba(255,255,255,0.6);}
-.star-body input,.star-body textarea{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);padding:4px 8px;font-family:var(--font);font-size:15px;outline:none;margin-bottom:5px;color:#fff;resize:none;}
-.star-body input::placeholder,.star-body textarea::placeholder{color:rgba(255,255,255,0.3);}
-.star-submit{background:transparent;border:1px solid rgba(255,255,255,0.3);padding:4px 16px;font-family:var(--font);font-size:15px;cursor:pointer;color:rgba(255,255,255,0.7);}
-.star-submit:hover{background:rgba(255,255,255,0.1);color:#fff;}
-.star-count{font-size:13px;color:rgba(255,255,255,0.3);margin-top:8px;}
-.star-tbar{background:linear-gradient(to right,#0a0a20,#1a1a40) !important;}
+/* ── NOTES ── */
+.notes-shell{flex:1;display:flex;overflow:hidden;}
+.notes-sidebar{width:130px;flex-shrink:0;background:#181818;border-right:1px solid #2a2a2a;display:flex;flex-direction:column;overflow-y:auto;}
+.ns-hdr{padding:6px 8px;font-size:13px;color:#555;border-bottom:1px solid #2a2a2a;}
+.ns-cat{padding:5px 10px;font-size:15px;cursor:pointer;border-bottom:.5px solid #222;color:#aaa;}
+.ns-cat:hover,.ns-cat.active{background:rgba(29,185,84,.12);}
+.ns-cat.active{color:var(--accent);font-weight:700;}
+.notes-main{flex:1;display:flex;overflow:hidden;}
+.notes-list{width:160px;flex-shrink:0;overflow-y:auto;background:#111;border-right:1px solid #2a2a2a;}
+.note-item{padding:8px 10px;border-bottom:.5px solid #1a1a1a;cursor:pointer;}
+.note-item:hover,.note-item.active{background:rgba(29,185,84,.1);}
+.note-item.active{border-left:3px solid var(--accent);}
+.note-title{font-size:15px;font-weight:700;color:#ccc;}
+.note-date{font-size:11px;color:#444;}
+.note-viewer{flex:1;padding:12px;overflow-y:auto;background:#0d0d0d;font-size:16px;line-height:1.7;white-space:pre-wrap;color:#bbb;}
+.note-viewer h2{font-size:18px;color:var(--accent);margin-bottom:8px;}
 
-/* GENERIC */
+/* ── ARCHIVE ── */
+.arc-shell{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.arc-filters{padding:4px 8px;background:#181818;border-bottom:1px solid #2a2a2a;display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;}
+.arc-filters span{font-size:13px;color:#555;margin-right:4px;}
+.fbtn{font-family:var(--font);font-size:12px;background:#2a2a2a;border:1px solid #444;padding:1px 8px;cursor:pointer;color:#aaa;border-radius:2px;}
+.fbtn.active{background:var(--accent);color:#000;border-color:var(--accent);}
+.arc-list{flex:1;overflow-y:auto;background:#111;}
+.arc-entry{display:grid;grid-template-columns:80px 1fr;gap:8px;padding:10px 12px;border-bottom:.5px solid #1a1a1a;}
+.arc-entry:hover{background:#1a1a1a;}
+.arc-date{font-size:12px;color:#555;padding-top:2px;}
+.arc-title{font-size:16px;font-weight:700;color:#ddd;}
+.arc-title a{color:var(--accent);text-decoration:none;}
+.arc-title a:hover{text-decoration:underline;}
+.arc-desc{font-size:13px;color:#777;line-height:1.4;margin-top:2px;}
+.arc-tags{margin-top:4px;display:flex;gap:3px;flex-wrap:wrap;}
+.atag{font-size:10px;padding:1px 6px;border:1px solid;font-family:var(--font);}
+.t-built{color:#6aa;border-color:#6aa;}
+.t-art{color:#a86;border-color:#a86;}
+.t-brand{color:#6a8;border-color:#6a8;}
+.t-writing{color:#a68;border-color:#a68;}
+.t-talk{color:#88a;border-color:#88a;}
+.t-community{color:#6a9;border-color:#6a9;}
+
+/* ── STAR WINDOW ── */
+.star-body{flex:1;padding:12px;background:#05050f;overflow-y:auto;}
+.star-body p{font-size:15px;color:rgba(255,255,255,.5);margin-bottom:10px;line-height:1.6;}
+.star-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);padding:5px 8px;font-family:var(--font);font-size:15px;color:#fff;outline:none;margin-bottom:6px;border-radius:2px;}
+.star-input::placeholder{color:rgba(255,255,255,.25);}
+.star-submit{background:transparent;border:1px solid rgba(255,255,255,.2);padding:4px 16px;font-family:var(--font);font-size:15px;cursor:pointer;color:rgba(255,255,255,.6);border-radius:2px;}
+.star-submit:hover{background:rgba(255,255,255,.08);color:#fff;}
+.star-cnt{font-size:13px;color:rgba(255,255,255,.25);margin-top:10px;}
+
+/* ── GENERIC WINDOW CONTENT ── */
 .wc{padding:12px;font-size:16px;line-height:1.6;overflow-y:auto;flex:1;background:#181818;color:#ccc;}
-.wc h3{font-size:17px;margin-bottom:8px;color:#1DB954;}
+.wc h3{font-size:17px;margin-bottom:8px;color:var(--accent);}
 .wc p{margin-bottom:6px;font-size:15px;}
-.wlink{display:block;border:1px solid #333;padding:5px 10px;font-size:15px;text-decoration:none;color:#ccc;margin-bottom:4px;}
-.wlink:hover{background:#1DB954;color:#000;}
-.pr{display:flex;gap:8px;margin-bottom:4px;font-size:15px;color:#ccc;}
-.plb{color:#666;min-width:80px;}
-.ds2{border-top:1px solid #333;margin:6px 0;}
+.wlink{display:block;border:1px solid #2a2a2a;padding:5px 10px;font-size:15px;text-decoration:none;color:#ccc;margin-bottom:4px;}
+.wlink:hover{background:var(--accent);color:#000;}
+.wpr{display:flex;gap:8px;margin-bottom:4px;font-size:15px;color:#ccc;}
+.wpl{color:#555;min-width:80px;}
+.wds{border-top:1px solid #2a2a2a;margin:6px 0;}
+.about-ico{font-size:48px;text-align:center;margin-bottom:8px;}
 
-/* START */
-#smenu{display:none;position:fixed;bottom:32px;left:0;width:210px;background:#1a1a1a;border:1px solid #333;box-shadow:4px 4px 16px rgba(0,0,0,0.8);z-index:9000;flex-direction:row;}
+/* ── BROWSER ── */
+.browser-bar{display:flex;align-items:center;gap:4px;padding:4px 6px;background:#1a1a1a;border-bottom:1px solid #2a2a2a;flex-shrink:0;}
+.browser-btn{background:#2a2a2a;border:1px solid #3a3a3a;color:#ccc;font-family:var(--font);font-size:14px;padding:1px 8px;cursor:pointer;}
+.browser-btn:hover{background:#333;}
+.browser-url{flex:1;background:#111;border:1px solid #3a3a3a;color:#ccc;font-family:var(--font);font-size:14px;padding:2px 8px;outline:none;}
+.browser-go{background:var(--accent);border:none;color:#000;font-family:var(--font);font-size:14px;padding:2px 10px;cursor:pointer;}
+.browser-ext{background:#2a2a2a;border:1px solid #3a3a3a;color:#ccc;font-size:13px;padding:2px 8px;text-decoration:none;}
+.browser-frame-wrap{flex:1;position:relative;overflow:hidden;}
+.browser-frame-wrap iframe{width:100%;height:100%;border:none;}
+.browser-blocked{display:none;position:absolute;inset:0;background:#111;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#555;}
+.browser-blocked.show{display:flex;}
+.browser-blocked a{color:var(--accent);}
+
+/* ── START MENU ── */
+#smenu{display:none;position:fixed;bottom:32px;left:0;width:210px;background:#1a1a1a;border:1px solid #333;box-shadow:4px -4px 16px rgba(0,0,0,.8);z-index:9000;flex-direction:row;}
 #smenu.open{display:flex;}
-.sm-side{background:#1DB954;width:26px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;}
-.sm-side span{font-size:13px;color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;letter-spacing:1px;}
+.sm-side{background:var(--accent);width:26px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;}
+.sm-side span{font-size:13px;color:#000;writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;letter-spacing:1px;}
 .sm-items{flex:1;padding:2px 0;}
 .si{font-size:15px;padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;text-decoration:none;color:#ccc;}
-.si:hover{background:#1DB954;color:#000;}
+.si:hover{background:var(--accent);color:#000;}
 
-/* TASKBAR */
-#taskbar{height:32px;background:#121212;border-top:1px solid #333;display:flex;align-items:center;padding:0 2px;gap:2px;position:fixed;bottom:0;left:0;right:0;z-index:500;}
-#start-btn{background:#3a3a3a;border:1px solid #555;padding:1px 10px;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;color:#e0e0e0;}
-#start-btn:active,#start-btn.open{background:#4a4a4a;border-color:#666;}
-.tb-sep{width:1px;height:22px;background:#333;margin:0 4px;}
-.tbi{display:none;background:#2a2a2a;border:1px solid #444;padding:1px 7px;font-family:var(--font);font-size:13px;cursor:pointer;color:#ccc;}
-.tbi:hover{background:#d4d0c8;}
-.tbi.active{border-color:var(--dark) var(--white) var(--white) var(--dark);background:#b0b0b0;}
-#tb-apps{display:flex;gap:2px;align-items:center;margin-left:0;}
-.tb-app-ico{width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;border:1px solid #333;background:#2a2a2a;position:relative;border-radius:2px;}
-.tb-app-ico:hover{background:#1DB954;}
-.tb-app-ico:active{border-color:var(--mid) var(--white) var(--white) var(--mid);}
-.tb-app-ico[title]:hover::after{content:attr(title);position:absolute;bottom:28px;left:50%;transform:translateX(-50%);background:#000;color:#fff;font-family:var(--font);font-size:12px;padding:2px 6px;white-space:nowrap;pointer-events:none;z-index:9999;}
-#tb-soc{display:flex;gap:1px;align-items:center;margin-left:auto;position:relative;z-index:501;}
-#tb-soc a{width:22px;height:22px;display:flex;align-items:center;justify-content:center;text-decoration:none;opacity:0.5;border:1px solid transparent;color:#ccc;}
-#tb-soc a:hover{opacity:1;color:#1DB954;}
-#tb-soc a svg{width:13px;height:13px;fill:currentColor;stroke:currentColor;}
-#tb-clock{margin-left:0;background:#1a1a1a;border:1px solid #333;padding:2px 7px;font-family:var(--font);font-size:14px;white-space:nowrap;color:#ccc;}
+/* ── TASKBAR ── */
+#taskbar{height:32px;background:#121212;border-top:1px solid #2a2a2a;display:flex;align-items:center;padding:0 2px;gap:2px;position:fixed;bottom:0;left:0;right:0;z-index:500;}
+#start-btn{background:#3a3a3a;border:1px solid #555;padding:1px 10px;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;color:#e0e0e0;flex-shrink:0;}
+#start-btn:hover{background:#4a4a4a;}
+.tb-sep{width:1px;height:22px;background:#2a2a2a;margin:0 3px;flex-shrink:0;}
+#tb-apps{display:flex;gap:2px;align-items:center;}
+.tb-app{width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;border:1px solid #2a2a2a;background:#1e1e1e;border-radius:2px;position:relative;flex-shrink:0;}
+.tb-app:hover{background:var(--accent);}
+.tb-app[title]:hover::after{content:attr(title);position:absolute;bottom:30px;left:50%;transform:translateX(-50%);background:#000;color:#fff;font-family:var(--font);font-size:12px;padding:2px 7px;white-space:nowrap;pointer-events:none;z-index:9999;border:1px solid #333;}
+#tb-soc{display:flex;gap:1px;align-items:center;margin-left:auto;}
+#tb-soc a{width:22px;height:22px;display:flex;align-items:center;justify-content:center;opacity:.5;border:1px solid transparent;text-decoration:none;color:#ccc;}
+#tb-soc a:hover{opacity:1;border-color:#3a3a3a;}
+#tb-soc a svg{width:12px;height:12px;fill:currentColor;stroke:currentColor;}
+#tb-clock{background:#1a1a1a;border:1px solid #2a2a2a;padding:2px 8px;font-family:var(--font);font-size:14px;color:#ccc;white-space:nowrap;flex-shrink:0;}
+
+/* ── OVERLAY ── */
 #overlay{display:none;position:fixed;inset:0;z-index:400;}
 #overlay.on{display:block;}
-#grain{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
 
-
-/* RESIZE HANDLES */
+/* ── RESIZE HANDLES ── */
 .rh{position:absolute;z-index:9999;}
 .rh-se{bottom:0;right:0;width:14px;height:14px;cursor:se-resize;}
 .rh-sw{bottom:0;left:0;width:14px;height:14px;cursor:sw-resize;}
 .rh-ne{top:0;right:0;width:14px;height:14px;cursor:ne-resize;}
 .rh-nw{top:0;left:0;width:14px;height:14px;cursor:nw-resize;}
-.rh-n{top:0;left:14px;right:14px;height:6px;cursor:n-resize;}
-.rh-s{bottom:0;left:14px;right:14px;height:6px;cursor:s-resize;}
-.rh-e{right:0;top:14px;bottom:14px;width:6px;cursor:e-resize;}
-.rh-w{left:0;top:14px;bottom:14px;width:6px;cursor:w-resize;}
-.rh-corner-vis{position:absolute;bottom:2px;right:2px;width:10px;height:10px;pointer-events:none;}
-.rh-corner-vis::before,.rh-corner-vis::after{content:'';position:absolute;background:var(--mid);}
-.rh-corner-vis::before{right:0;bottom:3px;width:10px;height:1px;}
-.rh-corner-vis::after{right:3px;bottom:0;width:1px;height:10px;}
+.rh-n{top:0;left:14px;right:14px;height:5px;cursor:n-resize;}
+.rh-s{bottom:0;left:14px;right:14px;height:5px;cursor:s-resize;}
+.rh-e{right:0;top:14px;bottom:14px;width:5px;cursor:e-resize;}
+.rh-w{left:0;top:14px;bottom:14px;width:5px;cursor:w-resize;}
+.resize-corner{position:absolute;bottom:3px;right:3px;width:8px;height:8px;pointer-events:none;border-right:2px solid #3a3a3a;border-bottom:2px solid #3a3a3a;}
 
-
-
-/* MOBILE IMPROVEMENTS */
-
-  #icon-grid{display:grid!important;grid-template-columns:repeat(4,64px);gap:4px;top:auto;bottom:50px;left:8px;right:8px;width:calc(100vw - 16px);}
-  .d-icon{width:64px;}
-  
-  #star-hint{display:block;pointer-events:all;cursor:pointer;}
-  .win{max-width:98vw;}
-  #sky-click{pointer-events:all!important;}
+/* ── MOBILE ── */
+@media(max-width:520px){
+  #icons{top:auto;left:50%;transform:translateX(-50%);flex-direction:row;flex-wrap:wrap;justify-content:center;gap:6px;width:auto;max-width:96vw;bottom:50px;position:fixed;}
+  .ico{width:68px;}
+  #sp-pin{display:none!important;}
+  #star-hint{top:8px;right:8px;}
+  .win{max-width:96vw!important;}
+  .tbtn{min-width:20px;min-height:20px;width:20px;height:20px;font-size:11px;}
+  .tbar-btns .tbtn{touch-action:manipulation;}
 }
-
-/* SPOTIFY PINNED */
-#spotify-pin{position:fixed;bottom:38px;right:0;width:320px;z-index:300;border-left:1px solid rgba(255,255,255,0.1);border-top:1px solid rgba(255,255,255,0.1);overflow:hidden;background:#000;}
-#spotify-pin iframe{display:block;width:100%;height:80px;border:none;}
-
-@keyframes icon-pulse {
-  0%,100%{box-shadow:0 0 0 0 rgba(29,185,84,0);}
-  50%{box-shadow:0 0 8px 3px rgba(29,185,84,0.4);}
-}
-
-  #ico-chat .ico::after{content:"start here";display:block;font-size:9px;color:#1DB954;margin-top:2px;letter-spacing:0.05em;}
-}
-
-
-@media (max-width: 520px) {
-  /* Icons — mobile only, centered vertically */
-  #icon-grid {
-    flex-direction: column !important;
-    position: fixed !important;
-    top: 20px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 76px !important;
-    bottom: auto !important;
-  }
-  .d-icon { width: 72px; }
-
-  /* No spotify pin on mobile */
-  #spotify-pin { display: none !important; }
-
-  /* Star hint */
-  #star-hint { top: 8px; right: 8px; }
-
-  /* Windows fill screen sensibly */
-  .win { max-width: 96vw !important; }
-
-  /* Bigger touch targets for title bar buttons */
-  .tbar-ctrl .tbtn {
-    min-width: 22px !important;
-    min-height: 22px !important;
-    width: 22px !important;
-    height: 22px !important;
-    font-size: 12px !important;
-  }
-
-  /* Hide footer on small screens */
-  .site-footer { display: none; }
-}
-
 </style>
 </head>
 <body>
 <div id="grain"></div>
-<div id="star-tooltip" style="position:fixed;display:none;background:rgba(10,10,20,0.92);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);font-family:var(--font);font-size:13px;padding:4px 10px;pointer-events:none;z-index:999;max-width:200px;line-height:1.4;"></div>
-<canvas id="sky-canvas"></canvas>
-<div id="sky-click"></div>
-<div id="star-hint" onclick="openWin('star-win')" style="cursor:pointer;">
-  <div>✦ <span style="text-decoration:underline;text-underline-offset:2px;">leave a star</span></div>
-  <div id="star-counter-hint" style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:2px;text-align:right;letter-spacing:0.05em;"></div>
+<canvas id="sky"></canvas>
+<div id="star-hint" onclick="openWin('star-win')">
+  <div>✦ <span>leave a star</span></div>
+  <div id="star-count-display"></div>
 </div>
+<div id="star-tooltip"></div>
 <div id="overlay" onclick="closeAll()"></div>
+
 <div id="desktop">
-<div id="icon-grid">
-  <div class="d-icon" id="ico-chat" onmousedown="icoDown(event,'ico-chat')" data-action="win" data-target="chat-win"><div class="ico">💬</div><span>ask_eve.exe</span></div>
-  <div class="d-icon" id="ico-notes" onmousedown="icoDown(event,'ico-notes')" data-action="win" data-target="notes-win"><div class="ico">📓</div><span>notes.app</span></div>
-  <div class="d-icon" id="ico-fn" onmousedown="icoDown(event,'ico-fn')" data-action="win" data-target="fn-win"><div class="ico">🗂️</div><span>archive.exe</span></div>
-  <div class="d-icon" id="ico-music" onmousedown="icoDown(event,'ico-music')" data-action="win" data-target="music-win"><div class="ico">🎵</div><span>music.exe</span></div>
-  <div class="d-icon" id="ico-cal" onmousedown="icoDown(event,'ico-cal')" data-action="external" data-target="https://calendar.app.google/oCJud9JDKNkZa8uH6"><div class="ico">📅</div><span>calendar</span></div>
-  <div class="d-icon" id="ico-soc" onmousedown="icoDown(event,'ico-soc')" data-action="win" data-target="soc-win"><div class="ico">🌐</div><span>socials</span></div>
-  <div class="d-icon" id="ico-ws" onmousedown="icoDown(event,'ico-ws')" data-action="browser" data-target="https://bywhitespace.com" data-title="Whitespace"><div class="ico">💼</div><span>whitespace</span></div>
-  <div class="d-icon" id="ico-gw" onmousedown="icoDown(event,'ico-gw')" data-action="browser" data-target="https://goodworldliving.com" data-title="Good World Living"><div class="ico">🌿</div><span>good_world</span></div>
-  <div class="d-icon" id="ico-star" onmousedown="icoDown(event,'ico-star')" data-action="win" data-target="star-win"><div class="ico">✦</div><span>night_sky</span></div>
-    <div class="d-icon" id="ico-gallery" onmousedown="icoDown(event,'ico-gallery')" data-action="browser" data-target="https://ivonnealdaz.com/gallery" data-title="Art Gallery"><div class="ico">🎨</div><span>gallery.exe</span></div>
+<div id="icons">
+  <div class="ico" id="ico-chat" data-action="win" data-target="chat-win"><div class="em">🌚</div><div class="lb">ask_eve.exe</div></div>
+  <div class="ico" id="ico-notes" data-action="win" data-target="notes-win"><div class="em">📓</div><div class="lb">notes.app</div></div>
+  <div class="ico" id="ico-arc" data-action="win" data-target="arc-win"><div class="em">🗂️</div><div class="lb">archive.exe</div></div>
+  <div class="ico" id="ico-music" data-action="win" data-target="music-win"><div class="em">🎵</div><div class="lb">music.exe</div></div>
+  <div class="ico" id="ico-cal" data-action="external" data-target="https://calendar.app.google/oCJud9JDKNkZa8uH6"><div class="em">📅</div><div class="lb">calendar</div></div>
+  <div class="ico" id="ico-soc" data-action="win" data-target="soc-win"><div class="em">🌐</div><div class="lb">socials</div></div>
+  <div class="ico" id="ico-ws" data-action="browser" data-target="https://bywhitespace.com" data-title="Whitespace"><div class="em">💼</div><div class="lb">whitespace</div></div>
+  <div class="ico" id="ico-gw" data-action="browser" data-target="https://goodworldliving.com" data-title="Good World Living"><div class="em">🌿</div><div class="lb">good_world</div></div>
+  <div class="ico" id="ico-star" data-action="win" data-target="star-win"><div class="em">✦</div><div class="lb">night_sky</div></div>
+  <div class="ico" id="ico-gallery" data-action="external" data-target="https://ivonnealdaz.com/gallery"><div class="em">🎨</div><div class="lb">gallery.exe</div></div>
+</div>
+
+<!-- SPOTIFY PINNED -->
+<div id="sp-pin">
+  <iframe src="https://open.spotify.com/embed/playlist/5vCPnlOrnR2IoYwBO0Ecgh?utm_source=generator&theme=0" width="320" height="80" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 </div>
 
 <!-- ASK EVE -->
-<div class="win focused" id="chat-win" style="width:min(570px,94vw);height:min(510px,80vh);top:28px;left:50%;transform:translateX(-50%);" onmousedown="focusWin('chat-win')">
+<div class="win on" id="chat-win" style="width:min(570px,94vw);height:min(510px,80vh);top:28px;left:50%;transform:translateX(-50%);" onmousedown="focusWin('chat-win')">
   <div class="tbar" onmousedown="dragStart(event,'chat-win')">
-    <div class="tbar-txt">🌚 ask_eve.exe — ivonne_aldaz [online]</div>
-    <div class="tbar-ctrl">
+    <div class="tbar-title">🌚 ask_eve.exe — ivonne_aldaz [online]</div>
+    <div class="tbar-btns">
       <button class="tbtn" onclick="minWin('chat-win')">_</button>
       <button class="tbtn" onclick="maxWin('chat-win')">□</button>
       <button class="tbtn" onclick="closeWin('chat-win')">✕</button>
@@ -338,12 +299,11 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
       <div class="di" onclick="newChat();closeAll()">💬 New Chat</div>
       <div class="dsep"></div>
       <div class="di" onclick="openWin('notes-win');closeAll()">📓 Open Notes</div>
-      <div class="di" onclick="openWin('fn-win');closeAll()">📁 Open Field Notes</div>
+      <div class="di" onclick="openWin('arc-win');closeAll()">🗂️ Open Archive</div>
       <div class="di" onclick="openWin('music-win');closeAll()">🎵 Open Music</div>
-      <div class="di" onclick="openWin('cal-win');closeAll()">📅 Open Calendar</div>
       <div class="dsep"></div>
-      <a class="di" href="https://bywhitespace.com"  onclick="openBrowser('https://bywhitespace.com','bywhitespace.com');closeAll()">💼 Visit Whitespace</a>
-      <a class="di" href="https://goodworldliving.com"  onclick="openBrowser('https://goodworldliving.com','goodworldliving.com');closeAll()">🌿 Visit Good World Living</a>
+      <a class="di" href="https://bywhitespace.com" target="_blank" onclick="closeAll()">💼 Whitespace</a>
+      <a class="di" href="https://goodworldliving.com" target="_blank" onclick="closeAll()">🌿 Good World Living</a>
       <div class="dsep"></div>
       <a class="di" href="/" onclick="closeAll()">🏠 Exit to Lab</a>
     </div></div>
@@ -352,17 +312,16 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
       <div class="di" onclick="maxWin('chat-win');closeAll()">□ Fullscreen</div>
       <a class="di" href="/ask-eve" target="_blank" onclick="closeAll()">↗ Open in New Tab</a>
       <div class="dsep"></div>
-      <a class="di" href="/field-notes" target="_blank" onclick="closeAll()">📁 Field Notes (web)</a>
+      <a class="di" href="/field-notes" onclick="closeAll()">📁 Field Notes (web)</a>
       <a class="di" href="/ask" onclick="closeAll()">✨ Ask Eve (minimal)</a>
-      <a class="di" href="/entry" onclick="closeAll()">📄 CV Entry</a>
     </div></div>
     <div class="mi" onclick="toggleMenu(this)">Actions<div class="dd">
-      <div class="di" onclick="ask('tell me about ivonne\'s work');closeAll()">💼 About the work</div>
-      <div class="di" onclick="ask('what inspires ivonne?');closeAll()">✨ What inspires her?</div>
-      <div class="di" onclick="ask('what are ivonne\'s favorite projects?');closeAll()">⭐ Favorite projects</div>
-      <div class="di" onclick="ask('what are ivonne\'s current obsessions?');closeAll()">🔥 Current obsessions</div>
-      <div class="di" onclick="ask('what are ivonne\'s favorite places?');closeAll()">📍 Favorite places</div>
-      <div class="di" onclick="ask('tell me something unexpected about ivonne');closeAll()">🎲 Something random</div>
+      <div class="di" onclick="quickAsk('tell me about ivonne\'s work')">💼 About the work</div>
+      <div class="di" onclick="quickAsk('what inspires ivonne?')">✨ What inspires her?</div>
+      <div class="di" onclick="quickAsk('what are ivonne\'s favorite projects?')">⭐ Favorite projects</div>
+      <div class="di" onclick="quickAsk('what are ivonne\'s current obsessions?')">🔥 Current obsessions</div>
+      <div class="di" onclick="quickAsk('what are ivonne\'s favorite places?')">📍 Favorite places</div>
+      <div class="di" onclick="quickAsk('tell me something unexpected about ivonne')">🎲 Something random</div>
       <div class="dsep"></div>
       <a class="di" href="mailto:hello@ivonnealdaz.com" onclick="closeAll()">📧 Send Email</a>
     </div></div>
@@ -370,26 +329,26 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
       <div class="di" onclick="openWin('about-win');closeAll()">🌚 About Eve</div>
       <div class="di" onclick="openWin('about-lab-win');closeAll()">🖥️ About the Lab</div>
       <div class="dsep"></div>
-      <a class="di" href="https://ivonnealdaz.com"  onclick="openBrowser('https://ivonnealdaz.com','ivonnealdaz.com');closeAll()">👤 ivonnealdaz.com</a>
-      <a class="di" href="https://ivonnealdaz.com/gallery"  onclick="openBrowser('https://ivonnealdaz.com/gallery','ivonnealdaz.com');closeAll()">🎨 Art Gallery</a>
+      <a class="di" href="https://ivonnealdaz.com" target="_blank" onclick="closeAll()">👤 ivonnealdaz.com</a>
+      <a class="di" href="https://ivonnealdaz.com/gallery" target="_blank" onclick="closeAll()">🎨 Art Gallery</a>
     </div></div>
   </div>
-  <div class="chat-hdr">
-    <div style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;line-height:1;">🌚</div>
-    <div class="chat-hdr-info">
-      <div class="chat-name">eve ✦</div>
-      <div class="chat-status">● online · moon-powered · trained on ivonne's cv</div>
+  <div style="display:flex;align-items:center;gap:10px;padding:7px 10px 5px;background:#181818;border-bottom:1px solid #2a2a2a;flex-shrink:0;">
+    <div style="font-size:28px;line-height:1;flex-shrink:0;">🌚</div>
+    <div>
+      <div class="chat-name" style="font-size:17px;font-weight:700;color:var(--accent);">eve ✦</div>
+      <div style="font-size:13px;color:#555;">● online · moon-powered · trained on ivonne's cv</div>
     </div>
   </div>
   <div class="chat-area" id="chat-area">
     <div class="mrow eve">
       <div class="mhead"><span class="he">eve ✦</span> <span id="init-time"></span></div>
-      <div class="mbody">hey ✦ i'm eve — ivonne's ai. ask me about her work, what inspires her, where she's been, or what she's currently building. what's on your mind?</div>
-      <div class="rr"><span class="rx">♥</span><span class="rx">👁</span><span class="rx">✦</span></div>
+      <div class="mbody">hey ✦ i'm eve — ivonne's ai. ask me about her work, what inspires her, where she's been, or what she's building. what's on your mind?</div>
+      <div class="rx-row"><span class="rx">♥</span><span class="rx">👁</span><span class="rx">✦</span></div>
     </div>
   </div>
-  <div class="prompts-wrap" id="pw">
-    <div class="plbl">try asking:</div>
+  <div class="prompts" id="prompts">
+    <div class="prompts-lbl">try asking:</div>
     <div class="pgrid">
       <button class="pbtn" onclick="ask(this.textContent)">tell me about ivonne's work</button>
       <button class="pbtn" onclick="ask(this.textContent)">what inspires her?</button>
@@ -408,17 +367,51 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
     </div>
     <div class="ihint">ask_eve v1.0 · trained on ivonne's actual cv · powered by claude</div>
   </div>
+  <div class="resize-corner"></div>
 </div>
 
-<!-- NOTES APP -->
-<div class="win unfocused" id="notes-win" style="width:min(560px,94vw);height:420px;top:50px;left:calc(50% - 280px);display:none;" onmousedown="focusWin('notes-win')">
-  <div class="tbar" onmousedown="dragStart(event,'notes-win')">
-    <div class="tbar-txt">📓 notes.app</div>
-    <div class="tbar-ctrl"><button class="tbtn" onclick="minWin('notes-win')">_</button><button class="tbtn" onclick="maxWin('notes-win')">□</button><button class="tbtn" onclick="closeWin('notes-win')">✕</button></div>
+<!-- MUSIC -->
+<div class="win off" id="music-win" style="width:320px;height:400px;top:60px;left:calc(50% + 240px);display:none;" onmousedown="focusWin('music-win')">
+  <div class="tbar" onmousedown="dragStart(event,'music-win')"><div class="tbar-title">🎵 music.exe</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('music-win')">_</button><button class="tbtn" onclick="maxWin('music-win')">□</button><button class="tbtn" onclick="closeWin('music-win')">✕</button></div></div>
+  <div class="music-body">
+    <div class="music-hdr"><div class="now-lbl">▶ NOW PLAYING</div><div class="now-title">ivonne's playlist</div><div class="now-sub"><a href="https://open.spotify.com/user/1244680102" target="_blank">view all playlists ↗</a></div></div>
+    <div class="sp-embed"><iframe src="https://open.spotify.com/embed/playlist/5vCPnlOrnR2IoYwBO0Ecgh?utm_source=generator&theme=0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
   </div>
+  <div class="resize-corner"></div>
+</div>
+
+<!-- CALENDAR -->
+<div class="win off" id="cal-win" style="width:290px;height:220px;top:80px;left:calc(50% - 380px);display:none;" onmousedown="focusWin('cal-win')">
+  <div class="tbar" onmousedown="dragStart(event,'cal-win')"><div class="tbar-title">📅 calendar.exe</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('cal-win')">_</button><button class="tbtn" onclick="maxWin('cal-win')">□</button><button class="tbtn" onclick="closeWin('cal-win')">✕</button></div></div>
+  <div class="cal-body">
+    <div class="cal-h">Book Time With Ivonne</div>
+    <div class="cal-desc">Schedule a conversation about brand strategy, a collaboration, or just to connect.</div>
+    <a class="cal-link" href="https://calendar.app.google/oCJud9JDKNkZa8uH6" target="_blank">📅 Open Calendar →</a>
+    <div style="font-size:13px;color:#555;">or email <a href="mailto:hello@ivonnealdaz.com" style="color:var(--accent);">hello@ivonnealdaz.com</a></div>
+  </div>
+  <div class="resize-corner"></div>
+</div>
+
+<!-- SOCIALS -->
+<div class="win off" id="soc-win" style="width:300px;height:330px;top:60px;left:calc(50% - 360px);display:none;" onmousedown="focusWin('soc-win')">
+  <div class="tbar" onmousedown="dragStart(event,'soc-win')"><div class="tbar-title">🌐 socials</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('soc-win')">_</button><button class="tbtn" onclick="maxWin('soc-win')">□</button><button class="tbtn" onclick="closeWin('soc-win')">✕</button></div></div>
+  <div class="soc-body">
+    <a class="soc-row" href="https://instagram.com/ivonnealdaz" target="_blank"><span class="soc-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></span><span class="soc-name">Instagram</span><span class="soc-handle">@ivonnealdaz</span></a>
+    <a class="soc-row" href="https://x.com/ivonnealdazz" target="_blank"><span class="soc-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span><span class="soc-name">X</span><span class="soc-handle">@ivonnealdazz</span></a>
+    <a class="soc-row" href="https://tiktok.com/@ivonnealdaz" target="_blank"><span class="soc-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.28 8.28 0 0 0 4.84 1.54V7.15a4.85 4.85 0 0 1-1.07-.46z"/></svg></span><span class="soc-name">TikTok</span><span class="soc-handle">@ivonnealdaz</span></a>
+    <a class="soc-row" href="https://linkedin.com/in/ivonnealdaz" target="_blank"><span class="soc-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></span><span class="soc-name">LinkedIn</span><span class="soc-handle">ivonnealdaz</span></a>
+    <a class="soc-row" href="https://pinterest.com/ivonnealdaz" target="_blank"><span class="soc-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></span><span class="soc-name">Pinterest</span><span class="soc-handle">ivonnealdaz</span></a>
+    <a class="soc-row" href="mailto:hello@ivonnealdaz.com"><span class="soc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 6l10 8 10-8"/></svg></span><span class="soc-name">Email</span><span class="soc-handle">hello@</span></a>
+  </div>
+  <div class="resize-corner"></div>
+</div>
+
+<!-- NOTES -->
+<div class="win off" id="notes-win" style="width:min(560px,94vw);height:400px;top:50px;left:calc(50% - 280px);display:none;" onmousedown="focusWin('notes-win')">
+  <div class="tbar" onmousedown="dragStart(event,'notes-win')"><div class="tbar-title">📓 notes.app</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('notes-win')">_</button><button class="tbtn" onclick="maxWin('notes-win')">□</button><button class="tbtn" onclick="closeWin('notes-win')">✕</button></div></div>
   <div class="notes-shell">
     <div class="notes-sidebar">
-      <div class="ns-header">CATEGORIES</div>
+      <div class="ns-hdr">CATEGORIES</div>
       <div class="ns-cat active" onclick="showCat(this,'movies')">🎬 movies</div>
       <div class="ns-cat" onclick="showCat(this,'books')">📚 books</div>
       <div class="ns-cat" onclick="showCat(this,'quotes')">💬 quotes</div>
@@ -432,210 +425,93 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
     </div>
     <div class="notes-main">
       <div class="notes-list" id="notes-list"></div>
-    </div>
-    <div style="flex:1;border-left:1px solid var(--mid);overflow:hidden;display:flex;flex-direction:column;">
-      <div class="note-viewer" id="note-viewer">select a note to read it.</div>
+      <div class="note-viewer" id="note-viewer">select a note.</div>
     </div>
   </div>
+  <div class="resize-corner"></div>
 </div>
 
-<!-- FIELD NOTES WINDOW -->
-<div class="win unfocused" id="fn-win" style="width:min(620px,94vw);height:480px;top:40px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('fn-win')">
-  <div class="tbar" onmousedown="dragStart(event,'fn-win')">
-    <div class="tbar-txt">🗂️ archive.exe — ivonne aldaz</div>
-    <div class="tbar-ctrl"><button class="tbtn" onclick="minWin('fn-win')">_</button><button class="tbtn" onclick="maxWin('fn-win')">□</button><button class="tbtn" onclick="closeWin('fn-win')">✕</button></div>
-  </div>
-  <div class="fn-shell">
-    <div class="fn-filters">
-      <span style="font-size:13px;color:var(--mid);margin-right:4px;">filter:</span>
-      <button class="fn-btn active" onclick="filterFN('all',this)">All</button>
-      <button class="fn-btn" onclick="filterFN('built',this)">Built</button>
-      <button class="fn-btn" onclick="filterFN('brand',this)">Brand</button>
-      <button class="fn-btn" onclick="filterFN('art',this)">Art</button>
-      <button class="fn-btn" onclick="filterFN('writing',this)">Writing</button>
-      <button class="fn-btn" onclick="filterFN('talk',this)">Talk</button>
-      <button class="fn-btn" onclick="filterFN('community',this)">Community</button>
+<!-- ARCHIVE -->
+<div class="win off" id="arc-win" style="width:min(620px,94vw);height:460px;top:40px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('arc-win')">
+  <div class="tbar" onmousedown="dragStart(event,'arc-win')"><div class="tbar-title">🗂️ archive.exe — ivonne aldaz</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('arc-win')">_</button><button class="tbtn" onclick="maxWin('arc-win')">□</button><button class="tbtn" onclick="closeWin('arc-win')">✕</button></div></div>
+  <div class="arc-shell">
+    <div class="arc-filters">
+      <span>filter:</span>
+      <button class="fbtn active" onclick="filterArc('all',this)">All</button>
+      <button class="fbtn" onclick="filterArc('built',this)">Built</button>
+      <button class="fbtn" onclick="filterArc('brand',this)">Brand</button>
+      <button class="fbtn" onclick="filterArc('art',this)">Art</button>
+      <button class="fbtn" onclick="filterArc('writing',this)">Writing</button>
+      <button class="fbtn" onclick="filterArc('talk',this)">Talk</button>
+      <button class="fbtn" onclick="filterArc('community',this)">Community</button>
     </div>
-    <div class="fn-list" id="fn-list"></div>
+    <div class="arc-list" id="arc-list"></div>
   </div>
-</div>
-
-<!-- MUSIC -->
-<div class="win unfocused" id="music-win" style="width:320px;height:420px;top:60px;left:calc(50% + 240px);display:none;" onmousedown="focusWin('music-win')">
-  <div class="tbar" onmousedown="dragStart(event,'music-win')">
-    <div class="tbar-txt">🎵 music.exe</div>
-    <div class="tbar-ctrl"><button class="tbtn" onclick="minWin('music-win')">_</button><button class="tbtn" onclick="maxWin('music-win')">□</button><button class="tbtn" onclick="closeWin('music-win')">✕</button></div>
-  </div>
-  <div class="music-body">
-    <div class="music-now">
-      <div class="music-now-lbl">▶ NOW PLAYING</div>
-      <div class="music-title">ivonne's playlist</div>
-      <div class="music-sub"><a href="https://open.spotify.com/user/1244680102" target="_blank" style="color:#1DB954;">view all playlists ↗</a></div>
-    </div>
-    <div class="sp-embed">
-      <iframe src="https://open.spotify.com/embed/playlist/5vCPnlOrnR2IoYwBO0Ecgh?utm_source=generator&theme=0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-    </div>
-  </div>
-</div>
-
-<!-- CALENDAR -->
-<div class="win unfocused" id="cal-win" style="width:300px;height:230px;top:80px;left:calc(50% - 380px);display:none;" onmousedown="focusWin('cal-win')">
-  <div class="tbar" onmousedown="dragStart(event,'cal-win')">
-    <div class="tbar-txt">📅 calendar.exe</div>
-    <div class="tbar-ctrl"><button class="tbtn" onclick="minWin('cal-win')">_</button><button class="tbtn" onclick="maxWin('cal-win')">□</button><button class="tbtn" onclick="closeWin('cal-win')">✕</button></div>
-  </div>
-  <div class="cal-body">
-    <div class="cal-h">Book Time With Ivonne</div>
-    <div class="cal-desc">Schedule a conversation about brand strategy, a collaboration, or just to connect.</div>
-    <a class="cal-link" href="https://calendar.app.google/oCJud9JDKNkZa8uH6"  onclick="openBrowser('https://calendar.app.google/oCJud9JDKNkZa8uH6','calendar.app.google')">📅 Open Calendar →</a>
-    <div style="font-size:13px;color:var(--mid);">or email <a href="mailto:hello@ivonnealdaz.com" style="color:var(--navy);">hello@ivonnealdaz.com</a></div>
-  </div>
-</div>
-
-<!-- SOCIALS -->
-<div class="win unfocused" id="soc-win" style="width:300px;height:310px;top:60px;left:calc(50% - 360px);display:none;" onmousedown="focusWin('soc-win')">
-  <div class="tbar" onmousedown="dragStart(event,'soc-win')">
-    <div class="tbar-txt">🌐 socials</div>
-    <div class="tbar-ctrl"><button class="tbtn" onclick="minWin('soc-win')">_</button><button class="tbtn" onclick="maxWin('soc-win')">□</button><button class="tbtn" onclick="closeWin('soc-win')">✕</button></div>
-  </div>
-  <div class="soc-body">
-    <a class="soc-row" href="https://instagram.com/ivonnealdaz"  onclick="openBrowser('https://instagram.com/ivonnealdaz','instagram.com')">
-      <span class="soc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></span>
-      <span class="soc-name">Instagram</span><span class="soc-handle">@ivonnealdaz</span>
-    </a>
-    <a class="soc-row" href="https://x.com/ivonnealdazz"  onclick="openBrowser('https://x.com/ivonnealdazz','x.com')">
-      <span class="soc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span>
-      <span class="soc-name">X</span><span class="soc-handle">@ivonnealdazz</span>
-    </a>
-    <a class="soc-row" href="https://tiktok.com/@ivonnealdaz"  onclick="openBrowser('https://tiktok.com/@ivonnealdaz','tiktok.com')">
-      <span class="soc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.28 8.28 0 0 0 4.84 1.54V7.15a4.85 4.85 0 0 1-1.07-.46z"/></svg></span>
-      <span class="soc-name">TikTok</span><span class="soc-handle">@ivonnealdaz</span>
-    </a>
-    <a class="soc-row" href="https://linkedin.com/in/ivonnealdaz"  onclick="openBrowser('https://linkedin.com/in/ivonnealdaz','linkedin.com')">
-      <span class="soc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></span>
-      <span class="soc-name">LinkedIn</span><span class="soc-handle">ivonnealdaz</span>
-    </a>
-    <a class="soc-row" href="https://pinterest.com/ivonnealdaz"  onclick="openBrowser('https://pinterest.com/ivonnealdaz','pinterest.com')">
-      <span class="soc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></span>
-      <span class="soc-name">Pinterest</span><span class="soc-handle">ivonnealdaz</span>
-    </a>
-    <a class="soc-row" href="mailto:hello@ivonnealdaz.com">
-      <span class="soc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 6l10 8 10-8"/></svg></span>
-      <span class="soc-name">Email</span><span class="soc-handle">hello@</span>
-    </a>
-  </div>
+  <div class="resize-corner"></div>
 </div>
 
 <!-- WHITESPACE -->
-<div class="win unfocused" id="ws-win" style="width:290px;height:230px;top:120px;left:80px;display:none;" onmousedown="focusWin('ws-win')">
-  <div class="tbar" onmousedown="dragStart(event,'ws-win')">
-    <div class="tbar-txt">💼 Whitespace</div>
-    <div class="tbar-ctrl"><button class="tbtn" onclick="minWin('ws-win')">_</button><button class="tbtn" onclick="maxWin('ws-win')">□</button><button class="tbtn" onclick="closeWin('ws-win')">✕</button></div>
-  </div>
-  <div class="wc">
-    <h3>💼 Whitespace</h3>
-    <p>Brand strategy studio. 3-month sprint engagements for founders and growing brands.</p>
-    <div class="ds2"></div>
-    <div class="pr"><span class="plb">Focus:</span><span>Positioning, GTM, narrative</span></div>
-    <div class="pr"><span class="plb">Format:</span><span>3-month sprints</span></div>
-    <a class="wlink" href="https://bywhitespace.com"  style="margin-top:8px;" onclick="openBrowser('https://bywhitespace.com','bywhitespace.com')">Visit bywhitespace.com →</a>
-  </div>
+<div class="win off" id="ws-win" style="width:290px;height:230px;top:120px;left:80px;display:none;" onmousedown="focusWin('ws-win')">
+  <div class="tbar" onmousedown="dragStart(event,'ws-win')"><div class="tbar-title">💼 Whitespace</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('ws-win')">_</button><button class="tbtn" onclick="maxWin('ws-win')">□</button><button class="tbtn" onclick="closeWin('ws-win')">✕</button></div></div>
+  <div class="wc"><h3>💼 Whitespace</h3><p>Brand strategy studio. 3-month sprint engagements.</p><div class="wds"></div><div class="wpr"><span class="wpl">Focus:</span><span>Positioning, GTM, narrative</span></div><div class="wpr"><span class="wpl">Format:</span><span>3-month sprints</span></div><a class="wlink" href="https://bywhitespace.com" target="_blank" style="margin-top:8px;">Visit bywhitespace.com →</a></div>
+  <div class="resize-corner"></div>
 </div>
 
 <!-- GOOD WORLD -->
-<div class="win unfocused" id="gw-win" style="width:290px;height:220px;top:140px;left:100px;display:none;" onmousedown="focusWin('gw-win')">
-  <div class="tbar" onmousedown="dragStart(event,'gw-win')">
-    <div class="tbar-txt">🌿 Good World Living</div>
-    <div class="tbar-ctrl"><button class="tbtn" onclick="minWin('gw-win')">_</button><button class="tbtn" onclick="maxWin('gw-win')">□</button><button class="tbtn" onclick="closeWin('gw-win')">✕</button></div>
-  </div>
-  <div class="wc">
-    <h3>🌿 Good World Living</h3>
-    <p>A lifestyle platform — art, travel, and intentional living. Founded 2023.</p>
-    <div class="ds2"></div>
-    <a class="wlink" href="https://goodworldliving.com"  onclick="openBrowser('https://goodworldliving.com','goodworldliving.com')">Visit goodworldliving.com →</a>
-  </div>
+<div class="win off" id="gw-win" style="width:290px;height:220px;top:140px;left:100px;display:none;" onmousedown="focusWin('gw-win')">
+  <div class="tbar" onmousedown="dragStart(event,'gw-win')"><div class="tbar-title">🌿 Good World Living</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('gw-win')">_</button><button class="tbtn" onclick="maxWin('gw-win')">□</button><button class="tbtn" onclick="closeWin('gw-win')">✕</button></div></div>
+  <div class="wc"><h3>🌿 Good World Living</h3><p>A lifestyle platform — art, travel, and intentional living. Founded 2023.</p><div class="wds"></div><a class="wlink" href="https://goodworldliving.com" target="_blank">Visit goodworldliving.com →</a></div>
+  <div class="resize-corner"></div>
 </div>
 
-<!-- NIGHT SKY WINDOW -->
-<div class="win unfocused" id="star-win" style="width:310px;height:280px;top:80px;left:calc(50% + 260px);display:none;background:#0a0a18;border-color:rgba(255,255,255,0.2) rgba(0,0,10,0.8) rgba(0,0,10,0.8) rgba(255,255,255,0.2);" onmousedown="focusWin('star-win')">
-  <div class="tbar star-tbar" onmousedown="dragStart(event,'star-win')" style="background:linear-gradient(to right,#0a0a25,#1a1a50);">
-    <div class="tbar-txt" style="color:rgba(255,255,255,0.8);">✦ night_sky</div>
-    <div class="tbar-ctrl"><button class="tbtn" onclick="minWin('star-win')" style="background:#1a1a35;color:#fff;border-color:rgba(255,255,255,0.3) rgba(0,0,0,0.5) rgba(0,0,0,0.5) rgba(255,255,255,0.3);">_</button><button class="tbtn" onclick="maxWin('star-win')" style="background:#1a1a35;color:#fff;border-color:rgba(255,255,255,0.3) rgba(0,0,0,0.5) rgba(0,0,0,0.5) rgba(255,255,255,0.3);">□</button><button class="tbtn" onclick="closeWin('star-win')" style="background:#1a1a35;color:#fff;border-color:rgba(255,255,255,0.3) rgba(0,0,0,0.5) rgba(0,0,0,0.5) rgba(255,255,255,0.3);">✕</button></div>
-  </div>
+<!-- NIGHT SKY -->
+<div class="win off" id="star-win" style="width:310px;height:260px;top:80px;left:calc(50% + 260px);display:none;background:#05050f;border-color:rgba(255,255,255,.15);" onmousedown="focusWin('star-win')">
+  <div class="tbar" style="background:linear-gradient(to right,#05051a,#0d0d30);" onmousedown="dragStart(event,'star-win')"><div class="tbar-title" style="color:rgba(255,255,255,.7);">✦ night_sky</div><div class="tbar-btns"><button class="tbtn" style="background:#0d0d25;color:rgba(255,255,255,.6);" onclick="minWin('star-win')">_</button><button class="tbtn" style="background:#0d0d25;color:rgba(255,255,255,.6);" onclick="maxWin('star-win')">□</button><button class="tbtn" style="background:#0d0d25;color:rgba(255,255,255,.6);" onclick="closeWin('star-win')">✕</button></div></div>
   <div class="star-body">
-    <p>leave a tiny star in the sky. something quiet that says you were here.</p>
-    <input type="text" id="star-note" placeholder="a word, song, link, or thought (optional)" maxlength="120"/>
-    <input type="text" id="star-name" placeholder="name (optional)" maxlength="40"/>
+    <p>leave a tiny star in the sky. a word, song, link, or thought. something quiet that says you were here.</p>
+    <input class="star-input" type="text" id="star-note" placeholder="a word, song, link, or thought (optional)" maxlength="120"/>
+    <input class="star-input" type="text" id="star-name" placeholder="name (optional)" maxlength="40"/>
     <button class="star-submit" onclick="plantStar()">✦ leave a star</button>
-    <div class="star-count" id="star-count">loading stars...</div>
+    <div class="star-cnt" id="star-cnt">loading stars...</div>
   </div>
+  <div class="resize-corner"></div>
 </div>
 
 <!-- ABOUT EVE -->
-<div class="win unfocused" id="about-win" style="width:300px;height:270px;top:100px;left:calc(50% + 60px);display:none;" onmousedown="focusWin('about-win')">
-  <div class="tbar" onmousedown="dragStart(event,'about-win')">
-    <div class="tbar-txt">🌚 About eve</div>
-    <div class="tbar-ctrl"><button class="tbtn" onclick="minWin('about-win')">_</button><button class="tbtn">□</button><button class="tbtn" onclick="closeWin('about-win')">✕</button></div>
-  </div>
-  <div class="wc" style="text-align:center;">
-    <div style="font-size:46px;margin-bottom:6px;">🌙</div>
-    <h3>ask_eve.exe v1.0</h3>
-    <p style="text-align:left;">An AI agent representing Ivonne Aldaz — brand strategist, artist, and creative director. Named Eve, moon-shaped, trained on the actual CV.</p>
-    <div class="ds2"></div>
-    <div style="text-align:left;font-size:14px;color:var(--mid);">Built May 2026 · Claude API · Vercel</div>
-    <div style="margin-top:12px;"><button class="sbtn" onclick="closeWin('about-win')">OK</button></div>
-  </div>
+<div class="win off" id="about-win" style="width:300px;height:270px;top:100px;left:calc(50% + 60px);display:none;" onmousedown="focusWin('about-win')">
+  <div class="tbar" onmousedown="dragStart(event,'about-win')"><div class="tbar-title">🌚 About eve</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('about-win')">_</button><button class="tbtn">□</button><button class="tbtn" onclick="closeWin('about-win')">✕</button></div></div>
+  <div class="wc" style="text-align:center;"><div class="about-ico">🌚</div><h3>ask_eve.exe v1.0</h3><p style="text-align:left;">An AI agent representing Ivonne Aldaz — brand strategist, artist, creative director. Named Eve, moon-powered.</p><div class="wds"></div><div style="font-size:14px;color:#555;text-align:left;">Built May 2026 · Claude API · Vercel</div><div style="margin-top:12px;"><button class="sbtn" onclick="closeWin('about-win')">OK</button></div></div>
+  <div class="resize-corner"></div>
 </div>
 
 <!-- ABOUT LAB -->
-<div class="win unfocused" id="about-lab-win" style="width:300px;height:250px;top:110px;left:calc(50% + 80px);display:none;" onmousedown="focusWin('about-lab-win')">
-  <div class="tbar" onmousedown="dragStart(event,'about-lab-win')">
-    <div class="tbar-txt">🖥️ About the Lab</div>
-    <div class="tbar-ctrl"><button class="tbtn" onclick="minWin('about-lab-win')">_</button><button class="tbtn">□</button><button class="tbtn" onclick="closeWin('about-lab-win')">✕</button></div>
-  </div>
-  <div class="wc">
-    <h3>🖥️ lab.ivonnealdaz.com</h3>
-    <p>A working record of things built, made, written, and shipped — across brand strategy, art, and whatever else refuses to stay in one category.</p>
-    <div class="ds2"></div>
-    <a class="wlink" href="/">🖥️ Lab Homepage →</a>
-    <a class="wlink" href="/field-notes">📁 Field Notes →</a>
-    <a class="wlink" href="/entry">📄 CV Agent Entry →</a>
-  </div>
-</div>
+<div class="win off" id="about-lab-win" style="width:300px;height:250px;top:110px;left:calc(50% + 80px);display:none;" onmousedown="focusWin('about-lab-win')">
+  <div class="tbar" onmousedown="dragStart(event,'about-lab-win')"><div class="tbar-title">🖥️ About the Lab</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('about-lab-win')">_</button><button class="tbtn">□</button><button class="tbtn" onclick="closeWin('about-lab-win')">✕</button></div></div>
+  <div class="wc"><h3>🖥️ lab.ivonnealdaz.com</h3><p>A working record of things built, made, written, and shipped — across brand strategy, art, and whatever else refuses to stay in one category.</p><div class="wds"></div><a class="wlink" href="/">🖥️ Lab Homepage →</a><a class="wlink" href="/field-notes">📁 Field Notes →</a><a class="wlink" href="/entry">📄 CV Agent Entry →</a></div>
+  <div class="resize-corner"></div>
 </div>
 
-<!-- SPOTIFY PINNED -->
-<div id="spotify-pin">
-  <iframe src="https://open.spotify.com/embed/playlist/5vCPnlOrnR2IoYwBO0Ecgh?utm_source=generator&theme=0" width="320" height="80" frameborder="0" allowtransparency="true" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-</div>
-
-
-<!-- BROWSER WINDOW -->
-<div class="win unfocused" id="browser-win" style="width:min(700px,95vw);height:min(520px,80vh);top:40px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('browser-win')">
-  <div class="tbar" onmousedown="dragStart(event,'browser-win')">
-    <div class="tbar-txt">🌐 <span id="browser-title">browser</span></div>
-    <div class="tbar-ctrl">
-      <button class="tbtn" onclick="minWin('browser-win')">_</button>
-      <button class="tbtn" onclick="maxWin('browser-win')">□</button>
-      <button class="tbtn" onclick="closeWin('browser-win')">✕</button>
-    </div>
+<!-- BROWSER -->
+<div class="win off" id="browser-win" style="width:min(700px,95vw);height:min(520px,80vh);top:40px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('browser-win')">
+  <div class="tbar" onmousedown="dragStart(event,'browser-win')"><div class="tbar-title">🌐 <span id="browser-title">browser</span></div><div class="tbar-btns"><button class="tbtn" onclick="minWin('browser-win')">_</button><button class="tbtn" onclick="maxWin('browser-win')">□</button><button class="tbtn" onclick="closeWin('browser-win')">✕</button></div></div>
+  <div class="browser-bar">
+    <button class="browser-btn" onclick="document.getElementById('browser-frame').contentWindow?.history.back()">◀</button>
+    <button class="browser-btn" onclick="var f=document.getElementById('browser-frame');f.src=f.src;">↺</button>
+    <input class="browser-url" id="browser-url" onkeydown="if(event.key==='Enter')browserNav(this.value)"/>
+    <button class="browser-go" onclick="browserNav(document.getElementById('browser-url').value)">Go</button>
+    <a class="browser-ext" id="browser-ext" href="#" target="_blank">↗</a>
   </div>
-  <div style="display:flex;align-items:center;gap:4px;padding:4px 6px;background:#1a1a1a;border-bottom:1px solid #333;flex-shrink:0;">
-    <button onclick="browserBack()" style="background:#2a2a2a;border:1px solid #444;color:#ccc;font-family:var(--font);font-size:14px;padding:1px 8px;cursor:pointer;">◀</button>
-    <button onclick="browserRefresh()" style="background:#2a2a2a;border:1px solid #444;color:#ccc;font-family:var(--font);font-size:14px;padding:1px 8px;cursor:pointer;">↺</button>
-    <input id="browser-url" style="flex:1;background:#111;border:1px solid #444;color:#ccc;font-family:var(--font);font-size:14px;padding:2px 8px;outline:none;" onkeydown="if(event.key==='Enter')browserNavigate(this.value)" />
-    <button onclick="browserNavigate(document.getElementById('browser-url').value)" style="background:#1DB954;border:none;color:#000;font-family:var(--font);font-size:14px;padding:2px 10px;cursor:pointer;">Go</button>
-    <a id="browser-external" href="#" target="_blank" style="background:#2a2a2a;border:1px solid #444;color:#ccc;font-family:var(--font);font-size:13px;padding:2px 8px;text-decoration:none;" title="Open in new tab">↗</a>
-  </div>
-  <div style="flex:1;position:relative;overflow:hidden;">
-    <iframe id="browser-frame" src="" style="width:100%;height:100%;border:none;" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"></iframe>
-    <div id="browser-blocked" style="display:none;position:absolute;inset:0;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#666;">
+  <div class="browser-frame-wrap">
+    <iframe id="browser-frame" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+    <div class="browser-blocked" id="browser-blocked">
       <div style="font-size:32px;">🚫</div>
-      <div style="font-family:var(--font);font-size:16px;color:#888;">this site blocks embedding</div>
-      <a id="browser-blocked-link" href="#" target="_blank" style="font-family:var(--font);font-size:15px;color:#1DB954;text-decoration:underline;">open in new tab ↗</a>
+      <div style="font-size:16px;color:#888;">this site blocks embedding</div>
+      <a id="browser-blocked-link" href="#" target="_blank" style="color:var(--accent);font-size:15px;">open in new tab ↗</a>
     </div>
   </div>
+  <div class="resize-corner"></div>
 </div>
+</div><!-- end desktop -->
 
 <!-- START MENU -->
 <div id="smenu">
@@ -643,20 +519,18 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
   <div class="sm-items">
     <div class="si" onclick="openWin('chat-win');closeAll()">🌚 ask_eve.exe</div>
     <div class="si" onclick="openWin('notes-win');closeAll()">📓 notes.app</div>
-    <div class="si" onclick="openWin('fn-win');closeAll()">🗂️ archive.exe</div>
+    <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ archive.exe</div>
     <div class="si" onclick="openWin('music-win');closeAll()">🎵 music.exe</div>
-    <div class="si" onclick="openWin('cal-win');closeAll()">📅 calendar</div>
     <div class="si" onclick="openWin('soc-win');closeAll()">🌐 socials</div>
     <div class="si" onclick="openWin('star-win');closeAll()">✦ night_sky</div>
-    <div class="si" onclick="openBrowser('https://ivonnealdaz.com/gallery','Art Gallery');closeAll()">🎨 gallery.exe</div>
     <div class="dsep"></div>
-    <div class="si" onclick="openWin('ws-win');closeAll()">💼 whitespace</div>
-    <div class="si" onclick="openWin('gw-win');closeAll()">🌿 good_world</div>
+    <div class="si" onclick="openBrowser('https://bywhitespace.com','Whitespace');closeAll()">💼 whitespace</div>
+    <div class="si" onclick="openBrowser('https://goodworldliving.com','Good World Living');closeAll()">🌿 good_world</div>
     <div class="dsep"></div>
     <a class="si" href="https://ivonnealdaz.com" target="_blank" onclick="closeAll()">👤 ivonnealdaz.com</a>
     <a class="si" href="mailto:hello@ivonnealdaz.com" onclick="closeAll()">📧 email</a>
     <div class="dsep"></div>
-    <div class="si" onclick="openWin('about-win');closeAll()">🌙 about eve</div>
+    <div class="si" onclick="openWin('about-win');closeAll()">🌚 about eve</div>
     <a class="si" href="/" onclick="closeAll()">🏠 exit to lab</a>
   </div>
 </div>
@@ -666,379 +540,423 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
   <button id="start-btn" onclick="toggleStart()">Start</button>
   <div class="tb-sep"></div>
   <div id="tb-apps">
-    <div class="tb-app-ico" onclick="toggleWin('chat-win')" title="Ask Eve">🌙</div>
-    <div class="tb-app-ico" onclick="openWin('notes-win')" title="Notes">📓</div>
-    <div class="tb-app-ico" onclick="openWin('fn-win')" title="Archive">🗂️</div>
-    <div class="tb-app-ico" onclick="openWin('music-win')" title="Music">🎵</div>
-    <div class="tb-app-ico" onclick="openWin('cal-win')" title="Calendar">📅</div>
-    <div class="tb-app-ico" onclick="openWin('soc-win')" title="Socials">🌐</div>
+    <div class="tb-app" onclick="toggleWin('chat-win')" title="Ask Eve">🌚</div>
+    <div class="tb-app" onclick="openWin('notes-win')" title="Notes">📓</div>
+    <div class="tb-app" onclick="openWin('arc-win')" title="Archive">🗂️</div>
+    <div class="tb-app" onclick="openWin('music-win')" title="Music">🎵</div>
+    <div class="tb-app" onclick="window.open('https://calendar.app.google/oCJud9JDKNkZa8uH6','_blank')" title="Calendar">📅</div>
+    <div class="tb-app" onclick="openWin('soc-win')" title="Socials">🌐</div>
   </div>
   <div id="tb-soc">
-    <a href="https://instagram.com/ivonnealdaz" target="_blank" title="Instagram" onclick="window.open('https://instagram.com/ivonnealdaz','_blank');return false;"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
-    <a href="https://x.com/ivonnealdazz" target="_blank" title="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-    <a href="https://tiktok.com/@ivonnealdaz" target="_blank" title="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.28 8.28 0 0 0 4.84 1.54V7.15a4.85 4.85 0 0 1-1.07-.46z"/></svg></a>
-    <a href="https://linkedin.com/in/ivonnealdaz" target="_blank" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
-    <a href="https://pinterest.com/ivonnealdaz" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a>
+    <a href="https://instagram.com/ivonnealdaz" target="_blank" title="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+    <a href="https://x.com/ivonnealdazz" target="_blank" title="X"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    <a href="https://tiktok.com/@ivonnealdaz" target="_blank" title="TikTok"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.28 8.28 0 0 0 4.84 1.54V7.15a4.85 4.85 0 0 1-1.07-.46z"/></svg></a>
+    <a href="https://linkedin.com/in/ivonnealdaz" target="_blank" title="LinkedIn"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+    <a href="https://pinterest.com/ivonnealdaz" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a>
   </div>
   <div id="tb-clock">12:00 PM</div>
 </div>
 
 <script>
-
-// Mobile: don't auto-open chat window
-(function(){
-  if(window.innerWidth <= 520){
-    const cw = document.getElementById('chat-win');
-    if(cw){ cw.style.display='none'; cw.dataset.minimized='1'; }
-    // Remove from taskbar on mobile
-    const tb = document.getElementById('tb-chat-win');
-    if(tb) tb.style.display='none';
-  }
-})();
-
-const SB_URL='https://ploijdxywrajyycemmua.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsb2lqZHh5d3Jhanl5Y2VtbXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjQwMzgsImV4cCI6MjA5NDcwMDAzOH0.m9ggHCLfINex_Wj8GL381PFjU-Eu7aovaNF001PqaQs';
+const SB='https://ploijdxywrajyycemmua.supabase.co';
+const SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsb2lqZHh5d3Jhanl5Y2VtbXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjQwMzgsImV4cCI6MjA5NDcwMDAzOH0.m9ggHCLfINex_Wj8GL381PFjU-Eu7aovaNF001PqaQs';
+const BLOCKED=['linkedin.com','spotify.com','instagram.com','tiktok.com','twitter.com','x.com','pinterest.com','google.com','calendar.app.google','ivonnealdaz.com'];
 
 // CLOCK
-function clk(){const d=new Date();let h=d.getHours(),m=d.getMinutes();const ap=h>=12?'PM':'AM';h=h%12||12;document.getElementById('tb-clock').textContent=h+':'+String(m).padStart(2,'0')+' '+ap;}
+function clk(){var d=new Date(),h=d.getHours(),m=d.getMinutes(),ap=h>=12?'PM':'AM';h=h%12||12;document.getElementById('tb-clock').textContent=h+':'+String(m).padStart(2,'0')+' '+ap;}
 setInterval(clk,1000);clk();
-const it=document.getElementById('init-time');if(it){const d=new Date();let h=d.getHours(),m=d.getMinutes();const ap=h>=12?'PM':'AM';h=h%12||12;it.textContent=h+':'+String(m).padStart(2,'0')+' '+ap;}
+var it=document.getElementById('init-time');if(it){var d=new Date(),h=d.getHours(),m=d.getMinutes(),ap=h>=12?'PM':'AM';h=h%12||12;it.textContent=h+':'+String(m).padStart(2,'0')+' '+ap;}
 
-// WINDOW MGMT
-let zTop=200,dragSt=null,maxSt={};
-const tbMeta={'chat-win':['🌙','ask_eve'],'notes-win':['📓','notes'],'fn-win':['📁','archive.exe'],'music-win':['🎵','music'],'cal-win':['📅','calendar'],'soc-win':['🌐','socials'],'ws-win':['💼','whitespace'],'gw-win':['🌿','good_world'],'star-win':['✦','night_sky'],'about-win':['🌙','about_eve'],'about-lab-win':['🖥️','about_lab']};
+// WINDOW MANAGEMENT
+var zTop=200,dragSt=null,maxSt={};
+function getT(){var d=new Date(),h=d.getHours(),m=d.getMinutes(),ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+String(m).padStart(2,'0')+' '+ap;}
 
 function focusWin(id){
-  const el=document.getElementById(id);if(!el)return;
-  document.querySelectorAll('.win').forEach(w=>{w.classList.remove('focused');w.classList.add('unfocused');});
-  el.classList.remove('unfocused');el.classList.add('focused');
+  var el=document.getElementById(id);if(!el)return;
+  document.querySelectorAll('.win').forEach(function(w){w.classList.remove('on');w.classList.add('off');});
+  el.classList.remove('off');el.classList.add('on');
   zTop++;el.style.zIndex=zTop;
-  document.querySelectorAll('.tbi').forEach(t=>t.classList.remove('active'));
-  const tb=document.getElementById('tb-'+id);if(tb)tb.classList.add('active');
 }
+
 function openWin(id){
-  const el=document.getElementById(id);if(!el)return;
-  el.style.display='flex';el.dataset.minimized='0';
-  // On mobile, center windows
+  var el=document.getElementById(id);if(!el)return;
+  el.style.display='flex';el.dataset.min='0';
+  // center on mobile
   if(window.innerWidth<=520){
-    const w=Math.min(parseInt(el.style.width)||360, window.innerWidth*0.96);
-    const h=Math.min(parseInt(el.style.height)||400, window.innerHeight*0.75);
-    el.style.width=w+'px';
-    el.style.height=h+'px';
+    var w=Math.min(parseInt(el.style.width)||360,window.innerWidth*0.96);
+    var h=Math.min(parseInt(el.style.height)||400,window.innerHeight*0.75);
+    el.style.width=w+'px';el.style.height=h+'px';
     el.style.left=Math.round((window.innerWidth-w)/2)+'px';
     el.style.top=Math.round((window.innerHeight-h)/3)+'px';
     el.style.transform='none';
   }
-  focusWin(id);addTb(id);
-  if(id==='fn-win'){renderFN('all');requestAnimationFrame(()=>{renderFN('all');});}
-  if(id==='notes-win'){requestAnimationFrame(()=>{renderNotes('movies');});}
-  if(id==='notes-win'){renderNotes('movies');}
+  focusWin(id);
+  if(id==='arc-win')renderArc('all');
+  if(id==='notes-win')renderNotes('movies');
 }
+
 function closeWin(id){
-  const el=document.getElementById(id);
-  if(!el)return;
-  el.style.display='none';
-  el.dataset.minimized='0';
-  const tb=document.getElementById('tb-'+id);
-  if(tb&&id!=='chat-win')tb.remove();
-  else if(tb)tb.classList.remove('active');
+  var el=document.getElementById(id);if(el){el.style.display='none';el.dataset.min='0';}
 }
+
 function minWin(id){
-  const el=document.getElementById(id);if(!el)return;
-  if(el.dataset.minimized==='1'){el.style.display='flex';el.dataset.minimized='0';focusWin(id);}
-  else{el.style.display='none';el.dataset.minimized='1';}
+  var el=document.getElementById(id);if(!el)return;
+  if(el.dataset.min==='1'){el.style.display='flex';el.dataset.min='0';focusWin(id);}
+  else{el.style.display='none';el.dataset.min='1';}
 }
+
 function toggleWin(id){
-  const el=document.getElementById(id);if(!el)return;
-  if(el.style.display==='none'||el.dataset.minimized==='1'){openWin(id);}
-  else if(el.classList.contains('focused')){minWin(id);}
+  var el=document.getElementById(id);if(!el)return;
+  if(el.style.display==='none'||el.dataset.min==='1'){openWin(id);}
+  else if(el.classList.contains('on')){minWin(id);}
   else{focusWin(id);}
 }
+
 function maxWin(id){
-  const el=document.getElementById(id);if(!el)return;
+  var el=document.getElementById(id);if(!el)return;
   if(maxSt[id]){Object.assign(el.style,maxSt[id]);maxSt[id]=null;}
-  else{maxSt[id]={width:el.style.width,height:el.style.height,top:el.style.top,left:el.style.left,transform:el.style.transform};el.style.cssText+='width:100%!important;height:calc(100vh - 32px)!important;top:0!important;left:0!important;transform:none!important;';}
-}
-function addTb(id){
-  if(document.getElementById('tb-'+id))return;
-  const info=tbMeta[id];if(!info)return;
-  const btn=document.createElement('div');btn.className='tbi';btn.id='tb-'+id;
-  btn.textContent=info[0]+' '+info[1];btn.onclick=()=>toggleWin(id);
-  document.getElementById('tb-items').appendChild(btn);
+  else{maxSt[id]={width:el.style.width,height:el.style.height,top:el.style.top,left:el.style.left,transform:el.style.transform};
+    el.style.width='100%';el.style.height='calc(100vh - 32px)';el.style.top='0';el.style.left='0';el.style.transform='none';}
 }
 
 // DRAG WINDOWS
 function dragStart(e,id){
   if(e.target.classList.contains('tbtn'))return;
   focusWin(id);
-  const el=document.getElementById(id);const r=el.getBoundingClientRect();
+  var el=document.getElementById(id),r=el.getBoundingClientRect();
   el.style.transform='none';el.style.left=r.left+'px';el.style.top=r.top+'px';
-  dragSt={id,sx:e.clientX,sy:e.clientY,ol:r.left,ot:r.top};e.preventDefault();
+  dragSt={id:id,sx:e.clientX,sy:e.clientY,ol:r.left,ot:r.top};
+  e.preventDefault();
 }
-document.addEventListener('mousemove',e=>{
+document.addEventListener('mousemove',function(e){
   if(!dragSt)return;
-  const el=document.getElementById(dragSt.id);
+  var el=document.getElementById(dragSt.id);
   el.style.left=Math.max(0,dragSt.ol+(e.clientX-dragSt.sx))+'px';
   el.style.top=Math.max(0,Math.min(window.innerHeight-64,dragSt.ot+(e.clientY-dragSt.sy)))+'px';
 });
-document.addEventListener('mouseup',()=>{dragSt=null;icoDragSt=null;});
+document.addEventListener('mouseup',function(){dragSt=null;});
 
-// DRAG ICONS
-// icon drag removed for reliability
-
-
-// Ensure title bar buttons work — stop propagation so window drag doesn't interfere
-document.querySelectorAll('.tbtn').forEach(btn => {
-  btn.addEventListener('click', e => { e.stopPropagation(); });
-  btn.addEventListener('mousedown', e => { e.stopPropagation(); });
+// DRAG TOUCH for windows
+document.querySelectorAll('.tbar').forEach(function(tb){
+  tb.addEventListener('touchstart',function(e){
+    if(e.target.classList.contains('tbtn'))return;
+    var id=tb.closest('.win').id;
+    focusWin(id);
+    var el=document.getElementById(id),r=el.getBoundingClientRect(),t=e.touches[0];
+    el.style.transform='none';el.style.left=r.left+'px';el.style.top=r.top+'px';
+    dragSt={id:id,sx:t.clientX,sy:t.clientY,ol:r.left,ot:r.top};
+    e.preventDefault();
+  },{passive:false});
 });
-// Direct touch binding for title bar buttons — use capture phase to fire first
-document.addEventListener('touchstart', e => {
-  const btn = e.target.closest('.tbtn');
-  if(!btn) return;
-  btn.dataset.touchPending = '1';
-}, {passive:true, capture:true});
-document.addEventListener('touchend', e => {
-  const btn = e.target.closest('.tbtn');
-  if(!btn || !btn.dataset.touchPending) return;
-  delete btn.dataset.touchPending;
+document.addEventListener('touchmove',function(e){
+  if(!dragSt)return;
+  var t=e.touches[0],el=document.getElementById(dragSt.id);
+  el.style.left=Math.max(0,dragSt.ol+(t.clientX-dragSt.sx))+'px';
+  el.style.top=Math.max(0,Math.min(window.innerHeight-64,dragSt.ot+(t.clientY-dragSt.sy)))+'px';
   e.preventDefault();
-  e.stopPropagation();
-  btn.click();
-}, {passive:false, capture:true});
+},{passive:false});
+document.addEventListener('touchend',function(){dragSt=null;});
 
-
-// IN-APP BROWSER
-const BLOCKED_DOMAINS = ['linkedin.com','spotify.com','instagram.com','tiktok.com','twitter.com','x.com','pinterest.com','google.com','calendar.app.google'];
-
-function openBrowser(url, title) {
-  const isBlocked = BLOCKED_DOMAINS.some(d => url.includes(d));
-  const win = document.getElementById('browser-win');
-  const frame = document.getElementById('browser-frame');
-  const urlInput = document.getElementById('browser-url');
-  const titleEl = document.getElementById('browser-title');
-  const blocked = document.getElementById('browser-blocked');
-  const blockedLink = document.getElementById('browser-blocked-link');
-  const extLink = document.getElementById('browser-external');
-
-  titleEl.textContent = title || url.replace(/https?:\/\//, '').split('/')[0];
-  urlInput.value = url;
-  extLink.href = url;
-  blockedLink.href = url;
-
-  if (isBlocked) {
-    frame.src = '';
-    frame.style.display = 'none';
-    blocked.style.display = 'flex';
-  } else {
-    blocked.style.display = 'none';
-    frame.style.display = 'block';
-    frame.src = url;
-    // Check if it loaded — if not, show blocked after 3s
-    frame.onerror = () => {
-      frame.style.display = 'none';
-      blocked.style.display = 'flex';
-    };
-  }
-  openWin('browser-win');
-}
-
-function browserNavigate(url) {
-  if (!url.startsWith('http')) url = 'https://' + url;
-  openBrowser(url);
-}
-
-function browserBack() {
-  document.getElementById('browser-frame').contentWindow?.history.back();
-}
-
-function browserRefresh() {
-  const frame = document.getElementById('browser-frame');
-  frame.src = frame.src;
-}
-
-
-// Star hover tooltip
-const starTooltip = document.getElementById('star-tooltip');
-document.getElementById('sky-canvas').addEventListener('mousemove', e => {
-  const mx = e.clientX / window.innerWidth;
-  const my = e.clientY / window.innerHeight;
-  let found = null;
-  for(const s of skyStars){
-    if(!s.visitor) continue;
-    const dx = (s.x * window.innerWidth) - e.clientX;
-    const dy = (s.y * window.innerHeight) - e.clientY;
-    if(Math.sqrt(dx*dx+dy*dy) < 10){found=s;break;}
-  }
-  if(found && (found.note||found.name)){
-    const lines = [];
-    if(found.name) lines.push(found.name);
-    if(found.note) lines.push(found.note);
-    starTooltip.innerHTML = lines.join('<br>');
-    starTooltip.style.display = 'block';
-    starTooltip.style.left = (e.clientX+12)+'px';
-    starTooltip.style.top = (e.clientY-20)+'px';
-    document.body.style.cursor = 'pointer';
-  } else {
-    starTooltip.style.display = 'none';
-    document.body.style.cursor = '';
-  }
-});
-document.getElementById('sky-canvas').addEventListener('mouseleave', () => {
-  starTooltip.style.display = 'none';
-  document.body.style.cursor = '';
+// TITLE BAR BUTTONS - capture phase for reliable touch
+document.addEventListener('touchstart',function(e){
+  var btn=e.target.closest('.tbtn');if(!btn)return;
+  btn._pending=true;
+},{passive:true,capture:true});
+document.addEventListener('touchend',function(e){
+  var btn=e.target.closest('.tbtn');if(!btn||!btn._pending)return;
+  btn._pending=false;e.preventDefault();e.stopPropagation();btn.click();
+},{passive:false,capture:true});
+document.querySelectorAll('.tbtn').forEach(function(b){
+  b.addEventListener('click',function(e){e.stopPropagation();});
+  b.addEventListener('mousedown',function(e){e.stopPropagation();});
 });
 
-
-// fn-list link delegation
-document.addEventListener('click', e => {
-  const a = e.target.closest('.fn-link');
-  if(!a) return;
-  e.preventDefault();
-  const href = a.dataset.href;
-  const title = a.dataset.htitle;
-  if(href) openBrowser(href, title);
-});
-
-</script>
-</body>
-</html>
-// Icon drag
-function icoDown(e,id){
-  var el=document.getElementById(id);
-  var r=el.getBoundingClientRect();
-  document.querySelectorAll('.d-icon').forEach(function(i){i.classList.remove('sel');});
-  el.classList.add('sel');
-  icoDragSt={id:id,sx:e.clientX,sy:e.clientY,ol:r.left,ot:r.top,moved:false};
-  e.preventDefault();
+// RESIZE
+var resizeSt=null;
+function addResize(id){
+  var el=document.getElementById(id);if(!el||el.querySelector('.rh-se'))return;
+  ['se','sw','ne','nw','n','s','e','w'].forEach(function(d){
+    var h=document.createElement('div');h.className='rh rh-'+d;
+    h.addEventListener('mousedown',function(e){
+      e.preventDefault();e.stopPropagation();focusWin(id);
+      var r=el.getBoundingClientRect();
+      resizeSt={id:id,dir:d,sx:e.clientX,sy:e.clientY,ow:r.width,oh:r.height,ol:r.left,ot:r.top};
+    });
+    el.appendChild(h);
+  });
 }
+document.addEventListener('mousemove',function(e){
+  if(!resizeSt)return;
+  var el=document.getElementById(resizeSt.id),dx=e.clientX-resizeSt.sx,dy=e.clientY-resizeSt.sy,d=resizeSt.dir;
+  var nw=resizeSt.ow,nh=resizeSt.oh,nl=resizeSt.ol,nt=resizeSt.ot;
+  if(d.includes('e'))nw=Math.max(220,resizeSt.ow+dx);
+  if(d.includes('s'))nh=Math.max(100,resizeSt.oh+dy);
+  if(d.includes('w')){nw=Math.max(220,resizeSt.ow-dx);nl=resizeSt.ol+resizeSt.ow-nw;}
+  if(d.includes('n')){nh=Math.max(100,resizeSt.oh-dy);nt=resizeSt.ot+resizeSt.oh-nh;}
+  el.style.width=nw+'px';el.style.height=nh+'px';el.style.left=nl+'px';el.style.top=nt+'px';el.style.transform='none';
+});
+document.addEventListener('mouseup',function(){resizeSt=null;});
+document.querySelectorAll('.win').forEach(function(w){addResize(w.id);});
 
+// ICON ACTIVATION
+function activateIcon(ico){
+  var a=ico.dataset.action,t=ico.dataset.target,ti=ico.dataset.title||'';
+  if(a==='win')openWin(t);
+  else if(a==='browser')openBrowser(t,ti);
+  else if(a==='external')window.open(t,'_blank');
+}
+// Desktop dblclick
+document.querySelectorAll('.ico').forEach(function(ico){
+  ico.addEventListener('dblclick',function(e){e.preventDefault();activateIcon(ico);});
+  // mobile: single tap
+  ico.addEventListener('touchend',function(e){
+    e.preventDefault();e.stopPropagation();
+    document.querySelectorAll('.ico').forEach(function(i){i.classList.remove('sel');});
+    ico.classList.add('sel');
+    activateIcon(ico);
+  },{passive:false});
+});
 
 // START + MENUS
-function toggleStart(){var m=document.getElementById('smenu'),b=document.getElementById('start-btn'),o=m.classList.contains('open');closeAll();if(!o){m.classList.add('open');b.classList.add('open');document.getElementById('overlay').classList.add('on');}}
-function toggleMenu(el){var was=el.classList.contains('open');document.querySelectorAll('.mi.open').forEach(function(m){m.classList.remove('open');});if(!was){el.classList.add('open');document.getElementById('overlay').classList.add('on');}else document.getElementById('overlay').classList.remove('on');}
-function closeAll(){document.querySelectorAll('.mi.open').forEach(function(m){m.classList.remove('open');});document.getElementById('smenu').classList.remove('open');document.getElementById('start-btn').classList.remove('open');document.getElementById('overlay').classList.remove('on');}
-
-// Icon action handler
-function activateIcon(ico){
-  var action=ico.dataset.action;var target=ico.dataset.target;var title=ico.dataset.title||'';
-  if(action==='win') openWin(target);
-  else if(action==='browser') openBrowser(target,title);
-  else if(action==='external') window.open(target,'_blank');
+function toggleStart(){
+  var m=document.getElementById('smenu'),b=document.getElementById('start-btn'),o=m.classList.contains('open');
+  closeAll();
+  if(!o){m.classList.add('open');b.style.background='#4a4a4a';document.getElementById('overlay').classList.add('on');}
 }
-// Desktop double-click
-document.querySelectorAll('.d-icon').forEach(function(ico){
-  ico.addEventListener('dblclick',function(e){e.preventDefault();e.stopPropagation();if(icoDragSt&&icoDragSt.moved)return;activateIcon(ico);});
-});
+function toggleMenu(el){
+  var was=el.classList.contains('open');
+  document.querySelectorAll('.mi.open').forEach(function(m){m.classList.remove('open');});
+  if(!was){el.classList.add('open');document.getElementById('overlay').classList.add('on');}
+  else document.getElementById('overlay').classList.remove('on');
+}
+function closeAll(){
+  document.querySelectorAll('.mi.open').forEach(function(m){m.classList.remove('open');});
+  document.getElementById('smenu').classList.remove('open');
+  document.getElementById('start-btn').style.background='';
+  document.getElementById('overlay').classList.remove('on');
+}
+
+// TASKBAR TOUCH
+document.getElementById('taskbar').addEventListener('touchend',function(e){
+  var app=e.target.closest('.tb-app');
+  if(app){e.preventDefault();app.click();return;}
+  var sb=e.target.closest('#start-btn');
+  if(sb){e.preventDefault();toggleStart();return;}
+},{passive:false});
+
+// MOBILE: on load, don't show chat-win
+(function(){
+  if(window.innerWidth<=520){
+    var cw=document.getElementById('chat-win');
+    if(cw){cw.style.display='none';cw.dataset.min='0';}
+  }
+})();
 
 // CHAT
 var msgs=[];
-function gT(){var d=new Date();var h=d.getHours(),m=d.getMinutes();var ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+String(m).padStart(2,'0')+' '+ap;}
-function escH(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function ask(text){
+  document.getElementById('user-input').value=text;
+  var p=document.getElementById('prompts');if(p)p.style.display='none';
+  sendMessage();
+}
+function quickAsk(text){closeAll();ask(text);}
+function newChat(){
+  document.getElementById('chat-area').innerHTML='<div class="mrow eve"><div class="mhead"><span class="he">eve ✦</span> '+getT()+'</div><div class="mbody">new chat. what would you like to know?</div></div>';
+  msgs.length=0;
+  var p=document.getElementById('prompts');if(p)p.style.display='block';
+}
 function addMsg(role,content,thinking){
   thinking=thinking||false;
   var ca=document.getElementById('chat-area');
   var row=document.createElement('div');row.className='mrow '+role;
   var head=document.createElement('div');head.className='mhead';
-  head.innerHTML=(role==='user'?'<span class="hu">you</span>':'<span class="he">eve ✦</span>')+' '+gT();
+  head.innerHTML=(role==='user'?'<span class="hu">you</span>':'<span class="he">eve ✦</span>')+' '+getT();
   var body=document.createElement('div');body.className='mbody';
-  if(thinking){body.innerHTML='<span class="typing">eve is thinking ✦</span>';row.id='tr';}
+  if(thinking){body.innerHTML='<span class="typing-txt">eve is thinking ✦</span>';row.id='tr';}
   else body.textContent=content;
   row.appendChild(head);row.appendChild(body);
-  if(!thinking&&role==='eve'){var rr=document.createElement('div');rr.className='rr';rr.innerHTML='<span class="rx">♥</span><span class="rx">👁</span><span class="rx">✦</span>';row.appendChild(rr);}
-  ca.appendChild(row);ca.scrollTop=ca.scrollHeight;return row;
+  if(!thinking&&role==='eve'){var rr=document.createElement('div');rr.className='rx-row';rr.innerHTML='<span class="rx">♥</span><span class="rx">👁</span><span class="rx">✦</span>';row.appendChild(rr);}
+  ca.appendChild(row);ca.scrollTop=ca.scrollHeight;
 }
-function ask(text){document.getElementById('user-input').value=text;var pw=document.getElementById('pw');if(pw)pw.style.display='none';sendMessage();}
-function newChat(){document.getElementById('chat-area').innerHTML='<div class="mrow eve"><div class="mhead"><span class="he">eve ✦</span> '+gT()+'</div><div class="mbody">new chat. what would you like to know?</div></div>';msgs.length=0;var pw=document.getElementById('pw');if(pw)pw.style.display='block';}
 async function sendMessage(){
-  var input=document.getElementById('user-input');var btn=document.getElementById('send-btn');var q=input.value.trim();if(!q)return;
-  input.value='';btn.disabled=true;
+  var inp=document.getElementById('user-input'),btn=document.getElementById('send-btn'),q=inp.value.trim();
+  if(!q)return;inp.value='';btn.disabled=true;
   addMsg('user',q);msgs.push({role:'user',content:q});
-  var thinking=addMsg('eve','',true);
+  addMsg('eve','',true);
   try{
     var res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:msgs})});
-    var data=await res.json();document.getElementById('tr')&&document.getElementById('tr').remove();
+    var data=await res.json();
+    var tr=document.getElementById('tr');if(tr)tr.remove();
     if(data.error){addMsg('eve','something went wrong. please try again.');}
     else{var r=data.content[0].text;msgs.push({role:'assistant',content:r});addMsg('eve',r);}
-  }catch(e){document.getElementById('tr')&&document.getElementById('tr').remove();addMsg('eve','connection error. please try again.');}
+  }catch(ex){var tr=document.getElementById('tr');if(tr)tr.remove();addMsg('eve','connection error. please try again.');}
   btn.disabled=false;document.getElementById('user-input').focus();
 }
 
-// FIELD NOTES
-var FN_ENTRIES=[
-  {date:"May 2026",title:"CV agent — Ask Ivonne",desc:"Parsed a 10-tab Google Sheet of personal CV data and vibecoded it into a navigable interactive profile + an AI agent that answers questions about the work. Built with Claude, zero templates, no design tools.",tags:["built"],url:"/entry"},
+// BROWSER
+function openBrowser(url,title){
+  var blocked=BLOCKED.some(function(d){return url.includes(d);});
+  var frame=document.getElementById('browser-frame');
+  var urlInput=document.getElementById('browser-url');
+  var titleEl=document.getElementById('browser-title');
+  var blockedDiv=document.getElementById('browser-blocked');
+  var blockedLink=document.getElementById('browser-blocked-link');
+  var ext=document.getElementById('browser-ext');
+  titleEl.textContent=title||url.replace(/https?:\/\//,'').split('/')[0];
+  urlInput.value=url;ext.href=url;blockedLink.href=url;
+  if(blocked){frame.src='';frame.style.display='none';blockedDiv.classList.add('show');}
+  else{blockedDiv.classList.remove('show');frame.style.display='block';frame.src=url;}
+  openWin('browser-win');
+}
+function browserNav(url){if(!url.startsWith('http'))url='https://'+url;openBrowser(url);}
+
+// ARCHIVE
+var ARC_DATA=[
+  {date:"May 2026",title:"CV agent — Ask Ivonne",desc:"Parsed a 10-tab Google Sheet of personal CV data and vibecoded it into a navigable interactive profile + an AI agent. Built with Claude, zero templates.",tags:["built"],url:"/entry"},
   {date:"May 2026",title:"Alliance Française Events Committee",desc:"Joined the Events Committee at Alliance Française San Antonio.",tags:["community"],url:null},
   {date:"May 2026",title:"Centro de Artes Committee — San Antonio Arts Commission",desc:"Appointed to the Centro de Artes Committee with the San Antonio Arts Commission.",tags:["community"],url:null},
   {date:"March 2026",title:"The Dominion — group exhibition",desc:"Abstract expressionism and small landscape works. Sold two large paintings.",tags:["art"],url:null},
   {date:"2026",title:"Whitespace LLC",desc:"Formally filed the strategy and creative studio. 3-month sprint engagements.",tags:["brand"],url:"https://bywhitespace.com"},
-  {date:"2025",title:"AI and the Art of Creative Direction",desc:"Essay on what AI can't replace in creative work — and why having a point of view matters more now, not less.",tags:["writing"],url:"https://www.bywhitespace.com/blog/ai-and-the-art-of-creative-direction-why-taste-still-wins"},
+  {date:"2025",title:"AI and the Art of Creative Direction",desc:"Essay on what AI can't replace in creative work — and why having a point of view matters more now.",tags:["writing"],url:"https://www.bywhitespace.com/blog/ai-and-the-art-of-creative-direction-why-taste-still-wins"},
   {date:"2024",title:"B2B Marketing in SaaS — University of Portland",desc:"Invited lecture, delivered twice for the School of Business.",tags:["talk"],url:null},
   {date:"Sept 2024",title:"NG Art Residency, Provence",desc:"Four weeks painting in Maussane des Alpilles. Memory, light, and landscape.",tags:["art"],url:"https://www.goodworldliving.com/articles/how-an-art-residency-in-provence-transformed-my-creative-path"},
-  {date:"March 2024",title:"Torre Delle Arti — Abstract Gradients",desc:"Group exhibition in Bellagio, Lake Como.",tags:["art"],url:"https://www.goodworldliving.com/articles/when-the-universe-hands-you-a-yes"},
-  {date:"2023",title:"State of Community Powered Marketing",desc:"Original industry research report for TrueLoyal.",tags:["brand","writing"],url:"https://www.trueloyal.com/research-reports/state-of-community-powered-marketing/"},
+  {date:"March 2024",title:"Torre Delle Arti — Abstract Gradients",desc:"Group exhibition in Bellagio, Lake Como. First international exhibition.",tags:["art"],url:"https://www.goodworldliving.com/articles/when-the-universe-hands-you-a-yes"},
+  {date:"2023",title:"State of Community Powered Marketing",desc:"Original industry research report for TrueLoyal on community-led brand growth.",tags:["brand","writing"],url:"https://www.trueloyal.com/research-reports/state-of-community-powered-marketing/"},
   {date:"May 2023",title:"La Roane residency, France",desc:"Art retreat in St. Antonin Noble Val. First European residency.",tags:["art"],url:"https://www.goodworldliving.com/articles/france-art-retreat"},
   {date:"2023",title:"Good World Living",desc:"Launched the lifestyle platform — art, travel, intentional living.",tags:["built","writing"],url:"https://goodworldliving.com"},
   {date:"2020–2023",title:"Future of Marketing Newsletter",desc:"100+ issues. Grew from 7K to 50K subscribers, open rates 8% to 25%.",tags:["brand","writing"],url:null},
   {date:"2021",title:"State of UGC 2021",desc:"Annual research report on UGC trends, cited by Forbes, Adweek, and Digiday.",tags:["brand","writing"],url:"https://www.trueloyal.com/blog/state-of-ugc-report-2021-updates-trends-and-predictions/"}
 ];
-var TAG_LABELS={built:"Built",brand:"Brand",art:"Art",writing:"Writing",talk:"Talk",community:"Community"};
+var TAG_L={built:"Built",brand:"Brand",art:"Art",writing:"Writing",talk:"Talk",community:"Community"};
 
-function filterFN(f,btn){
-  document.querySelectorAll('.fn-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');
-  renderFN(f);
+function filterArc(f,btn){
+  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');renderArc(f);
 }
-function renderFN(filter){
-  var list=document.getElementById('fn-list');
-  if(!list)return;
-  var filtered=filter==='all'?FN_ENTRIES:FN_ENTRIES.filter(function(e){return e.tags.includes(filter);});
-  var parts=[];
+function renderArc(filter){
+  var list=document.getElementById('arc-list');if(!list)return;
+  var filtered=filter==='all'?ARC_DATA:ARC_DATA.filter(function(e){return e.tags.includes(filter);});
+  var html='';
   filtered.forEach(function(e){
-    var tagsHTML=e.tags.map(function(t){return '<span class="fn-tag tag-'+t+'">'+TAG_LABELS[t]+'</span>';}).join('');
-    var titleHTML=e.url?'<a href="#" data-href="'+e.url+'" data-htitle="'+e.title.replace(/"/g,'&quot;')+'" class="fn-link" style="color:#1DB954;">'+e.title+'</a>':e.title;
-    parts.push('<div class="fn-entry"><div class="fn-date">'+e.date+'</div><div><div class="fn-title">'+titleHTML+'</div><div class="fn-desc">'+e.desc+'</div><div class="fn-tags">'+tagsHTML+'</div></div></div>');
+    var tags=e.tags.map(function(t){return '<span class="atag t-'+t+'">'+TAG_L[t]+'</span>';}).join('');
+    var title=e.url?'<a href="#" class="arc-link" data-href="'+e.url+'" data-title="'+e.title.replace(/"/g,'&quot;')+'">'+e.title+'</a>':e.title;
+    html+='<div class="arc-entry"><div class="arc-date">'+e.date+'</div><div><div class="arc-title">'+title+'</div><div class="arc-desc">'+e.desc+'</div><div class="arc-tags">'+tags+'</div></div></div>';
   });
-  list.innerHTML=parts.join('');
-  list.scrollTop=0;
+  list.innerHTML=html;
+  // attach click handlers
+  list.querySelectorAll('.arc-link').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      var href=a.dataset.href;
+      if(href.startsWith('/')){window.location.href=href;}
+      else openBrowser(href,a.dataset.title);
+    });
+  });
 }
-
-// fn-list link delegation
-document.addEventListener('click',function(e){
-  var a=e.target.closest('.fn-link');if(!a)return;
-  e.preventDefault();
-  var href=a.dataset.href;var title=a.dataset.htitle;
-  if(href) openBrowser(href,title);
-});
 
 // NOTES
-var NOTES_DATA={
-  movies:[{title:"films i keep returning to",date:"ongoing",content:"Chungking Express\nIn the Mood for Love\nThe Royal Tenenbaums\nEternal Sunshine\nLost in Translation\nThe Virgin Suicides\n\n[add yours here]"},{title:"films to watch",date:"2026",content:"[placeholder — add your watchlist here]"}],
-  books:[{title:"books that changed something",date:"ongoing",content:"[placeholder — add books here]"},{title:"currently reading",date:"2026",content:"[placeholder]"}],
-  quotes:[{title:"things i keep coming back to",date:"ongoing",content:"[placeholder — add quotes here]"}],
-  music:[{title:"songs for different moods",date:"ongoing",content:"[placeholder — songs for painting, long drives, late nights...]"}],
-  travel:[{title:"places that stayed",date:"ongoing",content:"Provence — September 2024\nLake Como — March 2024, July 2025\nSt. Antonin Noble Val — May 2023\n\n[add more here]"},{title:"places to go",date:"wishlist",content:"[placeholder — your travel wishlist]"}],
-  ideas:[{title:"things i want to build",date:"2026",content:"[placeholder — your ideas list]"}],
-  recipes:[{title:"recipes worth keeping",date:"ongoing",content:"[placeholder — add recipes here]"}],
-  reminders:[{title:"things to remember",date:"ongoing",content:"[placeholder — add reminders, intentions, notes to self]"}],
-  thoughts:[{title:"notes to self",date:"ongoing",content:"[placeholder — the unfinished thoughts]"}],
-  references:[{title:"things i reference often",date:"ongoing",content:"[placeholder — links, people, resources]"}]
+var NOTES={
+  movies:[{t:"films i keep returning to",d:"ongoing",c:"Chungking Express\nIn the Mood for Love\nThe Royal Tenenbaums\nEternal Sunshine\nLost in Translation\nThe Virgin Suicides\nMulholland Drive\n\n[add yours here]"},{t:"films to watch",d:"2026",c:"[placeholder — add your watchlist here]"}],
+  books:[{t:"books that changed something",d:"ongoing",c:"[placeholder — add books here]\n\nIdeas:\n• title — why it mattered\n• title — what it shifted"},{t:"currently reading",d:"2026",c:"[placeholder]"}],
+  quotes:[{t:"things i keep coming back to",d:"ongoing",c:"[placeholder — add quotes here]"}],
+  music:[{t:"songs for different moods",d:"ongoing",c:"[placeholder]\n\nIdeas:\n• songs for painting\n• songs for long drives\n• songs for late nights"}],
+  travel:[{t:"places that stayed",d:"ongoing",c:"Provence — September 2024\nLake Como — March 2024, July 2025\nSt. Antonin Noble Val — May 2023\n\n[add more]"},{t:"places to go",d:"wishlist",c:"[placeholder]"}],
+  ideas:[{t:"things i want to build",d:"2026",c:"[placeholder — your ideas list]"}],
+  recipes:[{t:"recipes worth keeping",d:"ongoing",c:"[placeholder — add recipes here]"}],
+  reminders:[{t:"things to remember",d:"ongoing",c:"[placeholder — add reminders, intentions, notes to self]"}],
+  thoughts:[{t:"notes to self",d:"ongoing",c:"[placeholder — the unfinished thoughts]"}],
+  references:[{t:"things i reference often",d:"ongoing",c:"[placeholder — links, people, resources you return to]"}]
 };
-
 var activeCat='movies';
 function showCat(el,cat){
   document.querySelectorAll('.ns-cat').forEach(function(c){c.classList.remove('active');});
   el.classList.add('active');activeCat=cat;renderNotes(cat);
 }
 function renderNotes(cat){
-  var list=document.getElementById('notes-list');var viewer=document.getElementById('note-viewer');
+  var list=document.getElementById('notes-list'),viewer=document.getElementById('note-viewer');
   if(!list||!viewer)return;
-  var notes=NOTES_DATA[cat]||[];
+  var notes=NOTES[cat]||[];
   list.innerHTML='';
   notes.forEach(function(n,i){
     var item=document.createElement('div');item.className='note-item'+(i===0?' active':'');
-    item.innerHTML='<div class="note-title">'+n.title+'</div><div class="note-date">'+n.date+'</div>';
-    item.onclick=function(){document.querySelectorAll('.note-item').forEach(function(x){x.classList.remove('active');});item.classList.add('active');viewer.innerHTML='<h2>'+n.title+'</h2><div style="font-size:13px;color:#aaa;margin-bottom:12px;">'+n.date+'</div>'+n.content.replace(/\n/g,'<br>');};
+    item.innerHTML='<div class="note-title">'+n.t+'</div><div class="note-date">'+n.d+'</div>';
+    item.onclick=function(){
+      document.querySelectorAll('.note-item').forEach(function(x){x.classList.remove('active');});
+      item.classList.add('active');
+      viewer.innerHTML='<h2>'+n.t+'</h2><div style="font-size:13px;color:#444;margin-bottom:12px;">'+n.d+'</div>'+n.c.replace(/\n/g,'<br>');
+    };
     list.appendChild(item);
   });
-  if(notes.length>0)viewer.innerHTML='<h2>'+notes[0].title+'</h2><div style="font-size:13px;color:#aaa;margin-bottom:12px;">'+notes[0].date+'</div>'+notes[0].content.replace(/\n/g,'<br>');
+  if(notes.length>0){
+    viewer.innerHTML='<h2>'+notes[0].t+'</h2><div style="font-size:13px;color:#444;margin-bottom:12px;">'+notes[0].d+'</div>'+notes[0].c.replace(/\n/g,'<br>');
+  }
 }
 
+// NIGHT SKY
+var canvas=document.getElementById('sky');
+var ctx=canvas.getContext('2d');
+var skyStars=[];
+function resizeSky(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resizeSky();window.addEventListener('resize',resizeSky);
+function animSky(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  var now=Date.now()/1000;
+  skyStars.forEach(function(s){
+    var o=s.b*(0.5+0.5*Math.sin(now*s.sp+s.ph));
+    ctx.beginPath();ctx.arc(s.x*canvas.width,s.y*canvas.height,s.r,0,Math.PI*2);
+    ctx.fillStyle=s.v?'rgba(255,240,180,'+o+')':'rgba(255,255,255,'+o+')';
+    ctx.fill();
+  });
+  requestAnimationFrame(animSky);
+}
+// static bg stars
+for(var i=0;i<160;i++){skyStars.push({x:Math.random(),y:Math.random(),r:Math.random()<0.15?1.5:1,b:0.15+Math.random()*0.4,sp:0.2+Math.random()*0.5,ph:Math.random()*Math.PI*2,v:false,note:'',name:''});}
+animSky();
+
+async function loadStars(){
+  try{
+    var r=await fetch(SB+'/rest/v1/stars?select=x,y,note,name&order=created_at.asc&limit=400',{headers:{apikey:SK,'Authorization':'Bearer '+SK}});
+    var data=await r.json();
+    if(Array.isArray(data)){
+      data.forEach(function(s){skyStars.push({x:s.x,y:s.y,r:1.8,b:0.85,sp:0.3+Math.random()*0.4,ph:Math.random()*Math.PI*2,v:true,note:s.note||'',name:s.name||''});});
+      var cnt=document.getElementById('star-count-display');
+      if(cnt)cnt.textContent=data.length+' stars in the sky';
+      var sc=document.getElementById('star-cnt');if(sc)sc.textContent=data.length+' stars in the sky';
+    }
+  }catch(e){var sc=document.getElementById('star-cnt');if(sc)sc.textContent='be the first to leave a star';}
+}
+loadStars();
+
+async function plantStar(){
+  var note=document.getElementById('star-note').value.trim();
+  var name=document.getElementById('star-name').value.trim();
+  var x=0.08+Math.random()*0.84,y=0.05+Math.random()*0.75;
+  skyStars.push({x:x,y:y,r:2,b:1,sp:0.4,ph:0,v:true,note:note,name:name});
+  document.getElementById('star-note').value='';document.getElementById('star-name').value='';
+  var sc=document.getElementById('star-cnt');
+  if(sc){var prev=parseInt(sc.textContent)||0;sc.textContent=(prev+1)+' stars in the sky';}
+  var cd=document.getElementById('star-count-display');
+  if(cd){var prev2=parseInt(cd.textContent)||0;cd.textContent=(prev2+1)+' stars in the sky';}
+  try{await fetch(SB+'/rest/v1/stars',{method:'POST',headers:{apikey:SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({x:x,y:y,note:note,name:name})});}catch(ex){}
+  closeWin('star-win');
+}
+
+// Star tooltip on hover
+var tooltip=document.getElementById('star-tooltip');
+canvas.addEventListener('mousemove',function(e){
+  var mx=e.clientX,my=e.clientY,found=null;
+  for(var i=0;i<skyStars.length;i++){
+    var s=skyStars[i];if(!s.v)continue;
+    var dx=s.x*canvas.width-mx,dy=s.y*canvas.height-my;
+    if(Math.sqrt(dx*dx+dy*dy)<10){found=s;break;}
+  }
+  if(found&&(found.note||found.name)){
+    var lines=[];if(found.name)lines.push(found.name);if(found.note)lines.push(found.note);
+    tooltip.innerHTML=lines.join('<br>');tooltip.style.display='block';
+    tooltip.style.left=(mx+14)+'px';tooltip.style.top=(my-20)+'px';
+  }else{tooltip.style.display='none';}
+});
+canvas.addEventListener('mouseleave',function(){tooltip.style.display='none';});
+</script>
+</body>
+</html>
