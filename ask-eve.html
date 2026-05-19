@@ -243,13 +243,23 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
 /* SPOTIFY PINNED */
 #spotify-pin{position:fixed;bottom:38px;right:0;width:320px;z-index:300;border-left:1px solid rgba(255,255,255,0.1);border-top:1px solid rgba(255,255,255,0.1);overflow:hidden;background:#000;}
 #spotify-pin iframe{display:block;width:100%;height:80px;border:none;}
+
+@keyframes icon-pulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(29,185,84,0);}
+  50%{box-shadow:0 0 8px 3px rgba(29,185,84,0.4);}
+}
+@media(max-width:520px){
+  #ico-chat{animation:icon-pulse 2.5s ease-in-out infinite;border-radius:4px;}
+  #ico-chat .ico::after{content:"start here";display:block;font-size:9px;color:#1DB954;margin-top:2px;letter-spacing:0.05em;}
+}
+
 </style>
 </head>
 <body>
 <div id="grain"></div>
 <canvas id="sky-canvas"></canvas>
 <div id="sky-click"></div>
-<div id="star-hint" onclick="enableStarMode()" style="cursor:pointer;">✦ <span style="text-decoration:underline;text-underline-offset:2px;">click the sky to leave a star</span></div>
+<div id="star-hint" onclick="openWin('star-win')" style="cursor:pointer;">✦ <span style="text-decoration:underline;text-underline-offset:2px;">leave a star</span></div>
 <div id="overlay" onclick="closeAll()"></div>
 <div id="desktop">
 <div id="icon-grid">
@@ -257,10 +267,10 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
   <div class="d-icon" id="ico-notes" ondblclick="openWin('notes-win')" onmousedown="icoDown(event,'ico-notes')"><div class="ico">📓</div><span>notes.app</span></div>
   <div class="d-icon" id="ico-fn" ondblclick="openWin('fn-win')" onmousedown="icoDown(event,'ico-fn')"><div class="ico">🗂️</div><span>archive.exe</span></div>
   <div class="d-icon" id="ico-music" ondblclick="openWin('music-win')" onmousedown="icoDown(event,'ico-music')"><div class="ico">🎵</div><span>music.exe</span></div>
-  <div class="d-icon" id="ico-cal" ondblclick="openWin('cal-win')" onmousedown="icoDown(event,'ico-cal')"><div class="ico">📅</div><span>calendar</span></div>
+  <div class="d-icon" id="ico-cal" ondblclick="openBrowser('https://calendar.app.google/oCJud9JDKNkZa8uH6','Book Time With Ivonne')" onmousedown="icoDown(event,'ico-cal')"><div class="ico">📅</div><span>calendar</span></div>
   <div class="d-icon" id="ico-soc" ondblclick="openWin('soc-win')" onmousedown="icoDown(event,'ico-soc')"><div class="ico">🌐</div><span>socials</span></div>
-  <div class="d-icon" id="ico-ws" ondblclick="openWin('ws-win')" onmousedown="icoDown(event,'ico-ws')"><div class="ico">💼</div><span>whitespace</span></div>
-  <div class="d-icon" id="ico-gw" ondblclick="openWin('gw-win')" onmousedown="icoDown(event,'ico-gw')"><div class="ico">🌿</div><span>good_world</span></div>
+  <div class="d-icon" id="ico-ws" ondblclick="openBrowser('https://bywhitespace.com','Whitespace')" onmousedown="icoDown(event,'ico-ws')"><div class="ico">💼</div><span>whitespace</span></div>
+  <div class="d-icon" id="ico-gw" ondblclick="openBrowser('https://goodworldliving.com','Good World Living')" onmousedown="icoDown(event,'ico-gw')"><div class="ico">🌿</div><span>good_world</span></div>
   <div class="d-icon" id="ico-star" ondblclick="openWin('star-win')" onmousedown="icoDown(event,'ico-star')"><div class="ico">✦</div><span>night_sky</span></div>
 </div>
 
@@ -283,8 +293,8 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
       <div class="di" onclick="openWin('music-win');closeAll()">🎵 Open Music</div>
       <div class="di" onclick="openWin('cal-win');closeAll()">📅 Open Calendar</div>
       <div class="dsep"></div>
-      <a class="di" href="https://bywhitespace.com" target="_blank" onclick="closeAll()">💼 Visit Whitespace</a>
-      <a class="di" href="https://goodworldliving.com" target="_blank" onclick="closeAll()">🌿 Visit Good World Living</a>
+      <a class="di" href="https://bywhitespace.com"  onclick="openBrowser('https://bywhitespace.com','bywhitespace.com');closeAll()">💼 Visit Whitespace</a>
+      <a class="di" href="https://goodworldliving.com"  onclick="openBrowser('https://goodworldliving.com','goodworldliving.com');closeAll()">🌿 Visit Good World Living</a>
       <div class="dsep"></div>
       <a class="di" href="/" onclick="closeAll()">🏠 Exit to Lab</a>
     </div></div>
@@ -311,8 +321,8 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
       <div class="di" onclick="openWin('about-win');closeAll()">🌚 About Eve</div>
       <div class="di" onclick="openWin('about-lab-win');closeAll()">🖥️ About the Lab</div>
       <div class="dsep"></div>
-      <a class="di" href="https://ivonnealdaz.com" target="_blank" onclick="closeAll()">👤 ivonnealdaz.com</a>
-      <a class="di" href="https://ivonnealdaz.com/gallery" target="_blank" onclick="closeAll()">🎨 Art Gallery</a>
+      <a class="di" href="https://ivonnealdaz.com"  onclick="openBrowser('https://ivonnealdaz.com','ivonnealdaz.com');closeAll()">👤 ivonnealdaz.com</a>
+      <a class="di" href="https://ivonnealdaz.com/gallery"  onclick="openBrowser('https://ivonnealdaz.com/gallery','ivonnealdaz.com');closeAll()">🎨 Art Gallery</a>
     </div></div>
   </div>
   <div class="chat-hdr">
@@ -428,7 +438,7 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
   <div class="cal-body">
     <div class="cal-h">Book Time With Ivonne</div>
     <div class="cal-desc">Schedule a conversation about brand strategy, a collaboration, or just to connect.</div>
-    <a class="cal-link" href="https://calendar.app.google/oCJud9JDKNkZa8uH6" target="_blank">📅 Open Calendar →</a>
+    <a class="cal-link" href="https://calendar.app.google/oCJud9JDKNkZa8uH6"  onclick="openBrowser('https://calendar.app.google/oCJud9JDKNkZa8uH6','calendar.app.google')">📅 Open Calendar →</a>
     <div style="font-size:13px;color:var(--mid);">or email <a href="mailto:hello@ivonnealdaz.com" style="color:var(--navy);">hello@ivonnealdaz.com</a></div>
   </div>
 </div>
@@ -440,23 +450,23 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
     <div class="tbar-ctrl"><button class="tbtn" onclick="minWin('soc-win')">_</button><button class="tbtn" onclick="maxWin('soc-win')">□</button><button class="tbtn" onclick="closeWin('soc-win')">✕</button></div>
   </div>
   <div class="soc-body">
-    <a class="soc-row" href="https://instagram.com/ivonnealdaz" target="_blank">
+    <a class="soc-row" href="https://instagram.com/ivonnealdaz"  onclick="openBrowser('https://instagram.com/ivonnealdaz','instagram.com')">
       <span class="soc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></span>
       <span class="soc-name">Instagram</span><span class="soc-handle">@ivonnealdaz</span>
     </a>
-    <a class="soc-row" href="https://x.com/ivonnealdazz" target="_blank">
+    <a class="soc-row" href="https://x.com/ivonnealdazz"  onclick="openBrowser('https://x.com/ivonnealdazz','x.com')">
       <span class="soc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span>
       <span class="soc-name">X</span><span class="soc-handle">@ivonnealdazz</span>
     </a>
-    <a class="soc-row" href="https://tiktok.com/@ivonnealdaz" target="_blank">
+    <a class="soc-row" href="https://tiktok.com/@ivonnealdaz"  onclick="openBrowser('https://tiktok.com/@ivonnealdaz','tiktok.com')">
       <span class="soc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.28 8.28 0 0 0 4.84 1.54V7.15a4.85 4.85 0 0 1-1.07-.46z"/></svg></span>
       <span class="soc-name">TikTok</span><span class="soc-handle">@ivonnealdaz</span>
     </a>
-    <a class="soc-row" href="https://linkedin.com/in/ivonnealdaz" target="_blank">
+    <a class="soc-row" href="https://linkedin.com/in/ivonnealdaz"  onclick="openBrowser('https://linkedin.com/in/ivonnealdaz','linkedin.com')">
       <span class="soc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></span>
       <span class="soc-name">LinkedIn</span><span class="soc-handle">ivonnealdaz</span>
     </a>
-    <a class="soc-row" href="https://pinterest.com/ivonnealdaz" target="_blank">
+    <a class="soc-row" href="https://pinterest.com/ivonnealdaz"  onclick="openBrowser('https://pinterest.com/ivonnealdaz','pinterest.com')">
       <span class="soc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></span>
       <span class="soc-name">Pinterest</span><span class="soc-handle">ivonnealdaz</span>
     </a>
@@ -479,7 +489,7 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
     <div class="ds2"></div>
     <div class="pr"><span class="plb">Focus:</span><span>Positioning, GTM, narrative</span></div>
     <div class="pr"><span class="plb">Format:</span><span>3-month sprints</span></div>
-    <a class="wlink" href="https://bywhitespace.com" target="_blank" style="margin-top:8px;">Visit bywhitespace.com →</a>
+    <a class="wlink" href="https://bywhitespace.com"  style="margin-top:8px;" onclick="openBrowser('https://bywhitespace.com','bywhitespace.com')">Visit bywhitespace.com →</a>
   </div>
 </div>
 
@@ -493,7 +503,7 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
     <h3>🌿 Good World Living</h3>
     <p>A lifestyle platform — art, travel, and intentional living. Founded 2023.</p>
     <div class="ds2"></div>
-    <a class="wlink" href="https://goodworldliving.com" target="_blank">Visit goodworldliving.com →</a>
+    <a class="wlink" href="https://goodworldliving.com"  onclick="openBrowser('https://goodworldliving.com','goodworldliving.com')">Visit goodworldliving.com →</a>
   </div>
 </div>
 
@@ -550,6 +560,34 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
   <iframe src="https://open.spotify.com/embed/playlist/5vCPnlOrnR2IoYwBO0Ecgh?utm_source=generator&theme=0" width="320" height="80" frameborder="0" allowtransparency="true" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 </div>
 
+
+<!-- BROWSER WINDOW -->
+<div class="win unfocused" id="browser-win" style="width:min(700px,95vw);height:min(520px,80vh);top:40px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('browser-win')">
+  <div class="tbar" onmousedown="dragStart(event,'browser-win')">
+    <div class="tbar-txt">🌐 <span id="browser-title">browser</span></div>
+    <div class="tbar-ctrl">
+      <button class="tbtn" onclick="minWin('browser-win')">_</button>
+      <button class="tbtn" onclick="maxWin('browser-win')">□</button>
+      <button class="tbtn" onclick="closeWin('browser-win')">✕</button>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:4px;padding:4px 6px;background:#1a1a1a;border-bottom:1px solid #333;flex-shrink:0;">
+    <button onclick="browserBack()" style="background:#2a2a2a;border:1px solid #444;color:#ccc;font-family:var(--font);font-size:14px;padding:1px 8px;cursor:pointer;">◀</button>
+    <button onclick="browserRefresh()" style="background:#2a2a2a;border:1px solid #444;color:#ccc;font-family:var(--font);font-size:14px;padding:1px 8px;cursor:pointer;">↺</button>
+    <input id="browser-url" style="flex:1;background:#111;border:1px solid #444;color:#ccc;font-family:var(--font);font-size:14px;padding:2px 8px;outline:none;" onkeydown="if(event.key==='Enter')browserNavigate(this.value)" />
+    <button onclick="browserNavigate(document.getElementById('browser-url').value)" style="background:#1DB954;border:none;color:#000;font-family:var(--font);font-size:14px;padding:2px 10px;cursor:pointer;">Go</button>
+    <a id="browser-external" href="#" target="_blank" style="background:#2a2a2a;border:1px solid #444;color:#ccc;font-family:var(--font);font-size:13px;padding:2px 8px;text-decoration:none;" title="Open in new tab">↗</a>
+  </div>
+  <div style="flex:1;position:relative;overflow:hidden;">
+    <iframe id="browser-frame" src="" style="width:100%;height:100%;border:none;" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"></iframe>
+    <div id="browser-blocked" style="display:none;position:absolute;inset:0;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#666;">
+      <div style="font-size:32px;">🚫</div>
+      <div style="font-family:var(--font);font-size:16px;color:#888;">this site blocks embedding</div>
+      <a id="browser-blocked-link" href="#" target="_blank" style="font-family:var(--font);font-size:15px;color:#1DB954;text-decoration:underline;">open in new tab ↗</a>
+    </div>
+  </div>
+</div>
+
 <!-- START MENU -->
 <div id="smenu">
   <div class="sm-side"><span>ivonne aldaz</span></div>
@@ -596,6 +634,18 @@ html,body{height:100%;overflow:hidden;background:var(--sky);font-family:var(--fo
 </div>
 
 <script>
+
+// Mobile: don't auto-open chat window
+(function(){
+  if(window.innerWidth <= 520){
+    const cw = document.getElementById('chat-win');
+    if(cw){ cw.style.display='none'; cw.dataset.minimized='1'; }
+    // Remove from taskbar on mobile
+    const tb = document.getElementById('tb-chat-win');
+    if(tb) tb.style.display='none';
+  }
+})();
+
 const SB_URL='https://ploijdxywrajyycemmua.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsb2lqZHh5d3Jhanl5Y2VtbXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjQwMzgsImV4cCI6MjA5NDcwMDAzOH0.m9ggHCLfINex_Wj8GL381PFjU-Eu7aovaNF001PqaQs';
 
@@ -630,8 +680,8 @@ function openWin(id){
     el.style.transform='none';
   }
   focusWin(id);addTb(id);
-  if(id==='fn-win'){setTimeout(()=>renderFN('all'),50);}
-  if(id==='notes-win'){setTimeout(()=>renderNotes('movies'),50);}
+  if(id==='fn-win'){renderFN('all');setTimeout(()=>renderFN('all'),100);}
+  if(id==='notes-win'){renderNotes('movies');setTimeout(()=>renderNotes('movies'),100);}
   if(id==='notes-win'){renderNotes('movies');}
 }
 function closeWin(id){
@@ -794,25 +844,8 @@ async function plantStar(){
   closeWin('star-win');
 }
 
-// sky-click: only active in star-planting mode
-// toggled by star hint or star window open
-function enableStarMode(){
-  document.getElementById('sky-click').classList.add('starmode');
-  document.getElementById('star-hint').innerHTML = '✦ <span style="text-decoration:underline;text-underline-offset:2px;">click anywhere to plant a star</span> <span style="opacity:0.5;font-size:11px;">(click again to exit)</span>';
-}
-function disableStarMode(){
-  document.getElementById('sky-click').classList.remove('starmode');
-  document.getElementById('star-hint').innerHTML = '✦ <span style="text-decoration:underline;text-underline-offset:2px;">click the sky to leave a star</span>';
-}
-// After planting a star via click, auto-disable star mode
-document.getElementById('sky-click').addEventListener('click', async e => {
-  const x = e.clientX/window.innerWidth, y = e.clientY/window.innerHeight;
-  skyStars.push({x,y,r:2,baseO:1,spd:0.4,ph:0,visitor:true,note:'',name:''});
-  try{
-    await fetch(`${SB_URL}/rest/v1/stars`,{method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({x,y,note:'',name:''})});
-  }catch(e){}
-  disableStarMode();
-});
+// star mode disabled — stars planted via night_sky window only
+// stars planted via night_sky window submit button
 
 // FIELD NOTES DATA
 const FN_ENTRIES=[
@@ -968,32 +1001,27 @@ function addTouchDrag(id){
 document.querySelectorAll('.win').forEach(w=>addTouchDrag(w.id));
 
 
-// MOBILE: single tap for desktop icons
+// MOBILE: single tap opens icons
+const icoWinMap = {
+  'ico-chat':'chat-win','ico-notes':'notes-win','ico-fn':'fn-win',
+  'ico-music':'music-win','ico-soc':'soc-win','ico-star':'star-win'
+};
+const icoBrowserMap = {
+  'ico-ws':['https://bywhitespace.com','Whitespace'],
+  'ico-gw':['https://goodworldliving.com','Good World Living'],
+  'ico-cal':['https://calendar.app.google/oCJud9JDKNkZa8uH6','Book Time']
+};
 document.querySelectorAll('.d-icon').forEach(ico => {
-  let tapCount = 0;
-  let tapTimer = null;
   ico.addEventListener('touchend', e => {
+    if(icoDragSt && icoDragSt.moved) return; // was a drag, not a tap
     e.preventDefault();
-    tapCount++;
-    if (tapCount === 1) {
-      tapTimer = setTimeout(() => {
-        tapCount = 0;
-        // single tap = select
-        document.querySelectorAll('.d-icon.sel').forEach(i => i.classList.remove('sel'));
-        ico.classList.add('sel');
-      }, 300);
-    } else if (tapCount === 2) {
-      clearTimeout(tapTimer);
-      tapCount = 0;
-      // double tap = open
-      const id = ico.id.replace('ico-', '');
-      const winMap = {
-        'chat': 'chat-win', 'notes': 'notes-win', 'fn': 'fn-win',
-        'music': 'music-win', 'cal': 'cal-win', 'soc': 'soc-win',
-        'ws': 'ws-win', 'gw': 'gw-win', 'star': 'star-win'
-      };
-      if (winMap[id]) openWin(winMap[id]);
-    }
+    e.stopPropagation();
+    document.querySelectorAll('.d-icon.sel').forEach(i=>i.classList.remove('sel'));
+    ico.classList.add('sel');
+    const winId = icoWinMap[ico.id];
+    const browserTarget = icoBrowserMap[ico.id];
+    if(winId) openWin(winId);
+    else if(browserTarget) openBrowser(browserTarget[0], browserTarget[1]);
   });
 });
 
@@ -1006,19 +1034,13 @@ document.querySelectorAll('.tbtn').forEach(btn => {
   });
 });
 
-// MOBILE: make taskbar app icons work with touch
-document.querySelectorAll('.tb-app-ico').forEach(btn => {
-  btn.addEventListener('touchend', e => {
-    e.preventDefault();
-    btn.click();
-  });
-});
-
-// MOBILE: start button touch
-document.getElementById('start-btn').addEventListener('touchend', e => {
+// MOBILE: taskbar and start button touch via delegation
+document.getElementById('taskbar').addEventListener('touchend', e => {
   e.preventDefault();
-  toggleStart();
-});
+  const appIco = e.target.closest('.tb-app-ico');
+  if(appIco){ appIco.click(); return; }
+  if(e.target.closest('#start-btn')){ toggleStart(); return; }
+}, {passive:false});
 
 // MOBILE: sky click hint — make it actually trigger on tap
 document.getElementById('sky-click').addEventListener('touchend', async e => {
@@ -1033,7 +1055,7 @@ document.getElementById('sky-click').addEventListener('touchend', async e => {
   disableStarMode();
 });
 
-// MOBILE: icon drag with touch — improve sensitivity
+// MOBILE: icon drag with touch
 document.querySelectorAll('.d-icon').forEach(ico => {
   ico.addEventListener('touchstart', e => {
     const t = e.touches[0];
@@ -1052,9 +1074,7 @@ document.querySelectorAll('.d-icon').forEach(ico => {
       e.preventDefault();
     }
   }, {passive: false});
-  ico.addEventListener('touchend', e => {
-    if (icoDragSt) icoDragSt = null;
-  });
+  ico.addEventListener('touchend', () => { icoDragSt = null; });
 });
 
 
@@ -1063,6 +1083,64 @@ document.querySelectorAll('.tbtn').forEach(btn => {
   btn.addEventListener('click', e => { e.stopPropagation(); });
   btn.addEventListener('mousedown', e => { e.stopPropagation(); });
 });
+// Use event delegation for tbtn touch — handles dynamically added windows too
+document.addEventListener('touchend', e => {
+  const btn = e.target.closest('.tbtn');
+  if(!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  btn.click();
+}, {passive:false});
+
+
+// IN-APP BROWSER
+const BLOCKED_DOMAINS = ['linkedin.com','spotify.com','instagram.com','tiktok.com','twitter.com','x.com','pinterest.com'];
+
+function openBrowser(url, title) {
+  const isBlocked = BLOCKED_DOMAINS.some(d => url.includes(d));
+  const win = document.getElementById('browser-win');
+  const frame = document.getElementById('browser-frame');
+  const urlInput = document.getElementById('browser-url');
+  const titleEl = document.getElementById('browser-title');
+  const blocked = document.getElementById('browser-blocked');
+  const blockedLink = document.getElementById('browser-blocked-link');
+  const extLink = document.getElementById('browser-external');
+
+  titleEl.textContent = title || url.replace(/https?:\/\//, '').split('/')[0];
+  urlInput.value = url;
+  extLink.href = url;
+  blockedLink.href = url;
+
+  if (isBlocked) {
+    frame.src = '';
+    frame.style.display = 'none';
+    blocked.style.display = 'flex';
+  } else {
+    blocked.style.display = 'none';
+    frame.style.display = 'block';
+    frame.src = url;
+    // Check if it loaded — if not, show blocked after 3s
+    frame.onerror = () => {
+      frame.style.display = 'none';
+      blocked.style.display = 'flex';
+    };
+  }
+  openWin('browser-win');
+}
+
+function browserNavigate(url) {
+  if (!url.startsWith('http')) url = 'https://' + url;
+  openBrowser(url);
+}
+
+function browserBack() {
+  document.getElementById('browser-frame').contentWindow?.history.back();
+}
+
+function browserRefresh() {
+  const frame = document.getElementById('browser-frame');
+  frame.src = frame.src;
+}
 
 </script>
 </body>
