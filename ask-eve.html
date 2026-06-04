@@ -607,30 +607,40 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 </div>
 
 <!-- PHOTOS -->
-<div class="win off" id="photos-win" style="width:min(480px,94vw);height:min(420px,78vh);top:60px;left:calc(50% - 240px);display:none;" onmousedown="focusWin('photos-win')">
-  <div class="tbar" onmousedown="dragStart(event,'photos-win')"><div class="tbar-title">📷 photos.exe</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('photos-win')">_</button><button class="tbtn" onclick="maxWin('photos-win')">□</button><button class="tbtn" onclick="closeWin('photos-win')">✕</button></div></div>
-    <div class="photos-body">
-    <div class="ph-h">📷 photo archive</div>
-    <div class="ph-setup" id="ph-setup-box">
-      <strong>⚙️ one-time setup required</strong>
-      <div style="margin-bottom:8px;line-height:1.7;">
-        <b>Step 1 — Google Drive folder:</b><br>
-        Create a folder in Drive → right-click → Share → set to <em>"Anyone with link can view"</em><br>
-        Copy the ID from the URL: <span style="font-family:monospace;font-size:12px;background:#fff3;padding:1px 4px;">drive.google.com/drive/folders/<b>[THIS PART]</b></span>
-      </div>
-      <div style="margin-bottom:8px;line-height:1.7;">
-        <b>Step 2 — API key:</b><br>
-        Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:var(--navy);">console.cloud.google.com/apis/credentials</a><br>
-        → Enable "Google Drive API" → Credentials → + Create Credentials → API key
-      </div>
-      <input class="ph-folder-input" id="ph-folder" placeholder="Paste folder ID here" oninput="tryLoadPhotos()"/>
-      <input class="ph-folder-input" id="ph-api-key" placeholder="Paste API key here" oninput="tryLoadPhotos()"/>
-      <button onclick="tryLoadPhotos()" style="font-family:var(--font);font-size:14px;background:var(--silver);border:2px solid;border-color:#fff var(--border-dark) var(--border-dark) #fff;padding:3px 14px;cursor:pointer;margin-top:4px;">Load Photos →</button>
-    </div>
-    <div id="ph-status" style="font-size:13px;color:var(--dim);margin:6px 0;display:none;"></div>
-    <div class="ph-grid" id="ph-grid" style="display:none;"></div>
+<div class="win off" id="photos-win" style="width:min(520px,94vw);height:min(460px,80vh);top:60px;left:calc(50% - 260px);display:none;" onmousedown="focusWin('photos-win')">
+  <div class="tbar" onmousedown="dragStart(event,'photos-win')">
+    <div class="tbar-title">📷 photos.exe</div>
+    <div class="tbar-btns"><button class="tbtn" onclick="minWin('photos-win')">_</button><button class="tbtn" onclick="maxWin('photos-win')">□</button><button class="tbtn" onclick="closeWin('photos-win')">✕</button></div>
   </div>
+  <div class="mbar">
+    <div class="mi" onclick="toggleMenu(this)">View<div class="dd">
+      <div class="di" onclick="event.stopPropagation();setPhotoView('grid');closeAll()">⊞ Grid View</div>
+      <div class="di" onclick="event.stopPropagation();setPhotoView('large');closeAll()">⬜ Large View</div>
+    </div></div>
+    <div class="mi" onclick="event.stopPropagation();reloadPhotos();closeAll()">↺ Refresh</div>
+  </div>
+  <div style="padding:4px 8px;background:#e8e4de;border-bottom:1px solid var(--border);font-size:12px;color:var(--dim);flex-shrink:0;" id="ph-path">📁 photos / loading...</div>
+  <div style="flex:1;overflow-y:auto;background:#fff;position:relative;" id="ph-scroll">
+    <div id="ph-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:1px;background:var(--border);padding:0;"></div>
+    <div id="ph-empty" style="display:none;flex-direction:column;align-items:center;justify-content:center;height:200px;color:var(--dim);font-size:15px;text-align:center;padding:20px;">
+      <div style="font-size:36px;margin-bottom:10px;">📷</div>
+      <div>no photos found</div>
+      <div style="font-size:12px;margin-top:6px;">add images to your Google Drive folder and refresh</div>
+    </div>
+  </div>
+  <div style="padding:3px 8px;background:#e8e4de;border-top:1px solid var(--border);font-size:12px;color:var(--dim);flex-shrink:0;" id="ph-status">loading...</div>
   <div class="resize-corner"></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="ph-lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9500;flex-direction:column;align-items:center;justify-content:center;" onclick="closeLightbox()">
+  <div style="position:relative;max-width:90vw;max-height:85vh;" onclick="event.stopPropagation()">
+    <img id="ph-lb-img" src="" style="max-width:90vw;max-height:80vh;object-fit:contain;display:block;box-shadow:0 4px 32px rgba(0,0,0,.5);"/>
+    <div id="ph-lb-name" style="color:#ccc;font-family:var(--font);font-size:14px;text-align:center;margin-top:8px;"></div>
+  </div>
+  <button onclick="closeLightbox()" style="position:fixed;top:16px;right:20px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:18px;cursor:pointer;padding:4px 12px;font-family:var(--font);">✕ close</button>
+  <button onclick="lbPrev()" style="position:fixed;left:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:22px;cursor:pointer;padding:8px 14px;font-family:var(--font);">◀</button>
+  <button onclick="lbNext()" style="position:fixed;right:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:22px;cursor:pointer;padding:8px 14px;font-family:var(--font);">▶</button>
 </div>
 
 <!-- WHITESPACE -->
@@ -950,6 +960,7 @@ function openWin(id){
   focusWin(id);
   if(id==='arc-win')renderArc('all');
   if(id==='notes-win'){renderNotes('movies');showNotesMobileBar();}
+  if(id==='photos-win')loadPhotos();
 }
 function closeWin(id){var el=document.getElementById(id);if(el){el.style.display='none';el.dataset.min='0';}}
 function minWin(id){var el=document.getElementById(id);if(!el)return;if(el.dataset.min==='1'){el.style.display='flex';el.dataset.min='0';focusWin(id);}else{el.style.display='none';el.dataset.min='1';}}
@@ -1234,66 +1245,112 @@ async function submitNote(){
   document.getElementById('nf-sent').style.display='block';
 }
 
-// ── PHOTOS (Google Drive) ──
-async function tryLoadPhotos(){
-  var folderId=document.getElementById('ph-folder').value.trim();
-  var apiKey=document.getElementById('ph-api-key').value.trim();
-  if(!folderId||!apiKey)return;
-  var grid=document.getElementById('ph-grid');
-  var status=document.getElementById('ph-status');
-  status.style.display='block';
-  status.textContent='loading photos...';
-  grid.style.display='none';
-  grid.innerHTML='';
-  try{
-    var q=encodeURIComponent("'"+folderId+"' in parents and mimeType contains 'image/'");
-    var url='https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id,name,thumbnailLink,createdTime)&key='+apiKey+'&orderBy=createdTime+desc&pageSize=50';
-    var res=await fetch(url);
-    var data=await res.json();
-    if(data.error){
-      status.textContent='Error: '+data.error.message+' — check your folder ID and API key.';
-      return;
-    }
-    if(data.files&&data.files.length>0){
-      status.textContent=data.files.length+' photos loaded.';
-      grid.style.display='grid';
-      data.files.forEach(function(f){
-        var thumb=document.createElement('div');thumb.className='ph-thumb';
-        if(f.thumbnailLink){
-          var img=document.createElement('img');
-          img.src=f.thumbnailLink.replace('=s220','=s400');
-          img.alt=f.name;
-          img.loading='lazy';
-          thumb.appendChild(img);
-        } else {
-          thumb.innerHTML='<span style="font-size:28px;">🖼️</span>';
-        }
-        thumb.title=f.name;
-        thumb.onclick=function(){window.open('https://drive.google.com/file/d/'+f.id+'/view','_blank');};
-        grid.appendChild(thumb);
-      });
-      // Hide setup box after successful load
-      var setup=document.getElementById('ph-setup-box');
-      if(setup)setup.style.display='none';
-    } else {
-      status.textContent='No images found. Make sure the folder is shared publicly and contains images.';
-    }
-  }catch(ex){
-    status.textContent='Network error: '+ex.message;
+// ── PHOTOS ──
+var PH_API_KEY = 'AIzaSyBEmg6bEoDwNjYwCddq_j8HSxCakcEa1uE';
+var PH_FOLDER_ID = '1iZcEzOxnQQFSD0s4W9FOE2naPOkZmpWd'; // <-- replace with your Drive folder ID
+var phFiles = [];
+var phView = 'grid';
+var lbIndex = 0;
+
+function setPhotoView(v){
+  phView = v;
+  var grid = document.getElementById('ph-grid');
+  if(!grid) return;
+  if(v === 'large'){
+    grid.style.gridTemplateColumns = 'repeat(auto-fill,minmax(220px,1fr))';
+  } else {
+    grid.style.gridTemplateColumns = 'repeat(auto-fill,minmax(120px,1fr))';
   }
 }
-// Alias for backward compat
-function loadDrivePhotos(){tryLoadPhotos();}
-// Auto-open about.txt on first visit
-(function(){
-  var seen = sessionStorage.getItem('lab_visited');
-  if(!seen){
-    sessionStorage.setItem('lab_visited','1');
-    setTimeout(function(){ openWin('about-win'); }, 600);
+
+async function loadPhotos(){
+  var grid = document.getElementById('ph-grid');
+  var status = document.getElementById('ph-status');
+  var path = document.getElementById('ph-path');
+  var empty = document.getElementById('ph-empty');
+  if(!grid) return;
+  if(PH_FOLDER_ID === 'PASTE_FOLDER_ID_HERE'){
+    if(status) status.textContent = '⚠ folder not configured — send Ivonne your folder ID';
+    if(path) path.textContent = '📁 photos / not configured';
+    return;
   }
-})();
+  grid.innerHTML = '';
+  if(empty) empty.style.display = 'none';
+  if(status) status.textContent = 'loading...';
+  if(path) path.textContent = '📁 photos / fetching...';
+  try{
+    var q = encodeURIComponent("'"+PH_FOLDER_ID+"' in parents and mimeType contains 'image/'");
+    var url = 'https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id,name,thumbnailLink,createdTime,imageMediaMetadata)&key='+PH_API_KEY+'&orderBy=createdTime+desc&pageSize=100';
+    var res = await fetch(url);
+    var data = await res.json();
+    if(data.error){
+      if(status) status.textContent = '⚠ ' + data.error.message;
+      if(path) path.textContent = '📁 photos / error';
+      return;
+    }
+    phFiles = data.files || [];
+    if(phFiles.length === 0){
+      if(empty){ empty.style.display = 'flex'; }
+      if(status) status.textContent = '0 items';
+      if(path) path.textContent = '📁 photos / empty';
+      return;
+    }
+    if(path) path.textContent = '📁 photos / ' + phFiles.length + ' items';
+    if(status) status.textContent = phFiles.length + ' photo' + (phFiles.length !== 1 ? 's' : '');
+    phFiles.forEach(function(f, i){
+      var cell = document.createElement('div');
+      cell.style.cssText = 'aspect-ratio:1;overflow:hidden;cursor:pointer;background:#f0ede8;position:relative;';
+      if(f.thumbnailLink){
+        var img = document.createElement('img');
+        img.src = f.thumbnailLink.replace('=s220','=s400');
+        img.alt = f.name;
+        img.loading = 'lazy';
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s;';
+        cell.appendChild(img);
+        cell.onmouseover = function(){ img.style.transform = 'scale(1.04)'; };
+        cell.onmouseout = function(){ img.style.transform = ''; };
+      } else {
+        cell.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px;">🖼️</div>';
+      }
+      cell.onclick = function(){ openLightbox(i); };
+      cell.title = f.name;
+      grid.appendChild(cell);
+    });
+  } catch(ex){
+    if(status) status.textContent = '⚠ network error: ' + ex.message;
+  }
+}
 
+function reloadPhotos(){ loadPhotos(); }
 
+function openLightbox(i){
+  lbIndex = i;
+  var f = phFiles[i];
+  if(!f) return;
+  var lb = document.getElementById('ph-lightbox');
+  var img = document.getElementById('ph-lb-img');
+  var name = document.getElementById('ph-lb-name');
+  // Use a larger thumbnail or the direct view URL
+  img.src = f.thumbnailLink ? f.thumbnailLink.replace('=s220','=s1200') : '';
+  if(name) name.textContent = f.name.replace(/\.[^.]+$/, ''); // strip extension
+  lb.style.display = 'flex';
+  document.addEventListener('keydown', lbKeyHandler);
+}
+function closeLightbox(){
+  document.getElementById('ph-lightbox').style.display = 'none';
+  document.removeEventListener('keydown', lbKeyHandler);
+}
+function lbPrev(){ if(lbIndex > 0) openLightbox(lbIndex - 1); }
+function lbNext(){ if(lbIndex < phFiles.length - 1) openLightbox(lbIndex + 1); }
+function lbKeyHandler(e){
+  if(e.key === 'ArrowLeft') lbPrev();
+  if(e.key === 'ArrowRight') lbNext();
+  if(e.key === 'Escape') closeLightbox();
+}
+
+// Alias for backward compat
+function tryLoadPhotos(){ loadPhotos(); }
+function loadDrivePhotos(){ loadPhotos(); }
 // ── ENTRY WINDOW ──
 var ENTRIES_DATA = {};
 ENTRIES_DATA['/entry'] = {
