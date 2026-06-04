@@ -247,7 +247,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 .sm-cat{font-size:15px;padding:5px 8px 5px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;color:var(--text);position:relative;user-select:none;}
 .sm-cat:hover,.sm-cat.open{background:var(--tbar1);color:#fff;}
 .sm-cat .sm-arrow{font-size:10px;opacity:.7;}
-.sm-sub{display:none;position:absolute;left:212px;background:var(--win);border:2px solid;border-color:#fff var(--border-dark) var(--border-dark) #fff;box-shadow:4px 4px 10px rgba(0,0,0,.3);min-width:200px;z-index:9100;padding:2px 0;}
+.sm-sub{display:none;position:fixed;background:var(--win);border:2px solid;border-color:#fff var(--border-dark) var(--border-dark) #fff;box-shadow:4px 4px 10px rgba(0,0,0,.3);min-width:200px;z-index:9100;padding:2px 0;}
 .sm-cat.open>.sm-sub{display:block;}
 .sm-div{border-top:1px solid var(--border);margin:3px 0;}
 .si{font-size:15px;padding:4px 16px 4px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);white-space:nowrap;}
@@ -328,8 +328,27 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
 
 @media(max-width:520px){
-  #smenu{width:min(280px,90vw);}
-  .sm-sub{position:static!important;border:none;border-top:1px solid var(--border);box-shadow:none;padding-left:10px;background:#f5f0e8;left:auto!important;}
+  #smenu{width:calc(100vw - 0px);left:0;bottom:32px;max-height:85vh;}
+  #smenu .sm-items{overflow-y:auto;max-height:80vh;}
+  #smenu .sm-side{display:none;}
+  /* inline accordion submenus */
+  #smenu .sm-sub{
+    position:static !important;
+    left:auto !important;top:auto !important;
+    display:none;
+    border:none;
+    border-top:1px solid var(--border);
+    box-shadow:none;
+    padding:0 0 0 20px;
+    background:#ede9e2;
+    min-width:unset;
+    width:100%;
+  }
+  #smenu .sm-cat.open>.sm-sub{display:block;}
+  #smenu .sm-cat{padding:8px 12px;font-size:16px;}
+  #smenu .si{font-size:16px;padding:8px 12px;}
+  #smenu .sm-arrow{margin-left:auto;}
+  #smenu .sm-div{margin:4px 0;}
 }
 
 </style>
@@ -590,23 +609,26 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 <!-- PHOTOS -->
 <div class="win off" id="photos-win" style="width:min(480px,94vw);height:min(420px,78vh);top:60px;left:calc(50% - 240px);display:none;" onmousedown="focusWin('photos-win')">
   <div class="tbar" onmousedown="dragStart(event,'photos-win')"><div class="tbar-title">📷 photos.exe</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('photos-win')">_</button><button class="tbtn" onclick="maxWin('photos-win')">□</button><button class="tbtn" onclick="closeWin('photos-win')">✕</button></div></div>
-  <div class="photos-body">
+    <div class="photos-body">
     <div class="ph-h">📷 photo archive</div>
-    <div class="ph-setup">
-      <strong>⚙️ setup needed to activate</strong>
-      To connect your Google Drive photos:<br>
-      1. Create a folder in Google Drive<br>
-      2. Set sharing → "Anyone with link can view"<br>
-      3. Go to console.cloud.google.com → create project → enable Drive API → create API key<br>
-      4. Paste your folder ID and API key below<br>
-      <input class="ph-folder-input" id="ph-folder" placeholder="Google Drive folder ID (from share URL)" oninput="loadDrivePhotos()"/>
-      <input class="ph-folder-input" id="ph-api-key" placeholder="Google Drive API key" oninput="loadDrivePhotos()"/>
+    <div class="ph-setup" id="ph-setup-box">
+      <strong>⚙️ one-time setup required</strong>
+      <div style="margin-bottom:8px;line-height:1.7;">
+        <b>Step 1 — Google Drive folder:</b><br>
+        Create a folder in Drive → right-click → Share → set to <em>"Anyone with link can view"</em><br>
+        Copy the ID from the URL: <span style="font-family:monospace;font-size:12px;background:#fff3;padding:1px 4px;">drive.google.com/drive/folders/<b>[THIS PART]</b></span>
+      </div>
+      <div style="margin-bottom:8px;line-height:1.7;">
+        <b>Step 2 — API key:</b><br>
+        Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:var(--navy);">console.cloud.google.com/apis/credentials</a><br>
+        → Enable "Google Drive API" → Credentials → + Create Credentials → API key
+      </div>
+      <input class="ph-folder-input" id="ph-folder" placeholder="Paste folder ID here" oninput="tryLoadPhotos()"/>
+      <input class="ph-folder-input" id="ph-api-key" placeholder="Paste API key here" oninput="tryLoadPhotos()"/>
+      <button onclick="tryLoadPhotos()" style="font-family:var(--font);font-size:14px;background:var(--silver);border:2px solid;border-color:#fff var(--border-dark) var(--border-dark) #fff;padding:3px 14px;cursor:pointer;margin-top:4px;">Load Photos →</button>
     </div>
-    <div class="ph-grid" id="ph-grid">
-      <div class="ph-thumb">🖼️</div>
-      <div class="ph-thumb">🖼️</div>
-      <div class="ph-thumb">🖼️</div>
-    </div>
+    <div id="ph-status" style="font-size:13px;color:var(--dim);margin:6px 0;display:none;"></div>
+    <div class="ph-grid" id="ph-grid" style="display:none;"></div>
   </div>
   <div class="resize-corner"></div>
 </div>
@@ -1213,29 +1235,55 @@ async function submitNote(){
 }
 
 // ── PHOTOS (Google Drive) ──
-async function loadDrivePhotos(){
+async function tryLoadPhotos(){
   var folderId=document.getElementById('ph-folder').value.trim();
   var apiKey=document.getElementById('ph-api-key').value.trim();
   if(!folderId||!apiKey)return;
   var grid=document.getElementById('ph-grid');
-  grid.innerHTML='<div style="color:var(--dim);font-size:14px;padding:10px;">loading...</div>';
+  var status=document.getElementById('ph-status');
+  status.style.display='block';
+  status.textContent='loading photos...';
+  grid.style.display='none';
+  grid.innerHTML='';
   try{
-    var url='https://www.googleapis.com/drive/v3/files?q=\''+folderId+'\'+in+parents+and+mimeType+contains+\'image/\'&fields=files(id,name,thumbnailLink,createdTime)&key='+apiKey;
-    var res=await fetch(url);var data=await res.json();
+    var q=encodeURIComponent("'"+folderId+"' in parents and mimeType contains 'image/'");
+    var url='https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id,name,thumbnailLink,createdTime)&key='+apiKey+'&orderBy=createdTime+desc&pageSize=50';
+    var res=await fetch(url);
+    var data=await res.json();
+    if(data.error){
+      status.textContent='Error: '+data.error.message+' — check your folder ID and API key.';
+      return;
+    }
     if(data.files&&data.files.length>0){
-      grid.innerHTML='';
+      status.textContent=data.files.length+' photos loaded.';
+      grid.style.display='grid';
       data.files.forEach(function(f){
         var thumb=document.createElement('div');thumb.className='ph-thumb';
-        if(f.thumbnailLink){var img=document.createElement('img');img.src=f.thumbnailLink.replace('=s220','=s400');img.alt=f.name;thumb.appendChild(img);}
-        else thumb.textContent='🖼️';
+        if(f.thumbnailLink){
+          var img=document.createElement('img');
+          img.src=f.thumbnailLink.replace('=s220','=s400');
+          img.alt=f.name;
+          img.loading='lazy';
+          thumb.appendChild(img);
+        } else {
+          thumb.innerHTML='<span style="font-size:28px;">🖼️</span>';
+        }
         thumb.title=f.name;
         thumb.onclick=function(){window.open('https://drive.google.com/file/d/'+f.id+'/view','_blank');};
         grid.appendChild(thumb);
       });
-    } else {grid.innerHTML='<div style="color:var(--dim);font-size:14px;padding:10px;">no images found in this folder.</div>';}
-  }catch(ex){grid.innerHTML='<div style="color:var(--dim);font-size:14px;padding:10px;">error loading photos. check your folder ID and API key.</div>';}
+      // Hide setup box after successful load
+      var setup=document.getElementById('ph-setup-box');
+      if(setup)setup.style.display='none';
+    } else {
+      status.textContent='No images found. Make sure the folder is shared publicly and contains images.';
+    }
+  }catch(ex){
+    status.textContent='Network error: '+ex.message;
+  }
 }
-
+// Alias for backward compat
+function loadDrivePhotos(){tryLoadPhotos();}
 // Auto-open about.txt on first visit
 (function(){
   var seen = sessionStorage.getItem('lab_visited');
@@ -1307,16 +1355,35 @@ function closeNoLink(){
 
 // ── START MENU CASCADING SUBMENUS ──
 function openSmCat(el){
-  // Close other open subcats
   document.querySelectorAll('.sm-cat.open').forEach(function(c){
     if(c!==el)c.classList.remove('open');
   });
   el.classList.add('open');
+  var sub=el.querySelector('.sm-sub');
+  if(!sub)return;
+  // MOBILE: inline accordion — no positioning needed
+  if(window.innerWidth<=520){
+    sub.style.left='';sub.style.top='';sub.style.position='';
+    return;
+  }
+  // DESKTOP: fixed flyout, avoid screen overflow
+  var menuRect=document.getElementById('smenu').getBoundingClientRect();
+  var catRect=el.getBoundingClientRect();
+  sub.style.display='block';
+  var subH=sub.offsetHeight;
+  sub.style.display='';
+  var leftPos=menuRect.right-2;
+  var topPos=catRect.top;
+  if(topPos+subH>window.innerHeight-40) topPos=window.innerHeight-40-subH;
+  if(topPos<0) topPos=0;
+  sub.style.left=leftPos+'px';
+  sub.style.top=topPos+'px';
+  sub.style.position='fixed';
 }
 function toggleSmCat(el){
   var was=el.classList.contains('open');
   document.querySelectorAll('.sm-cat.open').forEach(function(c){c.classList.remove('open');});
-  if(!was) el.classList.add('open');
+  if(!was) openSmCat(el);
 }
 // Close subcats when start menu closes
 var _origCloseAll=closeAll;
