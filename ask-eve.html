@@ -32,7 +32,7 @@ a{color:inherit;text-decoration:none;}
 #sticky .sticky-title{font-size:12px;color:#8a7a20;margin-bottom:4px;letter-spacing:.05em;}
 
 /* ── ICONS ── */
-#icons{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:4px;z-index:20;width:74px;}
+#icons{position:absolute;top:10px;left:10px;display:grid;grid-template-columns:74px 74px;gap:4px;z-index:20;width:156px;}
 .ico{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px;border:1px solid transparent;color:#fff;text-shadow:1px 1px 3px rgba(0,0,0,.8),0 0 6px rgba(0,0,0,.4);text-align:center;user-select:none;cursor:pointer;width:74px;}
 .ico:hover,.ico.sel{background:rgba(26,58,107,.6);border:1px dotted rgba(255,255,255,.7);}
 .ico .em{font-size:26px;line-height:1.3;}
@@ -239,14 +239,18 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 .wds{border-top:1px solid var(--border);margin:6px 0;}
 
 /* ── START MENU ── */
-#smenu{display:none;position:fixed;bottom:32px;left:0;width:220px;background:var(--win);border:2px solid;border-color:#fff #7a6f62 #7a6f62 #fff;box-shadow:2px 2px 8px rgba(0,0,0,.3);z-index:9000;flex-direction:row;}
+#smenu{display:none;position:fixed;bottom:32px;left:0;width:240px;background:var(--win);border:2px solid;border-color:#fff var(--border-dark) var(--border-dark) #fff;box-shadow:4px 0 12px rgba(0,0,0,.3);z-index:9000;flex-direction:row;}
 #smenu.open{display:flex;}
-.sm-side{background:linear-gradient(to top,var(--tbar1),var(--tbar2));width:28px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;}
+.sm-side{background:linear-gradient(to top,var(--tbar1),var(--tbar2));width:28px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;flex-shrink:0;}
 .sm-side span{font-size:13px;color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;letter-spacing:1px;}
-.sm-items{flex:1;padding:2px 0;max-height:70vh;overflow-y:auto;}
-.sm-section{font-size:11px;color:var(--dim);padding:5px 12px 2px;letter-spacing:.1em;text-transform:uppercase;border-top:1px solid var(--border);margin-top:3px;}
-.sm-section:first-child{border-top:none;margin-top:0;}
-.si{font-size:15px;padding:4px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);}
+.sm-items{flex:1;padding:2px 0;overflow:visible;position:relative;}
+.sm-cat{font-size:15px;padding:5px 8px 5px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;color:var(--text);position:relative;user-select:none;}
+.sm-cat:hover,.sm-cat.open{background:var(--tbar1);color:#fff;}
+.sm-cat .sm-arrow{font-size:10px;opacity:.7;}
+.sm-sub{display:none;position:absolute;left:212px;background:var(--win);border:2px solid;border-color:#fff var(--border-dark) var(--border-dark) #fff;box-shadow:4px 4px 10px rgba(0,0,0,.3);min-width:200px;z-index:9100;padding:2px 0;}
+.sm-cat.open>.sm-sub{display:block;}
+.sm-div{border-top:1px solid var(--border);margin:3px 0;}
+.si{font-size:15px;padding:4px 16px 4px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);white-space:nowrap;}
 .si:hover{background:var(--tbar1);color:#fff;}
 
 /* ── TASKBAR ── */
@@ -272,7 +276,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
 /* ── MOBILE ── */
 @media(max-width:520px){
-  #icons{top:10px;left:8px;gap:3px;width:68px;}
+  #icons{top:8px;left:8px;gap:3px;width:auto;grid-template-columns:68px 68px;max-height:calc(100vh - 50px);overflow-y:auto;}
   .ico{width:68px;}
   #sp-pin{display:none!important;}
   #sticky{display:none;}
@@ -322,6 +326,12 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 .nf-header p{font-size:13px;opacity:.8;}
 .nf-form-inner{padding:14px 16px;}
 
+
+@media(max-width:520px){
+  #smenu{width:min(280px,90vw);}
+  .sm-sub{position:static!important;border:none;border-top:1px solid var(--border);box-shadow:none;padding-left:10px;background:#f5f0e8;left:auto!important;}
+}
+
 </style>
 </head>
 <body>
@@ -367,11 +377,11 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   </div>
   <div class="mbar">
     <div class="mi" onclick="toggleMenu(this)">File<div class="dd">
-      <div class="di" onclick="newChat();closeAll()">💬 New Chat</div>
+      <div class="di" onclick="event.stopPropagation();newChat();closeAll()">💬 New Chat</div>
       <div class="dsep"></div>
-      <div class="di" onclick="openWin('notes-win');closeAll()">📓 Open Notes</div>
-      <div class="di" onclick="openWin('arc-win');closeAll()">🗂️ Open Archive</div>
-      <div class="di" onclick="openWin('music-win');closeAll()">🎵 Open Music</div>
+      <div class="di" onclick="event.stopPropagation();openWin('notes-win');closeAll()">📓 Open Notes</div>
+      <div class="di" onclick="event.stopPropagation();openWin('arc-win');closeAll()">🗂️ Open Archive</div>
+      <div class="di" onclick="event.stopPropagation();openWin('music-win');closeAll()">🎵 Open Music</div>
       <div class="dsep"></div>
       <a class="di" href="https://bywhitespace.com" target="_blank" onclick="closeAll()">💼 Whitespace</a>
       <a class="di" href="https://goodworldliving.com" target="_blank" onclick="closeAll()">🌿 Good World Living</a>
@@ -379,8 +389,8 @@ textarea.nf-input{resize:vertical;min-height:70px;}
       <a class="di" href="/" onclick="closeAll()">🏠 Exit to Lab</a>
     </div></div>
     <div class="mi" onclick="toggleMenu(this)">View<div class="dd">
-      <div class="di" onclick="minWin('chat-win');closeAll()">_ Minimize</div>
-      <div class="di" onclick="maxWin('chat-win');closeAll()">□ Fullscreen</div>
+      <div class="di" onclick="event.stopPropagation();minWin('chat-win');closeAll()">_ Minimize</div>
+      <div class="di" onclick="event.stopPropagation();maxWin('chat-win');closeAll()">□ Fullscreen</div>
       <a class="di" href="/ask-eve" target="_blank" onclick="closeAll()">↗ Open in New Tab</a>
       <div class="dsep"></div>
       <a class="di" href="/field-notes" onclick="closeAll()">📁 Field Notes (web)</a>
@@ -397,7 +407,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
       <a class="di" href="mailto:hello@ivonnealdaz.com" onclick="closeAll()">📧 Send Email</a>
     </div></div>
     <div class="mi" onclick="toggleMenu(this)">Help<div class="dd">
-      <div class="di" onclick="openWin('about-win');closeAll()">📄 About this Lab</div>
+      <div class="di" onclick="event.stopPropagation();openWin('about-win');closeAll()">📄 About this Lab</div>
       <div class="dsep"></div>
       <a class="di" href="https://ivonnealdaz.com" target="_blank" onclick="closeAll()">👤 ivonnealdaz.com</a>
       <a class="di" href="https://ivonnealdaz.com/gallery" target="_blank" onclick="closeAll()">🎨 Art Gallery</a>
@@ -475,16 +485,16 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   </div>
   <div class="mbar">
     <div class="mi" onclick="toggleMenu(this)">View<div class="dd">
-      <div class="di" onclick="setArcView('grid');closeAll()">⊞ Icon View</div>
-      <div class="di" onclick="setArcView('list');closeAll()">≡ List View</div>
+      <div class="di" onclick="event.stopPropagation();setArcView('grid');closeAll()">⊞ Icon View</div>
+      <div class="di" onclick="event.stopPropagation();setArcView('list');closeAll()">≡ List View</div>
     </div></div>
     <div class="mi" onclick="toggleMenu(this)">Filter<div class="dd">
-      <div class="di" onclick="filterArc('all');closeAll()">All</div>
-      <div class="di" onclick="filterArc('built');closeAll()">Built</div>
-      <div class="di" onclick="filterArc('brand');closeAll()">Brand</div>
-      <div class="di" onclick="filterArc('art');closeAll()">Art</div>
-      <div class="di" onclick="filterArc('writing');closeAll()">Writing</div>
-      <div class="di" onclick="filterArc('talk');closeAll()">Talk</div>
+      <div class="di" onclick="event.stopPropagation();filterArc('all');closeAll()">All</div>
+      <div class="di" onclick="event.stopPropagation();filterArc('built');closeAll()">Built</div>
+      <div class="di" onclick="event.stopPropagation();filterArc('brand');closeAll()">Brand</div>
+      <div class="di" onclick="event.stopPropagation();filterArc('art');closeAll()">Art</div>
+      <div class="di" onclick="event.stopPropagation();filterArc('writing');closeAll()">Writing</div>
+      <div class="di" onclick="event.stopPropagation();filterArc('talk');closeAll()">Talk</div>
     </div></div>
   </div>
   <div class="arc-path" id="arc-path">📁 archive / all entries</div>
@@ -619,7 +629,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 <div class="win off" id="about-win" style="width:min(480px,94vw);height:min(400px,75vh);top:80px;left:calc(50% - 240px);display:none;" onmousedown="focusWin('about-win')">
   <div class="tbar" onmousedown="dragStart(event,'about-win')"><div class="tbar-title">📄 about.txt — Notepad</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('about-win')">_</button><button class="tbtn" onclick="maxWin('about-win')">□</button><button class="tbtn" onclick="closeWin('about-win')">✕</button></div></div>
   <div class="mbar">
-    <div class="mi" onclick="toggleMenu(this)">File<div class="dd"><div class="di grey">New</div><div class="di grey">Open</div><div class="dsep"></div><div class="di" onclick="closeWin('about-win');closeAll()">Close</div></div></div>
+    <div class="mi" onclick="toggleMenu(this)">File<div class="dd"><div class="di grey">New</div><div class="di grey">Open</div><div class="dsep"></div><div class="di" onclick="event.stopPropagation();closeWin('about-win');closeAll()">Close</div></div></div>
     <div class="mi" onclick="toggleMenu(this)">Edit<div class="dd"><div class="di grey">Cut</div><div class="di grey">Copy</div><div class="di grey">Paste</div></div></div>
   </div>
   <div class="about-body"><pre>about.txt
@@ -735,30 +745,56 @@ EOF</pre></div>
 </div>
 
 <!-- START MENU -->
+<div id="no-link-popup">
+  <div class="nlp-tbar"><span>ℹ️ ivonne_lab.exe</span><button onclick="closeNoLink()" style="background:var(--silver);border:1px solid var(--border-dark);font-size:9px;font-family:Arial,sans-serif;font-weight:700;cursor:pointer;width:16px;height:14px;">✕</button></div>
+  <div class="nlp-body">
+    <div class="nlp-icon">📭</div>
+    <div class="nlp-msg" id="nlp-msg">No link found.</div>
+    <div class="nlp-sub">This item hasn't been linked yet.<br>Check back — it may be added soon.</div>
+    <button class="nlp-ok" onclick="closeNoLink()">OK</button>
+  </div>
+</div>
 <div id="smenu">
   <div class="sm-side"><span>ivonne aldaz</span></div>
   <div class="sm-items">
-    <div class="sm-section">Programs</div>
-    <div class="si" onclick="openWin('chat-win');closeAll()">🌚 ask_eve.exe</div>
-    <div class="si" onclick="openWin('notes-win');closeAll()">📓 notes.app</div>
-    <a class="si" href="https://ivonnealdaz.com/gallery" target="_blank" onclick="closeAll()">🎨 gallery.exe</a>
-    <div class="si" onclick="openWin('music-win');closeAll()">🎵 music.exe</div>
-    <div class="si" onclick="window.open('https://calendar.app.google/oCJud9JDKNkZa8uH6','_blank');closeAll()">📅 calendar</div>
-    <div class="si" onclick="openWin('chess-win');closeAll()">♟️ chess.exe</div>
-    <div class="si" onclick="openWin('photos-win');closeAll()">📷 photos.exe</div>
-    <div class="sm-section">Explore</div>
-    <a class="si" href="/field-notes" onclick="closeAll()">📁 field_notes</a>
-    <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ archive.exe</div>
-    <div class="si" onclick="openBrowser('https://bywhitespace.com','Whitespace');closeAll()">💼 whitespace</div>
-    <div class="si" onclick="openBrowser('https://goodworldliving.com','Good World Living');closeAll()">🌿 good_world</div>
-    <div class="sm-section">Connect</div>
-    <div class="si" onclick="openWin('soc-win');closeAll()">🌐 socials</div>
-    <a class="si" href="mailto:hello@ivonnealdaz.com" onclick="closeAll()">📧 contact</a>
-    <div class="si" onclick="openWin('note-form-win');closeAll()">✉️ leave a note</div>
-    <div class="sm-section">About</div>
-    <div class="si" onclick="openWin('about-win');closeAll()">📄 about.txt</div>
-    <div class="dsep"></div>
-    <a class="si" href="/" onclick="closeAll()">🏠 exit to lab</a>
+    <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
+      <span>📁 Programs</span><span class="sm-arrow">▶</span>
+      <div class="sm-sub" style="bottom:auto;top:0;">
+        <div class="si" onclick="openWin('chat-win');closeAll()">🌚 ask_eve.exe</div>
+        <div class="si" onclick="openWin('notes-win');closeAll()">📓 notes.app</div>
+        <a class="si" href="https://ivonnealdaz.com/gallery" target="_blank" onclick="closeAll()">🎨 gallery.exe</a>
+        <div class="si" onclick="openWin('music-win');closeAll()">🎵 music.exe</div>
+        <div class="si" onclick="window.open('https://calendar.app.google/oCJud9JDKNkZa8uH6','_blank');closeAll()">📅 calendar</div>
+        <div class="si" onclick="openWin('chess-win');closeAll()">♟️ chess.exe</div>
+        <div class="si" onclick="openWin('photos-win');closeAll()">📷 photos.exe</div>
+      </div>
+    </div>
+    <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
+      <span>🗺️ Explore</span><span class="sm-arrow">▶</span>
+      <div class="sm-sub" style="bottom:auto;top:0;">
+        <a class="si" href="/field-notes" onclick="closeAll()">📁 field_notes</a>
+        <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ archive.exe</div>
+        <div class="si" onclick="openBrowser('https://bywhitespace.com','Whitespace');closeAll()">💼 whitespace</div>
+        <div class="si" onclick="openBrowser('https://goodworldliving.com','Good World Living');closeAll()">🌿 good_world</div>
+      </div>
+    </div>
+    <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
+      <span>🔗 Connect</span><span class="sm-arrow">▶</span>
+      <div class="sm-sub" style="bottom:auto;top:0;">
+        <div class="si" onclick="openWin('soc-win');closeAll()">🌐 socials</div>
+        <a class="si" href="mailto:hello@ivonnealdaz.com" onclick="closeAll()">📧 contact</a>
+        <div class="si" onclick="openWin('note-form-win');closeAll()">✉️ leave a note</div>
+      </div>
+    </div>
+    <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
+      <span>ℹ️ About</span><span class="sm-arrow">▶</span>
+      <div class="sm-sub" style="bottom:auto;top:0;">
+        <div class="si" onclick="openWin('about-win');closeAll()">📄 about.txt</div>
+        <a class="si" href="https://ivonnealdaz.com" target="_blank" onclick="closeAll()">👤 ivonnealdaz.com</a>
+      </div>
+    </div>
+    <div class="sm-div"></div>
+    <a class="si" href="/" style="padding-left:12px;" onclick="closeAll()">🏠 exit to lab</a>
   </div>
 </div>
 
@@ -940,6 +976,25 @@ document.addEventListener('mouseup',function(){rsz=null;});
 document.querySelectorAll('.win').forEach(function(w){addResize(w.id);});
 addResize('entry-win');
 
+// ── ICON DRAG (desktop only) ──
+var icoDrag=null;
+document.addEventListener('mousemove',function(e){
+  if(!icoDrag||window.innerWidth<=520)return;
+  icoDrag.el.style.position='absolute';
+  icoDrag.el.style.left=Math.max(0,icoDrag.ox+(e.clientX-icoDrag.sx))+'px';
+  icoDrag.el.style.top=Math.max(0,Math.min(window.innerHeight-80,icoDrag.oy+(e.clientY-icoDrag.sy)))+'px';
+  icoDrag.moved=true;
+});
+document.addEventListener('mouseup',function(){
+  if(icoDrag){
+    if(icoDrag.moved){
+      // detach from grid flow
+      icoDrag.el.style.zIndex='25';
+    }
+    icoDrag=null;
+  }
+});
+
 // ── ICONS ──
 function activateIcon(ico){
   var a=ico.dataset.action,t=ico.dataset.target,ti=ico.dataset.title||'';
@@ -948,7 +1003,20 @@ function activateIcon(ico){
   else if(a==='external')window.open(t,'_blank');
 }
 document.querySelectorAll('.ico').forEach(function(ico){
-  ico.addEventListener('dblclick',function(e){e.preventDefault();activateIcon(ico);});
+  // desktop: mousedown starts potential drag
+  ico.addEventListener('mousedown',function(e){
+    if(window.innerWidth<=520)return;
+    var r=ico.getBoundingClientRect();
+    icoDrag={el:ico,sx:e.clientX,sy:e.clientY,ox:r.left,oy:r.top,moved:false};
+    document.querySelectorAll('.ico').forEach(function(i){i.classList.remove('sel');});
+    ico.classList.add('sel');
+  });
+  // desktop: dblclick opens
+  ico.addEventListener('dblclick',function(e){
+    if(icoDrag&&icoDrag.moved)return;
+    e.preventDefault();activateIcon(ico);
+  });
+  // mobile: single tap opens
   ico.addEventListener('touchend',function(e){
     e.preventDefault();e.stopPropagation();
     document.querySelectorAll('.ico').forEach(function(i){i.classList.remove('sel');});
@@ -1098,19 +1166,37 @@ function showCat(el,cat){
   renderNotes(cat);
 }
 function renderNotes(cat){
-  var list=document.getElementById('notes-list'),viewer=document.getElementById('note-viewer');if(!list||!viewer)return;
-  var notes=NOTES[cat]||[];list.innerHTML='';
+  var list=document.getElementById('notes-list');
+  var viewer=document.getElementById('note-viewer');
+  if(!list||!viewer)return;
+  var notes=NOTES[cat]||[];
+  list.innerHTML='';
+  function selectNote(n,el){
+    document.querySelectorAll('.note-item').forEach(function(x){x.classList.remove('active');});
+    el.classList.add('active');
+    var lines=n.c.split('\n');
+    var bodyHtml='';
+    lines.forEach(function(line){
+      if(line.trim()===''){bodyHtml+='<br>';}
+      else if(line.startsWith('•')){bodyHtml+='<div style="padding-left:12px;margin:2px 0;">'+line+'</div>';}
+      else{bodyHtml+='<div style="margin:2px 0;">'+line+'</div>';}
+    });
+    viewer.innerHTML='<h2>'+n.t+'</h2><div class="note-meta">'+n.d+'</div><div class="note-content">'+bodyHtml+'</div>';
+  }
   notes.forEach(function(n,i){
-    var item=document.createElement('div');item.className='note-item'+(i===0?' active':'');
-    item.innerHTML='<div class="note-title-row">'+n.t+'</div><div class="note-preview-row">'+n.c.split('\n')[0]+'</div><div class="note-date-row">'+n.d+'</div>';
-    item.onclick=function(){
-      document.querySelectorAll('.note-item').forEach(function(x){x.classList.remove('active');});
-      item.classList.add('active');
-    if(sec.body){var paras=sec.body.split('||');paras.forEach(function(p){if(p.trim())html+='<p>'+p+'</p>';});}
-    };
+    var item=document.createElement('div');
+    item.className='note-item'+(i===0?' active':'');
+    var preview=n.c.replace(/\n/g,' ').substring(0,50)+(n.c.length>50?'...':'');
+    item.innerHTML='<div class="note-title-row">'+n.t+'</div><div class="note-preview-row">'+preview+'</div><div class="note-date-row">'+n.d+'</div>';
+    item.addEventListener('click',function(){selectNote(n,item);});
     list.appendChild(item);
   });
-    if(sec.body){var paras=sec.body.split('||');paras.forEach(function(p){if(p.trim())html+='<p>'+p+'</p>';});}
+  if(notes.length>0){
+    var firstItem=list.querySelector('.note-item');
+    if(firstItem) selectNote(notes[0],firstItem);
+  } else {
+    viewer.innerHTML='<div style="color:var(--dim);padding-top:20px;text-align:center;">no notes in this category yet.</div>';
+  }
 }
 
 // ── LEAVE A NOTE (Supabase) ──
@@ -1217,6 +1303,34 @@ function closeNoLink(){
   document.getElementById('no-link-popup').style.display='none';
   document.getElementById('overlay').classList.remove('on');
 }
+
+
+// ── START MENU CASCADING SUBMENUS ──
+function openSmCat(el){
+  // Close other open subcats
+  document.querySelectorAll('.sm-cat.open').forEach(function(c){
+    if(c!==el)c.classList.remove('open');
+  });
+  el.classList.add('open');
+}
+function toggleSmCat(el){
+  var was=el.classList.contains('open');
+  document.querySelectorAll('.sm-cat.open').forEach(function(c){c.classList.remove('open');});
+  if(!was) el.classList.add('open');
+}
+// Close subcats when start menu closes
+var _origCloseAll=closeAll;
+closeAll=function(){
+  document.querySelectorAll('.sm-cat.open').forEach(function(c){c.classList.remove('open');});
+  _origCloseAll();
+};
+// Prevent subcat clicks from closing parent menu
+document.addEventListener('click',function(e){
+  var cat=e.target.closest('.sm-cat');
+  if(cat) e.stopPropagation();
+  var si=e.target.closest('.si');
+  if(si&&!si.closest('.sm-cat')){ /* top-level si, allow close */ }
+});
 
 </script>
 </body>
