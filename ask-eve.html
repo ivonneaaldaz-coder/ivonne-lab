@@ -276,15 +276,27 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
 /* ── MOBILE ── */
 @media(max-width:520px){
-  #icons{top:8px;left:8px;gap:3px;width:auto;grid-template-columns:68px 68px;max-height:calc(100vh - 50px);overflow-y:auto;}
+  #icons{top:8px;left:8px;gap:3px;width:auto;grid-template-columns:68px 68px;max-height:calc(100vh - 90px);overflow-y:auto;padding-bottom:8px;}
   .ico{width:68px;}
   #sp-pin{display:none!important;}
   #sticky{display:none;}
   .win{max-width:96vw!important;}
-  .tbtn{min-width:20px;min-height:20px;width:20px;height:20px;font-size:11px;}
+  .tbtn{min-width:22px;min-height:22px;width:22px;height:22px;font-size:11px;}
+  /* mobile taskbar: taller, 2-zone */
+  #taskbar{height:44px;padding:0 4px;gap:3px;}
+  #start-btn{font-size:13px;padding:2px 8px;}
+  /* show first 4 app icons only */
   #tb-apps .tb-app:nth-child(n+5){display:none;}
-  #tb-soc{display:none;}
+  #tb-apps .tb-app{width:30px;height:30px;font-size:17px;}
+  /* replace tb-soc with icon button that opens soc-win */
+  #tb-soc{display:none!important;}
+  #tb-soc-btn{display:flex!important;}
+  .tb-sep{display:none;}
+  #tb-clock{font-size:13px;padding:2px 5px;}
   .arc-body{grid-template-columns:repeat(auto-fill,minmax(70px,1fr));}
+}
+@media(min-width:521px){
+  #tb-soc-btn{display:none!important;}
 }
 
 /* ── NO LINK POPUP ── */
@@ -351,6 +363,22 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   #smenu .sm-div{margin:4px 0;}
 }
 
+
+.d-folder-ico{display:flex;flex-direction:column;align-items:center;padding:8px 6px;border:1px solid transparent;cursor:pointer;border-radius:2px;}
+.d-folder-ico:hover{background:rgba(26,58,107,.1);border-color:rgba(26,58,107,.2);}
+
+
+.dpad-btn{background:rgba(26,58,26,.7);border:1px solid #3a5a1a;color:#8aba4a;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;width:36px;height:36px;font-family:var(--font);border-radius:2px;}
+.dpad-btn:active{background:rgba(58,90,26,.9);}
+@media(max-width:520px){#snake-dpad{display:grid!important;}}
+
+
+.tb-app.tb-active{background:#c8c0b0;border-color:var(--border-dark) #fff #fff var(--border-dark);box-shadow:inset 1px 1px 2px rgba(0,0,0,.2);}
+
+
+@keyframes ico-flash{0%{background:rgba(26,58,107,.7);}100%{background:transparent;}}
+.ico.flash{animation:ico-flash .25s ease-out;}
+
 </style>
 </head>
 <body>
@@ -374,11 +402,9 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   <div class="ico" id="ico-arc" data-action="win" data-target="arc-win"><div class="em">🗂️</div><div class="lb">archive.exe</div></div>
   <div class="ico" id="ico-music" data-action="win" data-target="music-win"><div class="em">🎵</div><div class="lb">music.exe</div></div>
   <div class="ico" id="ico-cal" data-action="external" data-target="https://calendar.app.google/oCJud9JDKNkZa8uH6"><div class="em">📅</div><div class="lb">calendar</div></div>
-  <div class="ico" id="ico-chess" data-action="win" data-target="chess-win"><div class="em">♟️</div><div class="lb">chess.exe</div></div>
+  <div class="ico" id="ico-snake" data-action="win" data-target="snake-win"><div class="em">🐍</div><div class="lb">snake.exe</div></div>
   <div class="ico" id="ico-photos" data-action="win" data-target="photos-win"><div class="em">📷</div><div class="lb">photos.exe</div></div>
-  <div class="ico" id="ico-soc" data-action="win" data-target="soc-win"><div class="em">🌐</div><div class="lb">socials</div></div>
-  <div class="ico" id="ico-ws" data-action="browser" data-target="https://bywhitespace.com" data-title="Whitespace"><div class="em">💼</div><div class="lb">whitespace</div></div>
-  <div class="ico" id="ico-gw" data-action="browser" data-target="https://goodworldliving.com" data-title="Good World Living"><div class="em">🌿</div><div class="lb">good_world</div></div>
+  <div class="ico" id="ico-ventures" data-action="win" data-target="ventures-win"><div class="em">📁</div><div class="lb">ventures</div></div>
   <div class="ico" id="ico-note-form" data-action="win" data-target="note-form-win"><div class="em">✉️</div><div class="lb">leave a note</div></div>
   <div class="ico" id="ico-about" data-action="win" data-target="about-win"><div class="em">📄</div><div class="lb">about.txt</div></div>
 </div>
@@ -586,26 +612,6 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   <div class="resize-corner"></div>
 </div>
 
-<!-- CHESS -->
-<div class="win off" id="chess-win" style="width:min(360px,94vw);height:min(380px,75vh);top:70px;left:calc(50% + 40px);display:none;" onmousedown="focusWin('chess-win')">
-  <div class="tbar" onmousedown="dragStart(event,'chess-win')"><div class="tbar-title">♟️ chess.exe</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('chess-win')">_</button><button class="tbtn" onclick="maxWin('chess-win')">□</button><button class="tbtn" onclick="closeWin('chess-win')">✕</button></div></div>
-  <div class="chess-body">
-    <div class="ch-h">♟️ chess.exe</div>
-    <div class="ch-profile">
-      <div class="ch-avatar">♛</div>
-      <div>
-        <div class="ch-info" style="font-weight:700;">ivonnealdaz</div>
-        <div class="ch-stat">chess.com member</div>
-      </div>
-    </div>
-    <a class="ch-btn" href="https://www.chess.com/member/ivonnealdaz" target="_blank">👤 View Profile ↗</a>
-    <a class="ch-btn" href="https://www.chess.com/play/online" target="_blank">♟️ Play Online ↗</a>
-    <a class="ch-btn" href="https://www.chess.com/daily-chess-puzzle" target="_blank">🧩 Daily Puzzle ↗</a>
-    <div style="font-size:13px;color:var(--dim);margin-top:8px;line-height:1.5;">chess.com doesn't allow embedding, so these links open in a new tab. challenge ivonne to a game from her profile page.</div>
-  </div>
-  <div class="resize-corner"></div>
-</div>
-
 <!-- PHOTOS -->
 <div class="win off" id="photos-win" style="width:min(520px,94vw);height:min(460px,80vh);top:60px;left:calc(50% - 260px);display:none;" onmousedown="focusWin('photos-win')">
   <div class="tbar" onmousedown="dragStart(event,'photos-win')">
@@ -643,17 +649,75 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   <button onclick="lbNext()" style="position:fixed;right:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:22px;cursor:pointer;padding:8px 14px;font-family:var(--font);">▶</button>
 </div>
 
-<!-- WHITESPACE -->
-<div class="win off" id="ws-win" style="width:290px;height:220px;top:120px;left:80px;display:none;" onmousedown="focusWin('ws-win')">
-  <div class="tbar" onmousedown="dragStart(event,'ws-win')"><div class="tbar-title">💼 Whitespace</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('ws-win')">_</button><button class="tbtn" onclick="maxWin('ws-win')">□</button><button class="tbtn" onclick="closeWin('ws-win')">✕</button></div></div>
-  <div class="wc"><h3>💼 Whitespace</h3><p>Brand strategy studio. 3-month sprint engagements for founders and growing brands.</p><div class="wds"></div><div class="wpr"><span class="wpl">Focus:</span><span>Positioning, GTM, narrative</span></div><a class="wlink" href="https://bywhitespace.com" target="_blank" style="margin-top:8px;">Visit bywhitespace.com →</a></div>
+<!-- SNAKE -->
+<div class="win off" id="snake-win" style="width:min(400px,94vw);height:min(460px,80vh);top:40px;left:calc(50% - 200px);display:none;" onmousedown="focusWin('snake-win')">
+  <div class="tbar" onmousedown="dragStart(event,'snake-win')">
+    <div class="tbar-title">🐍 snake.exe</div>
+    <div class="tbar-btns"><button class="tbtn" onclick="minWin('snake-win')">_</button><button class="tbtn" onclick="maxWin('snake-win')">□</button><button class="tbtn" onclick="snakeStop();closeWin('snake-win')">✕</button></div>
+  </div>
+  <div style="background:#e8e4de;border-bottom:1px solid var(--border);padding:3px 8px;font-size:13px;color:var(--dim);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+    <span>score: <b id="snake-score">0</b></span>
+    <span>hi: <b id="snake-hi">0</b></span>
+    <span id="snake-level-display">level 1</span>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#1a1a0a;position:relative;overflow:hidden;">
+    <canvas id="snake-canvas" width="320" height="320" style="display:block;image-rendering:pixelated;border:2px solid #3a3a1a;"></canvas>
+    <div id="snake-overlay" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,10,5,.88);color:#8aba4a;font-family:var(--font);text-align:center;">
+      <div style="font-size:28px;margin-bottom:6px;">🐍</div>
+      <div style="font-size:22px;margin-bottom:4px;">snake.exe</div>
+      <div style="font-size:14px;color:#6a8a3a;margin-bottom:16px;">use arrow keys or swipe</div>
+      <button onclick="snakeStart()" style="background:#3a5a1a;border:2px solid #8aba4a;color:#8aba4a;font-family:var(--font);font-size:18px;padding:6px 24px;cursor:pointer;">▶ play</button>
+    </div>
+    <!-- mobile d-pad -->
+    <div id="snake-dpad" style="display:none;position:absolute;bottom:8px;right:8px;display:grid;grid-template-columns:36px 36px 36px;grid-template-rows:36px 36px 36px;gap:2px;">
+      <div></div>
+      <button class="dpad-btn" ontouchstart="event.preventDefault();snakeDir(0,-1)">▲</button>
+      <div></div>
+      <button class="dpad-btn" ontouchstart="event.preventDefault();snakeDir(-1,0)">◀</button>
+      <div></div>
+      <button class="dpad-btn" ontouchstart="event.preventDefault();snakeDir(1,0)">▶</button>
+      <div></div>
+      <button class="dpad-btn" ontouchstart="event.preventDefault();snakeDir(0,1)">▼</button>
+      <div></div>
+    </div>
+  </div>
+  <div style="background:#e8e4de;border-top:1px solid var(--border);padding:3px 10px;font-size:12px;color:var(--dim);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;">
+    <span>← → ↑ ↓ to move · eat 🍎 to grow</span>
+    <button onclick="toggleLeaderboard()" style="font-family:var(--font);font-size:12px;background:var(--silver);border:1px solid var(--border);padding:1px 8px;cursor:pointer;color:var(--text);">🏆 board</button>
+  </div>
+  <!-- LEADERBOARD PANEL -->
+  <div id="lb-panel" style="display:none;position:absolute;inset:22px 0 28px 0;background:#0d0d05;z-index:10;flex-direction:column;overflow:hidden;">
+    <div style="background:#1a1a0a;border-bottom:1px solid #3a3a1a;padding:6px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <span style="color:#8aba4a;font-family:var(--font);font-size:16px;">🏆 leaderboard</span>
+      <button onclick="toggleLeaderboard()" style="background:transparent;border:1px solid #3a3a1a;color:#6a8a3a;font-family:var(--font);font-size:13px;cursor:pointer;padding:1px 8px;">✕ close</button>
+    </div>
+    <div id="lb-list" style="flex:1;overflow-y:auto;padding:8px 0;"></div>
+    <div style="background:#1a1a0a;border-top:1px solid #3a3a1a;padding:6px 10px;flex-shrink:0;font-size:12px;color:#4a5a2a;text-align:center;">updates live · scores saved globally</div>
+  </div>
   <div class="resize-corner"></div>
 </div>
 
-<!-- GOOD WORLD -->
-<div class="win off" id="gw-win" style="width:290px;height:210px;top:140px;left:100px;display:none;" onmousedown="focusWin('gw-win')">
-  <div class="tbar" onmousedown="dragStart(event,'gw-win')"><div class="tbar-title">🌿 Good World Living</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('gw-win')">_</button><button class="tbtn" onclick="maxWin('gw-win')">□</button><button class="tbtn" onclick="closeWin('gw-win')">✕</button></div></div>
-  <div class="wc"><h3>🌿 Good World Living</h3><p>A lifestyle platform — art, travel, and intentional living. Founded 2023.</p><div class="wds"></div><a class="wlink" href="https://goodworldliving.com" target="_blank">Visit goodworldliving.com →</a></div>
+<!-- WHITESPACE-LEGACY -->
+<!-- VENTURES FOLDER -->
+<div class="win off" id="ventures-win" style="width:min(340px,94vw);height:min(280px,70vh);top:90px;left:calc(50% - 170px);display:none;" onmousedown="focusWin('ventures-win')">
+  <div class="tbar" onmousedown="dragStart(event,'ventures-win')">
+    <div class="tbar-title">📁 ventures</div>
+    <div class="tbar-btns"><button class="tbtn" onclick="minWin('ventures-win')">_</button><button class="tbtn" onclick="maxWin('ventures-win')">□</button><button class="tbtn" onclick="closeWin('ventures-win')">✕</button></div>
+  </div>
+  <div style="padding:3px 8px;background:#e8e4de;border-bottom:1px solid var(--border);font-size:12px;color:var(--dim);flex-shrink:0;">📁 ventures / 2 items</div>
+  <div style="flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;padding:16px;background:#fff;align-content:start;">
+    <div class="d-folder-ico" ondblclick="openBrowser('https://bywhitespace.com','Whitespace')" ontouchend="event.preventDefault();openBrowser('https://bywhitespace.com','Whitespace')">
+      <div style="font-size:32px;">💼</div>
+      <div style="font-size:12px;text-align:center;color:var(--text);margin-top:4px;">whitespace</div>
+      <div style="font-size:10px;color:var(--dim);text-align:center;">bywhitespace.com</div>
+    </div>
+    <div class="d-folder-ico" ondblclick="openBrowser('https://goodworldliving.com','Good World Living')" ontouchend="event.preventDefault();openBrowser('https://goodworldliving.com','Good World Living')">
+      <div style="font-size:32px;">🌿</div>
+      <div style="font-size:12px;text-align:center;color:var(--text);margin-top:4px;">good_world</div>
+      <div style="font-size:10px;color:var(--dim);text-align:center;">goodworldliving.com</div>
+    </div>
+  </div>
+  <div style="padding:3px 8px;background:#e8e4de;border-top:1px solid var(--border);font-size:12px;color:var(--dim);flex-shrink:0;">double-click to open</div>
   <div class="resize-corner"></div>
 </div>
 
@@ -797,7 +861,7 @@ EOF</pre></div>
         <a class="si" href="https://ivonnealdaz.com/gallery" target="_blank" onclick="closeAll()">🎨 gallery.exe</a>
         <div class="si" onclick="openWin('music-win');closeAll()">🎵 music.exe</div>
         <div class="si" onclick="window.open('https://calendar.app.google/oCJud9JDKNkZa8uH6','_blank');closeAll()">📅 calendar</div>
-        <div class="si" onclick="openWin('chess-win');closeAll()">♟️ chess.exe</div>
+        <div class="si" onclick="openWin('snake-win');closeAll()">🐍 snake.exe</div>
         <div class="si" onclick="openWin('photos-win');closeAll()">📷 photos.exe</div>
       </div>
     </div>
@@ -806,6 +870,7 @@ EOF</pre></div>
       <div class="sm-sub" style="bottom:auto;top:0;">
         <a class="si" href="/field-notes" onclick="closeAll()">📁 field_notes</a>
         <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ archive.exe</div>
+        <div class="si" onclick="openWin('ventures-win');closeAll()">📁 ventures</div>
         <div class="si" onclick="openBrowser('https://bywhitespace.com','Whitespace');closeAll()">💼 whitespace</div>
         <div class="si" onclick="openBrowser('https://goodworldliving.com','Good World Living');closeAll()">🌿 good_world</div>
       </div>
@@ -839,7 +904,7 @@ EOF</pre></div>
     <div class="tb-app" onclick="openWin('notes-win')" title="Notes">📓</div>
     <div class="tb-app" onclick="openWin('arc-win')" title="Archive">🗂️</div>
     <div class="tb-app" onclick="openWin('music-win')" title="Music">🎵</div>
-    <div class="tb-app" onclick="openWin('chess-win')" title="Chess">♟️</div>
+    <div class="tb-app" onclick="toggleWin('snake-win')" title="Snake">🐍</div>
     <div class="tb-app" onclick="openWin('soc-win')" title="Socials">🌐</div>
   </div>
   <div id="tb-soc">
@@ -848,6 +913,9 @@ EOF</pre></div>
     <a href="https://tiktok.com/@ivonnealdaz" target="_blank" title="TikTok"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.28 8.28 0 0 0 4.84 1.54V7.15a4.85 4.85 0 0 1-1.07-.46z"/></svg></a>
     <a href="https://linkedin.com/in/ivonnealdaz" target="_blank" title="LinkedIn"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
     <a href="https://pinterest.com/ivonnealdaz" target="_blank" title="Pinterest"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></a>
+  </div>
+  <div id="tb-soc-btn" style="display:none;margin-left:auto;" onclick="openWin('soc-win')">
+    <div class="tb-app" title="Socials" style="width:30px;height:30px;font-size:17px;">🌐</div>
   </div>
   <div id="tb-clock">12:00 PM</div>
 </div>
@@ -1030,6 +1098,8 @@ document.addEventListener('mouseup',function(){
 
 // ── ICONS ──
 function activateIcon(ico){
+  ico.classList.add('flash');
+  setTimeout(function(){ico.classList.remove('flash');},260);
   var a=ico.dataset.action,t=ico.dataset.target,ti=ico.dataset.title||'';
   if(a==='win')openWin(t);
   else if(a==='browser')openBrowser(t,ti);
@@ -1455,6 +1525,283 @@ document.addEventListener('click',function(e){
   var si=e.target.closest('.si');
   if(si&&!si.closest('.sm-cat')){ /* top-level si, allow close */ }
 });
+
+
+// ── SNAKE GAME ──
+var snakeTick=null,snakeRunning=false;
+var snakeBody=[],snakeDx=1,snakeDy=0,snakeFood={},snakeSc=0,snakeHi=0,snakeSz=16,snakeCols=20,snakeRows=20,snakeSpeed=160;
+
+function snakeStart(){
+  var ov=document.getElementById('snake-overlay');if(ov)ov.style.display='none';
+  snakeBody=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+  snakeDx=1;snakeDy=0;snakeSc=0;snakeRunning=true;
+  snakePlaceFood();
+  document.getElementById('snake-score').textContent='0';
+  if(snakeTick)clearInterval(snakeTick);
+  snakeTick=setInterval(snakeTick_,snakeSpeed);
+  // keyboard
+  document.removeEventListener('keydown',snakeKey);
+  document.addEventListener('keydown',snakeKey);
+  // touch swipe
+  var canvas=document.getElementById('snake-canvas');
+  canvas.removeEventListener('touchstart',snakeTouchStart);
+  canvas.addEventListener('touchstart',snakeTouchStart,{passive:true});
+  canvas.removeEventListener('touchend',snakeTouchEnd);
+  canvas.addEventListener('touchend',snakeTouchEnd,{passive:true});
+}
+
+function snakeStop(){
+  snakeRunning=false;
+  if(snakeTick){clearInterval(snakeTick);snakeTick=null;}
+  document.removeEventListener('keydown',snakeKey);
+}
+
+var _snakeTouchX=0,_snakeTouchY=0;
+function snakeTouchStart(e){_snakeTouchX=e.touches[0].clientX;_snakeTouchY=e.touches[0].clientY;}
+function snakeTouchEnd(e){
+  var dx=e.changedTouches[0].clientX-_snakeTouchX;
+  var dy=e.changedTouches[0].clientY-_snakeTouchY;
+  if(Math.abs(dx)>Math.abs(dy)){snakeDir(dx>0?1:-1,0);}
+  else{snakeDir(0,dy>0?1:-1);}
+}
+
+function snakeDir(dx,dy){
+  if(dx!==0&&snakeDx!==0)return; // no reverse x
+  if(dy!==0&&snakeDy!==0)return; // no reverse y
+  snakeDx=dx;snakeDy=dy;
+}
+
+function snakeKey(e){
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();
+  if(e.key==='ArrowUp')snakeDir(0,-1);
+  else if(e.key==='ArrowDown')snakeDir(0,1);
+  else if(e.key==='ArrowLeft')snakeDir(-1,0);
+  else if(e.key==='ArrowRight')snakeDir(1,0);
+}
+
+function snakePlaceFood(){
+  var occupied=new Set(snakeBody.map(function(s){return s.x+','+s.y;}));
+  var x,y;
+  do{x=Math.floor(Math.random()*snakeCols);y=Math.floor(Math.random()*snakeRows);}
+  while(occupied.has(x+','+y));
+  snakeFood={x:x,y:y};
+}
+
+function snakeTick_(){
+  if(!snakeRunning)return;
+  var head={x:snakeBody[0].x+snakeDx,y:snakeBody[0].y+snakeDy};
+  // wall collision
+  if(head.x<0||head.x>=snakeCols||head.y<0||head.y>=snakeRows){snakeGameOver();return;}
+  // self collision
+  for(var i=0;i<snakeBody.length;i++){if(snakeBody[i].x===head.x&&snakeBody[i].y===head.y){snakeGameOver();return;}}
+  snakeBody.unshift(head);
+  if(head.x===snakeFood.x&&head.y===snakeFood.y){
+    snakeSc+=10;
+    document.getElementById('snake-score').textContent=snakeSc;
+    if(snakeSc>snakeHi){snakeHi=snakeSc;document.getElementById('snake-hi').textContent=snakeHi;}
+    // speed up every 50 pts
+    if(snakeSc%50===0&&snakeSpeed>60){
+      snakeSpeed=Math.max(60,snakeSpeed-20);
+      clearInterval(snakeTick);snakeTick=setInterval(snakeTick_,snakeSpeed);
+      document.getElementById('snake-level-display').textContent='level '+(Math.floor((160-snakeSpeed)/20)+1);
+    }
+    snakePlaceFood();
+  } else {
+    snakeBody.pop();
+  }
+  snakeDraw();
+}
+
+function snakeDraw(){
+  var canvas=document.getElementById('snake-canvas');if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var sz=snakeSz;
+  ctx.fillStyle='#1a1a0a';ctx.fillRect(0,0,canvas.width,canvas.height);
+  // grid dots
+  ctx.fillStyle='#2a2a1a';
+  for(var gx=0;gx<snakeCols;gx++)for(var gy=0;gy<snakeRows;gy++){
+    ctx.fillRect(gx*sz+sz/2-1,gy*sz+sz/2-1,2,2);
+  }
+  // food
+  ctx.font=(sz-2)+'px serif';
+  ctx.fillText('🍎',snakeFood.x*sz+1,snakeFood.y*sz+sz-2);
+  // snake
+  snakeBody.forEach(function(s,i){
+    var g=ctx.createLinearGradient(s.x*sz,s.y*sz,(s.x+1)*sz,(s.y+1)*sz);
+    if(i===0){g.addColorStop(0,'#a0d040');g.addColorStop(1,'#6a9020');}
+    else{g.addColorStop(0,'#70a030');g.addColorStop(1,'#4a7010');}
+    ctx.fillStyle=g;
+    ctx.fillRect(s.x*sz+1,s.y*sz+1,sz-2,sz-2);
+    if(i===0){
+      // eyes
+      ctx.fillStyle='#fff';
+      var ex=s.x*sz+sz*0.7,ey=s.y*sz+sz*0.3;
+      if(snakeDx===1){ex=s.x*sz+sz*0.7;ey=s.y*sz+sz*0.35;}
+      else if(snakeDx===-1){ex=s.x*sz+sz*0.15;ey=s.y*sz+sz*0.35;}
+      else if(snakeDy===-1){ey=s.y*sz+sz*0.15;ex=s.x*sz+sz*0.35;}
+      else if(snakeDy===1){ey=s.y*sz+sz*0.75;ex=s.x*sz+sz*0.35;}
+      ctx.beginPath();ctx.arc(ex,ey,2,0,Math.PI*2);ctx.fill();
+    }
+  });
+}
+
+function snakeGameOver(){
+  snakeRunning=false;
+  clearInterval(snakeTick);snakeTick=null;
+  var canvas=document.getElementById('snake-canvas');
+  var ctx=canvas.getContext('2d');
+  ctx.fillStyle='rgba(10,10,5,.7)';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#d04040';ctx.font='bold 28px monospace';ctx.textAlign='center';
+  ctx.fillText('GAME OVER',canvas.width/2,canvas.height/2-20);
+  ctx.fillStyle='#8aba4a';ctx.font='18px monospace';
+  ctx.fillText('score: '+snakeSc,canvas.width/2,canvas.height/2+10);
+  ctx.fillStyle='#6a8a3a';ctx.font='14px monospace';
+  ctx.fillText('click play to try again',canvas.width/2,canvas.height/2+40);
+  var ov=document.getElementById('snake-overlay');
+  if(ov){
+    ov.style.display='flex';
+    ov.innerHTML='<div style="font-size:22px;color:#d04040;margin-bottom:8px;">game over</div><div style="font-size:16px;color:#8aba4a;margin-bottom:4px;">score: '+snakeSc+'</div><div style="font-size:13px;color:#6a8a3a;margin-bottom:16px;">best: '+snakeHi+'</div><button onclick="snakeStart()" style="background:#3a5a1a;border:2px solid #8aba4a;color:#8aba4a;font-family:var(--font);font-size:18px;padding:6px 24px;cursor:pointer;">▶ play again</button>';
+  }
+  document.removeEventListener('keydown',snakeKey);
+}
+
+// stop snake when window closes/minimizes
+var _origCloseWin2=closeWin;
+closeWin=function(id){if(id==='snake-win')snakeStop();_origCloseWin2(id);};
+var _origMinWin2=minWin;
+minWin=function(id){if(id==='snake-win')snakeStop();_origMinWin2(id);};
+
+
+// ── TASKBAR ACTIVE STATE ──
+var WIN_TB_MAP = {
+  'chat-win': 0, 'notes-win': 1, 'arc-win': 2,
+  'music-win': 3, 'snake-win': 4, 'soc-win': 5
+};
+function updateTbActive(){
+  var btns = document.querySelectorAll('.tb-app');
+  btns.forEach(function(b){ b.classList.remove('tb-active'); });
+  document.querySelectorAll('.win').forEach(function(w){
+    if(w.style.display !== 'none' && w.dataset.min !== '1'){
+      var idx = WIN_TB_MAP[w.id];
+      if(idx !== undefined && btns[idx]) btns[idx].classList.add('tb-active');
+    }
+  });
+}
+// Patch openWin and closeWin and minWin to update taskbar
+var _tbOrigOpen = openWin;
+openWin = function(id){ _tbOrigOpen(id); updateTbActive(); };
+var _tbOrigClose = closeWin;
+closeWin = function(id){ _tbOrigClose(id); updateTbActive(); };
+var _tbOrigMin = minWin;
+minWin = function(id){ _tbOrigMin(id); updateTbActive(); };
+
+
+// Auto-open about.txt on first visit (offset so desktop is visible behind it)
+(function(){
+  var seen = sessionStorage.getItem('lab_visited');
+  if(!seen){
+    sessionStorage.setItem('lab_visited','1');
+    setTimeout(function(){
+      var el = document.getElementById('about-win');
+      if(el){ el.style.left='60px'; el.style.top='40px'; el.style.transform='none'; }
+      openWin('about-win');
+    }, 700);
+  }
+})();
+
+
+// ── SNAKE LEADERBOARD ──
+var lbOpen = false;
+
+function toggleLeaderboard(){
+  lbOpen = !lbOpen;
+  var panel = document.getElementById('lb-panel');
+  if(!panel) return;
+  panel.style.display = lbOpen ? 'flex' : 'none';
+  if(lbOpen){ loadLeaderboard(); snakeStop(); }
+}
+
+async function loadLeaderboard(){
+  var list = document.getElementById('lb-list');
+  if(!list) return;
+  list.innerHTML = '<div style="color:#4a5a2a;font-size:14px;text-align:center;padding:20px;">loading...</div>';
+  try{
+    var res = await fetch(SB+'/rest/v1/snake_scores?select=name,score,created_at&order=score.desc&limit=20',{
+      headers:{apikey:SK,'Authorization':'Bearer '+SK}
+    });
+    var data = await res.json();
+    if(!Array.isArray(data)||data.length===0){
+      list.innerHTML = '<div style="color:#4a5a2a;font-size:14px;text-align:center;padding:30px;">no scores yet.<br>be the first.</div>';
+      return;
+    }
+    var html = '';
+    data.forEach(function(row, i){
+      var medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'<span style="color:#4a5a2a;font-size:12px;">'+(i+1)+'.</span>';
+      var d = new Date(row.created_at);
+      var ds = (d.getMonth()+1)+'/'+(d.getDate());
+      var isMe = row._highlight;
+      html += '<div style="display:grid;grid-template-columns:32px 1fr 60px 40px;align-items:center;gap:4px;padding:6px 12px;border-bottom:.5px solid #2a2a0a;'+(isMe?'background:rgba(138,186,74,.08);':'')+'">'+
+        '<span style="font-size:15px;text-align:center;">'+medal+'</span>'+
+        '<span style="color:#8aba4a;font-family:var(--font);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+escLb(row.name||'anonymous')+'</span>'+
+        '<span style="color:#6a9030;font-family:var(--font);font-size:16px;text-align:right;">'+row.score+'</span>'+
+        '<span style="color:#3a5a1a;font-size:11px;text-align:right;">'+ds+'</span>'+
+        '</div>';
+    });
+    list.innerHTML = html;
+  } catch(ex){
+    list.innerHTML = '<div style="color:#6a3a3a;font-size:13px;text-align:center;padding:20px;">could not load scores.</div>';
+  }
+}
+
+function escLb(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function submitScore(name, score){
+  try{
+    await fetch(SB+'/rest/v1/snake_scores',{
+      method:'POST',
+      headers:{apikey:SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({name:name||'anonymous',score:score,created_at:new Date().toISOString()})
+    });
+  } catch(ex){ console.log('score save failed',ex); }
+}
+
+// Override game over to show score submit prompt
+var _origGameOver = snakeGameOver;
+snakeGameOver = function(){
+  snakeRunning = false;
+  if(snakeTick){clearInterval(snakeTick);snakeTick=null;}
+  document.removeEventListener('keydown',snakeKey);
+  var ov = document.getElementById('snake-overlay');
+  if(ov){
+    ov.style.display = 'flex';
+    ov.style.flexDirection = 'column';
+    ov.innerHTML =
+      '<div style="font-size:20px;color:#d04040;margin-bottom:6px;">game over</div>'+
+      '<div style="font-size:18px;color:#8aba4a;margin-bottom:2px;">score: '+snakeSc+'</div>'+
+      '<div style="font-size:13px;color:#6a8a3a;margin-bottom:12px;">best: '+snakeHi+'</div>'+
+      (snakeSc > 0 ?
+        '<div style="font-size:13px;color:#6a8a3a;margin-bottom:6px;">add to leaderboard?</div>'+
+        '<input id="lb-name-input" placeholder="your name (optional)" maxlength="20" style="background:#1a1a0a;border:1px solid #3a5a1a;color:#8aba4a;font-family:var(--font);font-size:14px;padding:4px 10px;outline:none;margin-bottom:8px;width:180px;text-align:center;"/>'+
+        '<div style="display:flex;gap:8px;">'+
+          '<button onclick="submitAndPlay()" style="background:#3a5a1a;border:2px solid #8aba4a;color:#8aba4a;font-family:var(--font);font-size:15px;padding:4px 16px;cursor:pointer;">submit + play</button>'+
+          '<button onclick="snakeStart()" style="background:transparent;border:1px solid #3a3a1a;color:#4a6a2a;font-family:var(--font);font-size:14px;padding:4px 12px;cursor:pointer;">skip</button>'+
+        '</div>'
+      : '<button onclick="snakeStart()" style="background:#3a5a1a;border:2px solid #8aba4a;color:#8aba4a;font-family:var(--font);font-size:18px;padding:6px 24px;cursor:pointer;">▶ play again</button>'
+      );
+    // focus name input
+    setTimeout(function(){
+      var inp = document.getElementById('lb-name-input');
+      if(inp) inp.focus();
+    }, 100);
+  }
+};
+
+async function submitAndPlay(){
+  var inp = document.getElementById('lb-name-input');
+  var name = inp ? inp.value.trim() : '';
+  await submitScore(name, snakeSc);
+  snakeStart();
+}
 
 </script>
 </body>
