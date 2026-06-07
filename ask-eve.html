@@ -19,6 +19,18 @@
 <meta name="twitter:description" content="Brand strategist. Artist. Builder. A Windows 95 desktop vibecoded from scratch — AI agent, archive, notes, photos, and a global Snake leaderboard.">
 <meta name="twitter:image" content="https://lab.ivonnealdaz.com/og-image.png">
 <meta name="twitter:site" content="@ivonnealdazz">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0EQPFFGRQV"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0EQPFFGRQV');
+</script>
+<link rel="canonical" href="https://lab.ivonnealdaz.com/ask-eve">
+<meta name="robots" content="index, follow">
+<meta name="author" content="Ivonne Aldaz">
+<meta name="keywords" content="Ivonne Aldaz, brand strategy, creative director, artist, San Antonio, Whitespace, Good World Living, portfolio">
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -517,6 +529,11 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 <body>
 <div id="sky-bg"></div>
 <canvas id="sky-canvas"></canvas>
+<div style="position:absolute;left:-9999px;width:1px;overflow:hidden;" aria-hidden="true">
+  <h1>Ivonne Aldaz — Brand Strategist, Artist, Creative Director</h1>
+  <p>Ivonne Aldaz is a brand strategist and creative director based in San Antonio, TX. Founder of Whitespace (brand strategy studio) and Good World Living (lifestyle platform). Artist with residencies in Provence and Lake Como. This is her personal lab — an experimental portfolio built as a retro Windows desktop.</p>
+  <p>Contact: hello@ivonnealdaz.com</p>
+</div>
 <div id="grain"></div>
 <div id="overlay" onclick="closeAll()"></div>
 
@@ -1456,16 +1473,39 @@ function arcClick(e){
 
 // NOTES
 var NOTES={
-  movies:[{t:"films i keep returning to",d:"ongoing",c:"Chungking Express\nIn the Mood for Love\nThe Royal Tenenbaums\nEternal Sunshine\nLost in Translation\nThe Virgin Suicides\nMulholland Drive\n\n[add yours here]"},{t:"films to watch",d:"2026",c:"[placeholder — add your watchlist here]"}],
-  books:[{t:"books that changed something",d:"ongoing",c:"[placeholder — add books here]"},{t:"currently reading",d:"2026",c:"[placeholder]"}],
-  quotes:[{t:"things i keep coming back to",d:"ongoing",c:"[placeholder — add quotes here]"}],
-  music:[{t:"songs for different moods",d:"ongoing",c:"[placeholder]\n\nIdeas:\n• songs for painting\n• songs for long drives\n• songs for late nights"}],
-  travel:[{t:"places that stayed",d:"ongoing",c:"Provence — September 2024\nLake Como — March 2024, July 2025\nSt. Antonin Noble Val — May 2023\n\n[add more]"},{t:"places to go",d:"wishlist",c:"[placeholder]"}],
-  ideas:[{t:"things i want to build",d:"2026",c:"[placeholder — your ideas list]"}],
-  recipes:[{t:"recipes worth keeping",d:"ongoing",c:"[placeholder]"}],
-  reminders:[{t:"things to remember",d:"ongoing",c:"[placeholder]"}],
-  thoughts:[{t:"notes to self",d:"ongoing",c:"[placeholder — the unfinished thoughts]"}],
-  references:[{t:"things i reference often",d:"ongoing",c:"[placeholder — links, people, resources]"}]
+  movies:[
+    {t:"favorite films",d:"ongoing",c:"1. Interstellar\n2. Pursuit of Happyness\n3. 50 First Dates\n4. Mean Girls\n5. The Notebook\n6. When Harry Met Sally\n7. Eat, Pray, Love\n8. Wolf of Wall Street\n9. White Chicks\n10. Pineapple Express\n11. Pretty Woman"},
+    {t:"favorite TV shows",d:"ongoing",c:"1. Sex and the City\n2. Mad Men\n3. The Office\n4. Dark\n5. Handmaid\u2019s Tale\n6. Gossip Girl\n7. Breaking Bad\n8. Game of Thrones"}
+  ],
+  books:[
+    {t:"favorite books",d:"ongoing",c:"1. A New Earth\n2. The Alchemist\n3. Power\n4. Four Agreements\n5. Atomic Habits\n6. Daily Stoic"},
+    {t:"currently reading",d:"2026",c:"Becoming Supernatural"}
+  ],
+  quotes:[
+    {t:"things i keep coming back to",d:"ongoing",c:"\u201cThat it will never come again is what makes life so sweet.\u201d\n\u2014 Emily Dickinson"}
+  ],
+  music:[
+    {t:"favorite songs",d:"ongoing",c:"Vienna \u2014 Billy Joel\nHotel California \u2014 The Eagles\nTime \u2014 Pink Floyd\nEl Lugar Correcto \u2014 Natalia Lafourcade"}
+  ],
+  travel:[
+    {t:"places that stayed",d:"ongoing",c:"Croatia\nDolomites\nCorfu\nSouth of France\n\nAlso: Provence \u2014 September 2024\nLake Como \u2014 March 2024, July 2025\nSt. Antonin Noble Val \u2014 May 2023"},
+    {t:"travel bucket list",d:"wishlist",c:"Madeira\nIceland\nThailand\nJapan\nVietnam\nCamino de Santiago\nYellowstone"}
+  ],
+  ideas:[
+    {t:"things i want to build",d:"2026",c:"An AI that does my laundry."}
+  ],
+  recipes:[
+    {t:"my famous orange beet salad",d:"ongoing",c:"[recipe details coming soon]"}
+  ],
+  reminders:[
+    {t:"things to remember",d:"ongoing",c:"Everything is temporary.\nBe as you wish to seem.\nAlways do your best."}
+  ],
+  thoughts:[
+    {t:"notes to self",d:"ongoing",c:"TBD"}
+  ],
+  references:[
+    {t:"references",d:"ongoing",c:"TBD"}
+  ]
 };
 
 function showNotesMobileBar(){
@@ -1854,7 +1894,7 @@ ENTRIES_DATA['/entry-newsletter'] = {
 function openEntryWindow(path, title){
   var data = ENTRIES_DATA[path];
   if(!data){
-    openBrowser('https://ivonne-lab.vercel.app'+path, title||path);
+    openBrowser('https://lab.ivonnealdaz.com'+path, title||path);
     return;
   }
   var titleEl = document.getElementById('entry-win-title');
