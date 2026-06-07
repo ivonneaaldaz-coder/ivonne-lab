@@ -1450,7 +1450,7 @@ function renderArc(filter){
 
 function arcClick(e){
   if(!e.url){ showNoLink(e.title); return; }
-  if(e.url.startsWith('/')){ window.open(e.url,'_blank'); }
+  if(e.url.startsWith('/')){ openEntryWindow(e.url, e.title); }
   else { openBrowser(e.url, e.title); }
 }
 
@@ -1793,6 +1793,98 @@ function toggleNested(el){
   var was=el.classList.contains('open');
   document.querySelectorAll('.sm-nested-trigger.open').forEach(function(t){t.classList.remove('open');});
   if(!was){el.classList.add('open');if(window.innerWidth>520)openNested(el);}
+}
+
+
+// ── ENTRY VIEWER ──
+var ENTRIES_DATA = {};
+
+ENTRIES_DATA['/entry'] = {
+  title: 'CV Agent — Ask Ivonne',
+  date: 'May 2026',
+  tags: ['built'],
+  lede: 'Parsed a 10-tab Google Sheet of personal CV data and vibecoded it into a navigable interactive profile + an AI agent that answers questions about the work. Built with Claude, zero templates, no design tools.',
+  sections: [
+    {label:'The Problem', body:'A CV is a dead document. It sits in a PDF, gets skimmed for 30 seconds, closes. There is no way to ask it a question, filter by what you care about, or understand the person behind the entries.||I had a Google Sheet with 10 tabs covering a decade of work. The question was whether I could turn that raw data into something worth visiting.'},
+    {label:'What I Built', table:[['Part 1','Interactive CV — tabbed, filterable, fully linked.'],['Part 2','AI agent — answers questions in first person, sourced from actual CV data.'],['Stack','Vanilla HTML, CSS, JS. Anthropic API. No frameworks.'],['Deployed','GitHub + Vercel. Live at lab.ivonnealdaz.com/ask']]},
+    {label:'Process', steps:[['01','Uploaded the spreadsheet','Dropped the .xlsx into Claude. It parsed all 10 tabs and extracted the raw data.'],['02','Built the interactive CV','Designed and coded a tabbed interface with dark editorial aesthetic. Tab navigation, linked entries, responsive.'],['03','Layered in the AI agent','Built the Ask interface — a chat UI calling the Anthropic API with a system prompt trained on the full CV.'],['04','Deployed as a mini-site','Multiple HTML files, shared nav. Pushed to GitHub, deployed on Vercel. Live in under an hour.']]},
+    {label:'Reflection', quote:'The interesting part was the editorial work. Deciding what goes in the system prompt, how the agent sounds, what it refuses to answer. Brand strategy applied to AI.'}
+  ]
+};
+
+ENTRIES_DATA['/entry-dominion'] = {
+  title: 'The Dominion — Group Exhibition',
+  date: 'March 2026',
+  tags: ['art'],
+  lede: 'Abstract expressionism alongside landscape. Two large paintings sold. A room full of work that surprised me — including my own.',
+  sections: [
+    {label:'Context', body:'This show came at a specific moment — I had spent the previous two years making work in Europe, in controlled residency environments. The Dominion brought that work home. Into a room where people would walk past it with a glass of wine and make a split-second decision about whether to stop.||That is a different kind of pressure than a white-wall gallery. And it clarified something: the work that stops people is not always the work you expect.'},
+    {label:'The Work', body:'I showed a mix — large abstract expressionist canvases and smaller landscape pieces from Provence and Como. The abstracts outsold the landscapes. That surprised me and did not.||Works shown: what I didn\u2019t say (36x48, oil, sold) · before dark (30x40, acrylic, sold) · enough to stay (24x30, oil) · just because (18x24, acrylic)'},
+    {label:'What I Learned', body:'Abstract work communicates something different in a social setting than landscape does. Landscape asks you to look at a place. Abstract asks you to look at a feeling.||The titles matter more than I thought. what I didn\u2019t say stopped people before they even looked at the painting.'},
+    {label:'Quote', quote:'\u201cI don\u2019t usually buy art but I kept coming back to it.\u201d \u2014 collector, after purchasing what I didn\u2019t say'}
+  ]
+};
+
+ENTRIES_DATA['/entry-provence'] = {
+  title: 'NG Art Residency, Provence',
+  date: 'September 2024',
+  tags: ['art'],
+  lede: 'Four weeks in Maussane-les-Alpilles. Painting from life, painting from memory, and learning to tell the difference between the two.',
+  sections: [
+    {label:'Why Provence', body:'I applied without expecting to get in. A full month in Provence felt like a different scale of commitment — to the practice, to myself, to the idea that this was real and not a hobby I was managing around the rest of my life.||I got in. I went. It changed things.'},
+    {label:'The Work', body:'Provence in September is specific. The light is late-summer thick, gold by 4pm, gone fast. I painted en plein air every morning and worked in studio every afternoon.||By week three I had stopped trying to capture the landscape and started using it as raw material for something more interior. That shift is visible in the work.'},
+    {label:'Timeline', table:[['Week 1','Arrival. Plein air in the village. Mostly bad paintings. Necessary.'],['Week 2','Found a rhythm. Morning light, olive groves, studio afternoons. First good canvas.'],['Week 3','The shift. Less observational, more interior. Started working larger.'],['Week 4','Finishing, editing, letting go. Did not want to leave.']]},
+    {label:'What It Changed', body:'The residency made the practice non-negotiable. When you spend four weeks doing nothing but making work, you stop being able to pretend it is optional.||Work from this period was shown at The Dominion in San Antonio (March 2026). Some sold. Some is still in my studio. Some I painted over.'}
+  ]
+};
+
+ENTRIES_DATA['/entry-newsletter'] = {
+  title: 'Future of Marketing Newsletter',
+  date: '2020 – 2023',
+  tags: ['brand','writing'],
+  lede: '100+ issues. Three years. A weekly dispatch on where marketing was going — and what it meant for brands trying to build something real.',
+  sections: [
+    {label:'The Numbers', table:[['Issues','100+ published'],['Growth','7,000 → 50,000 subscribers'],['Open rate','8% → 25%'],['Run','3 years, zero missed issues']]},
+    {label:'What It Was', body:'I started the newsletter in 2020. The industry was moving fast and I was reading everything, synthesizing it. At some point someone said: this should be public. So I made it public and wrote it every week for three years without missing an issue.'},
+    {label:'What I Learned', body:'Writing to 50,000 people weekly for three years is a forcing function for intellectual honesty. You cannot hedge. You have to have a point of view, defend it, and update it publicly when you are wrong.||A brand that does not have a point of view is not a brand. It is a logo.'},
+    {label:'Legacy', body:'The newsletter ended in 2023 when I shifted focus to building Whitespace. Some of what I wrote became the intellectual foundation for how Whitespace approaches positioning and narrative work.'}
+  ]
+};
+
+function openEntryWindow(path, title){
+  var data = ENTRIES_DATA[path];
+  if(!data){
+    openBrowser('https://ivonne-lab.vercel.app'+path, title||path);
+    return;
+  }
+  var titleEl = document.getElementById('entry-win-title');
+  var entryContent = document.getElementById('entry-win-content');
+  if(titleEl) titleEl.textContent = data.title;
+  var html = '';
+  var tagsHtml = (data.tags||[]).map(function(t){return '<span class="entry-tag tag-'+t+'">'+t+'</span>';}).join('');
+  html += '<div class="entry-meta-row"><span style="font-size:12px;color:var(--dim);font-family:var(--font);">'+data.date+'</span>'+tagsHtml+'</div>';
+  html += '<h1>'+data.title+'</h1>';
+  html += '<p class="entry-lede">'+data.lede+'</p>';
+  (data.sections||[]).forEach(function(sec){
+    html += '<div class="entry-section"><h3>'+sec.label+'</h3>';
+    if(sec.body){
+      sec.body.split('||').forEach(function(p){if(p.trim())html+='<p>'+p+'</p>';});
+    }
+    if(sec.table){
+      html+='<table class="entry-detail-table">';
+      sec.table.forEach(function(r){html+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>';});
+      html+='</table>';
+    }
+    if(sec.steps){
+      sec.steps.forEach(function(s){
+        html+='<div class="entry-step"><div class="step-num">'+s[0]+'</div><div><div class="step-title">'+s[1]+'</div><div class="step-desc">'+s[2]+'</div></div></div>';
+      });
+    }
+    if(sec.quote){html+='<blockquote>'+sec.quote+'</blockquote>';}
+    html += '</div>';
+  });
+  if(entryContent) entryContent.innerHTML = html;
+  openWin('entry-win');
 }
 
 // AUTO-OPEN ABOUT
