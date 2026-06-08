@@ -322,7 +322,8 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 @media(max-width:520px){
   #icons{top:8px;left:8px;gap:3px;width:auto;grid-template-columns:68px 68px;max-height:calc(100vh - 90px);overflow-y:auto;padding-bottom:8px;}
   .ico{width:68px;}
-  #sp-pin{display:none!important;}
+  #sp-pin{display:block!important;width:100% !important;left:0 !important;right:0 !important;bottom:44px !important;border-left:none !important;}
+  #sp-pin iframe{height:80px !important;width:100% !important;} /* hidden on mobile */
   #sticky{display:none;}
   .win{max-width:96vw!important;}
   .tbtn{min-width:22px;min-height:22px;width:22px;height:22px;font-size:11px;}
@@ -338,6 +339,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   .tb-sep{display:none;}
   #tb-clock{font-size:13px;padding:2px 5px;}
   #tb-date{display:none;}
+  #desktop-contact{display:none !important;}
   .arc-body{grid-template-columns:repeat(auto-fill,minmax(70px,1fr));}
 
   /* Start menu mobile accordion */
@@ -350,7 +352,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   #smenu .sm-cat.open .sm-arrow{transform:rotate(90deg);}
   #smenu .sm-sub{position:static !important;left:auto !important;top:auto !important;width:100% !important;min-width:unset !important;display:none !important;background:#ede9e2;border:none !important;border-bottom:1px solid var(--border) !important;box-shadow:none !important;padding:4px 0 !important;}
   #smenu .sm-cat.open>.sm-sub{display:block !important;}
-  #smenu .sm-sub .si{font-size:16px !important;padding:11px 16px 11px 28px !important;border-bottom:.5px solid rgba(0,0,0,.06) !important;}
+  #smenu .sm-sub .si{font-size:15px !important;padding:7px 12px 7px 20px !important;border-bottom:.5px solid rgba(0,0,0,.06) !important;}
   #smenu .sm-items>.si{font-size:17px !important;padding:13px 16px !important;border-bottom:1px solid var(--border) !important;}
   #smenu .sm-div{margin:0 !important;}
 }
@@ -427,10 +429,8 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
 /* Mobile note viewer back button */
 #note-viewer{position:relative;}
-#nm-viewer-back{display:none;position:sticky;top:0;z-index:5;background:#e8e4de;border-bottom:1px solid var(--border);padding:5px 10px;margin:-14px -16px 10px;cursor:pointer;font-family:var(--font);font-size:14px;color:var(--navy);}
-@media(max-width:520px){
-  #nm-viewer-back{display:block;}
-}
+#nm-viewer-back{display:none !important;position:sticky;top:0;z-index:5;background:#e8e4de;border-bottom:1px solid var(--border);padding:5px 10px;margin:-14px -16px 10px;cursor:pointer;font-family:var(--font);font-size:14px;color:var(--navy);}
+
 
 
 .sm-nested-trigger{position:relative;cursor:pointer;gap:4px;}
@@ -1563,7 +1563,7 @@ function renderNotes(cat){
       else if(line.startsWith('•')){bodyHtml+='<div style="padding-left:12px;margin:2px 0;">'+line+'</div>';}
       else{bodyHtml+='<div style="margin:2px 0;">'+line+'</div>';}
     });
-    viewer.innerHTML='<div id="nm-viewer-back" onclick="nmViewerBack()">◀ back to list</div><h2>'+n.t+'</h2><div class="note-meta">'+n.d+'</div><div class="note-content">'+bodyHtml+'</div>';
+    viewer.innerHTML='<h2>'+n.t+'</h2><div class="note-meta">'+n.d+'</div><div class="note-content">'+bodyHtml+'</div>';
     if(window.innerWidth<=520){list.style.display='none';viewer.style.display='block';viewer.style.width='100%';}
   }
   notes.forEach(function(n,i){
