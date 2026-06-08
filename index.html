@@ -414,6 +414,80 @@ a{color:inherit;text-decoration:none;}
    MOBILE — single source of truth
    max-width: 520px
 ═══════════════════════════════════════ */
+
+/* ── START MENU ── */
+#smenu{
+  display:none;
+  position:fixed;
+  bottom:32px;
+  left:0;
+  width:240px;
+  background:var(--win);
+  border:2px solid;
+  border-color:#fff var(--border-dark) var(--border-dark) #fff;
+  box-shadow:4px 0 12px rgba(0,0,0,.3);
+  z-index:9000;
+  flex-direction:row;
+}
+#smenu.open{display:flex;}
+.sm-side{
+  background:linear-gradient(to top,var(--tbar1),var(--tbar2));
+  width:28px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding-bottom:8px;
+  flex-shrink:0;
+}
+.sm-side span{
+  font-size:13px;color:#fff;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  font-weight:700;letter-spacing:1px;
+}
+.sm-items{flex:1;padding:2px 0;overflow:visible;position:relative;}
+.sm-cat{
+  font-size:15px;
+  padding:5px 8px 5px 12px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:var(--text);
+  position:relative;
+  user-select:none;
+}
+.sm-cat:hover,.sm-cat.open{background:var(--tbar1);color:#fff;}
+.sm-cat .sm-arrow{font-size:10px;opacity:.7;transition:transform .15s;}
+.sm-sub{
+  display:none;
+  position:fixed;
+  background:var(--win);
+  border:2px solid;
+  border-color:#fff var(--border-dark) var(--border-dark) #fff;
+  box-shadow:4px 4px 10px rgba(0,0,0,.3);
+  min-width:200px;
+  z-index:9100;
+  padding:2px 0;
+}
+.sm-cat.open>.sm-sub{display:block;}
+.sm-div{border-top:1px solid var(--border);margin:3px 0;}
+.si{
+  font-size:15px;
+  padding:4px 16px 4px 12px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  color:var(--text);
+  white-space:nowrap;
+}
+.si:hover{background:var(--tbar1);color:#fff;}
+.sm-nested-trigger{position:relative;cursor:pointer;gap:4px;}
+.sm-nested{position:fixed !important;min-width:180px;display:none;z-index:9200;}
+.sm-nested-trigger.open>.sm-nested{display:block !important;}
+
 @media(max-width:520px){
 
   /* ICONS: 2-col grid, upper left */
