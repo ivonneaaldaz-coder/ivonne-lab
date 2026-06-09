@@ -1316,6 +1316,8 @@ function activateIcon(ico){
   ico.classList.add('flash');
   setTimeout(function(){ico.classList.remove('flash');},260);
   var a=ico.dataset.action,t=ico.dataset.target,ti=ico.dataset.title||'';
+  var label=ico.querySelector('.lb');
+  if(typeof gtag!=='undefined') gtag('event','icon_open',{app:label?label.textContent:t});
   if(a==='win')openWin(t);
   else if(a==='browser')openBrowser(t,ti);
   else if(a==='external')window.open(t,'_blank');
@@ -1369,6 +1371,7 @@ async function sendMessage(){
   var inp=document.getElementById('user-input'),btn=document.getElementById('send-btn'),q=inp.value.trim();
   if(!q)return;inp.value='';btn.disabled=true;
   addMsg('user',q);msgs.push({role:'user',content:q});addMsg('eve','',true);
+  if(typeof gtag!=='undefined') gtag('event','eve_message',{message_count:msgs.filter(function(m){return m.role==='user';}).length});
   try{
     var res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:msgs})});
     var data=await res.json();var tr=document.getElementById('tr');if(tr)tr.remove();
@@ -1434,6 +1437,7 @@ var arcFilter='all';
 
 function filterArc(f,btn){
   arcFilter=f;
+  if(typeof gtag!=='undefined') gtag('event','archive_filter',{filter:f});
   if(btn){document.querySelectorAll('.arc-filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');}
   renderArc(f);
 }
@@ -1484,6 +1488,7 @@ function renderArc(filter){
 }
 
 function arcClick(e){
+  if(typeof gtag!=='undefined') gtag('event','archive_click',{entry:e.title,type:e.type||''});
   if(!e.url){ showNoLink(e.title); return; }
   if(e.url.startsWith('/')){ openEntryWindow(e.url, e.title); }
   else { openBrowser(e.url, e.title); }
@@ -1589,6 +1594,7 @@ function nmViewerBack(){
 // LEAVE A NOTE
 async function submitNote(){
   var msg=document.getElementById('nf-message').value.trim();if(!msg)return;
+  if(typeof gtag!=='undefined') gtag('event','note_submitted');
   var email=document.getElementById('nf-email').value.trim();
   var name=document.getElementById('nf-name').value.trim()||'anonymous';
   try{await fetch(SB+'/rest/v1/visitor_notes',{method:'POST',headers:{apikey:SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({message:msg,email:email||null,name:name,created_at:new Date().toISOString()})});}catch(ex){}
@@ -1697,6 +1703,7 @@ function snakeResizeCanvas(){
 }
 function snakeStart(){
   var ov=document.getElementById('snake-overlay');if(ov)ov.style.display='none';
+  if(typeof gtag!=='undefined') gtag('event','snake_start');
   snakeBody=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
   snakeDx=1;snakeDy=0;snakeSc=0;snakeRunning=true;snakeSpeed=160;
   snakePlaceFood();
@@ -1798,6 +1805,7 @@ async function submitScore(name,score){
 }
 async function submitAndPlay(){
   var inp=document.getElementById('lb-name-input');
+  if(typeof gtag!=='undefined') gtag('event','snake_score_submitted',{score:snakeSc});
   await submitScore(inp?inp.value.trim():'',snakeSc);
   snakeStart();
 }
