@@ -322,8 +322,8 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 @media(max-width:520px){
   #icons{top:8px;left:8px;gap:3px;width:auto;grid-template-columns:68px 68px;max-height:calc(100vh - 90px);overflow-y:auto;padding-bottom:8px;}
   .ico{width:68px;}
-  #sp-pin{display:block !important;width:260px !important;right:0 !important;left:auto !important;bottom:44px !important;border-left:1px solid rgba(0,0,0,.1) !important;}
-  #sp-pin iframe{height:72px !important;width:260px !important;} /* hidden on mobile */
+  #sp-pin{display:block !important;width:320px !important;right:0 !important;left:auto !important;bottom:44px !important;border-left:1px solid rgba(0,0,0,.1) !important;}
+  #sp-pin iframe{height:80px !important;width:320px !important;} /* hidden on mobile */
   #sticky{display:none;}
   .win{max-width:96vw!important;}
   .tbtn{min-width:22px;min-height:22px;width:22px;height:22px;font-size:11px;}
@@ -618,28 +618,43 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   #smenu .sm-nested-trigger{
     display:block !important;
     width:100% !important;
-    font-size:15px !important;
+    padding:0 !important;
     border-bottom:.5px solid rgba(0,0,0,.06) !important;
     box-sizing:border-box !important;
     cursor:pointer !important;
-    padding:0 !important;
   }
   #smenu .sm-nested-trigger>span:first-child{
-    display:inline-flex !important;
+    display:flex !important;
     align-items:center !important;
-    padding:9px 12px 9px 24px !important;
-    width:calc(100% - 32px) !important;
+    justify-content:space-between !important;
+    padding:9px 16px 9px 24px !important;
+    width:100% !important;
+    box-sizing:border-box !important;
+    font-size:15px !important;
   }
-  #smenu .sm-nested-trigger>span:last-child{
-    display:inline-flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    width:32px !important;
-    vertical-align:middle !important;
-    font-size:10px !important;
+  #smenu .sm-nested-trigger>span:last-child{display:none !important;}
+  #smenu .sm-nested{
+    position:static !important;
+    width:100% !important;
+    min-width:unset !important;
+    background:#e6e2db !important;
+    border:none !important;
+    border-top:1px solid rgba(0,0,0,.06) !important;
+    box-shadow:none !important;
+    padding:4px 0 !important;
+    display:none !important;
+    left:auto !important;
+    top:auto !important;
   }
-  #smenu .sm-nested .si{padding-left:32px !important;}
-}
+  #smenu .sm-nested-trigger.open>.sm-nested{display:block !important;}
+  #smenu .sm-nested .si{
+    padding:9px 12px 9px 32px !important;
+    font-size:15px !important;
+    border-bottom:.5px solid rgba(0,0,0,.04) !important;
+    display:flex !important;
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
 
 </style>
 </head>
@@ -677,7 +692,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 <!-- SPOTIFY PIN -->
 <div id="desktop-contact" style="position:fixed;bottom:38px;left:50%;transform:translateX(-50%);font-family:var(--font);font-size:12px;color:rgba(255,255,255,0.25);z-index:10;pointer-events:none;text-align:center;white-space:nowrap;text-shadow:1px 1px 2px rgba(0,0,0,0.5);">hello@ivonnealdaz.com · bywhitespace.com</div>
 <div id="sp-pin">
-  <iframe src="https://open.spotify.com/embed/playlist/0k23fYvaVXxyfo8j5zl0cU?utm_source=generator&theme=0" width="320" height="80" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  <iframe src="https://open.spotify.com/embed/playlist/3MJORK5D5v7d5cSG1Cte6a?utm_source=generator&theme=0" width="320" height="80" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 </div>
 
 <!-- ASK EVE -->
@@ -814,7 +829,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   <div class="tbar" onmousedown="dragStart(event,'music-win')"><div class="tbar-title">🎵 music.exe</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('music-win')">_</button><button class="tbtn" onclick="maxWin('music-win')">□</button><button class="tbtn" onclick="closeWin('music-win')">✕</button></div></div>
   <div class="music-body">
     <div class="music-hdr"><div class="now-lbl">▶ NOW PLAYING</div><div class="now-title">ivonne's playlist</div><div class="now-sub"><a href="https://open.spotify.com/user/1244680102" target="_blank">view all playlists ↗</a></div></div>
-    <div class="sp-embed"><iframe src="https://open.spotify.com/embed/playlist/0k23fYvaVXxyfo8j5zl0cU?utm_source=generator&theme=0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+    <div class="sp-embed"><iframe src="https://open.spotify.com/embed/playlist/3MJORK5D5v7d5cSG1Cte6a?utm_source=generator&theme=0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
   </div>
   <div class="resize-corner"></div>
 </div>
