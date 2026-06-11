@@ -1456,7 +1456,8 @@ check back.</pre></div>
       <div class="sm-sub" style="bottom:auto;top:0;">
         <a class="si" href="/field-notes" onclick="closeAll()">📁 field_notes</a>
         <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ archive.exe</div>
-        <div class="si sm-nested-trigger" onmouseenter="openNested(this)" onclick="toggleNested(this)">📁 ventures <span style="margin-left:auto;font-size:10px;opacity:.7;">▶</span>
+        <div class="sm-cat sm-nested-trigger" onmouseenter="openNested(this)" onclick="toggleNested(this)" style="border-bottom:none;">
+          <span>📁 ventures</span><span class="sm-arrow">▶</span>
           <div class="sm-sub sm-nested">
             <div class="si" onclick="openWin('ventures-win');closeAll()">📁 open folder</div>
             <div class="si" onclick="openBrowser('https://bywhitespace.com','Whitespace');closeAll()">💼 whitespace</div>
