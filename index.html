@@ -656,6 +656,65 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     box-sizing:border-box !important;
   }
 
+
+/* ── WORK_WITH_ME.exe ── */
+.wm-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--win);cursor:default;}
+.wm-row:hover{background:rgba(26,58,107,.05);}
+.wm-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center;}
+.wm-label{font-family:var(--font);font-size:16px;color:var(--text);font-weight:700;}
+.wm-desc{font-family:var(--font);font-size:13px;color:var(--dim);margin-top:2px;}
+.wm-btn{
+  font-family:var(--font);
+  font-size:16px;
+  background:#d4cfc8;
+  border-top:2px solid #ffffff;
+  border-left:2px solid #ffffff;
+  border-right:2px solid #7a6f62;
+  border-bottom:2px solid #7a6f62;
+  padding:8px 22px;
+  cursor:pointer;
+  color:var(--text);
+  white-space:nowrap;
+  min-width:120px;
+  text-align:center;
+}
+.wm-btn:hover{background:#c8c0b8;}
+.wm-btn:active{
+  border-top:2px solid #7a6f62;
+  border-left:2px solid #7a6f62;
+  border-right:2px solid #ffffff;
+  border-bottom:2px solid #ffffff;
+  transform:translate(1px,1px);
+}
+.wm-primary{
+  background:var(--tbar1);
+  color:#ffffff;
+  border-top:2px solid #6090d0;
+  border-left:2px solid #6090d0;
+  border-right:2px solid #08164a;
+  border-bottom:2px solid #08164a;
+}
+.wm-primary:hover{background:#2a4a9a;}
+.wm-primary:active{
+  border-top:2px solid #08164a;
+  border-left:2px solid #08164a;
+  border-right:2px solid #6090d0;
+  border-bottom:2px solid #6090d0;
+}
+
+/* ── CHATROOM.exe ── */
+.cr-room{font-family:var(--font);font-size:16px;color:#b0b0e0;padding:9px 18px 9px 20px;cursor:default;letter-spacing:.01em;}
+.cr-room:hover,.cr-room.active{background:#1e1e50;color:#d8d8ff;}
+.cr-user{font-family:var(--font);font-size:13px;color:#60c090;padding:3px 0;}
+.cr-msg{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;padding:2px 0;}
+.cr-name{font-family:var(--font);font-size:14px;font-weight:700;flex-shrink:0;}
+.cr-text{font-family:var(--font);font-size:14px;color:#b0b0d8;line-height:1.6;}
+.cr-system{font-family:var(--font);font-size:13px;color:#6060a0;font-style:italic;padding:4px 0;}
+
+/* ── ICON highlight: WORK_WITH_ME slightly more noticeable ── */
+#ico-work .em{font-size:36px;}
+#ico-work .lb{color:var(--navy);font-weight:700;}
+
 </style>
 </head>
 <body>
@@ -687,6 +746,8 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   <div class="ico" id="ico-ventures" data-action="win" data-target="ventures-win"><div class="em">📁</div><div class="lb">ventures</div></div>
   <div class="ico" id="ico-note-form" data-action="win" data-target="note-form-win"><div class="em">✉️</div><div class="lb">leave a note</div></div>
   <div class="ico" id="ico-about" data-action="win" data-target="about-win"><div class="em">📄</div><div class="lb">about.txt</div></div>
+  <div class="ico" id="ico-work" data-action="win" data-target="work-win"><div class="em">📋</div><div class="lb">WORK_WITH_ME.exe</div></div>
+  <div class="ico" id="ico-chat-room" data-action="win" data-target="chat-room-win"><div class="em">💬</div><div class="lb">CHATROOM.exe</div></div>
 </div>
 
 <!-- SPOTIFY PIN -->
@@ -985,6 +1046,132 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 </div>
 
 <!-- WHITESPACE-LEGACY -->
+
+
+<!-- CHATROOM -->
+<div class="win off" id="chat-room-win" style="width:min(520px,94vw);height:min(560px,85vh);top:40px;left:calc(50% - 260px);display:none;" onmousedown="focusWin('chat-room-win')">
+  <div class="tbar" onmousedown="dragStart(event,'chat-room-win')">
+    <div class="tbar-title">💬 CHATROOM.exe</div>
+    <div class="tbar-btns">
+      <button class="tbtn" onclick="minWin('chat-room-win')">_</button>
+      <button class="tbtn" onclick="maxWin('chat-room-win')">□</button>
+      <button class="tbtn" onclick="closeWin('chat-room-win')">✕</button>
+    </div>
+  </div>
+  <!-- Classic toolbar -->
+  <div style="background:#d4cfc8;border-bottom:2px solid var(--border-dark);padding:3px 8px;font-family:var(--font);font-size:13px;color:var(--dim);display:flex;align-items:center;gap:16px;flex-shrink:0;">
+    <span>File</span><span>Rooms</span><span>People</span><span>Help</span>
+    <span style="margin-left:auto;font-size:11px;color:var(--accent);">● connected</span>
+  </div>
+  <!-- Main layout: user list + chat area -->
+  <div style="flex:1;display:flex;overflow:hidden;background:#1a1a2e;">
+    <!-- Left: room list -->
+    <div style="width:160px;flex-shrink:0;background:#12122a;border-right:1px solid #2a2a4a;display:flex;flex-direction:column;">
+      <div style="padding:10px 12px;font-family:var(--font);font-size:12px;color:#8080c0;letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid #2a2a4a;">Chat Rooms</div>
+      <div style="flex:1;overflow-y:auto;padding:6px 0;">
+        <div class="cr-room active">🎨 artists</div>
+        <div class="cr-room">🔨 builders</div>
+        <div class="cr-room">📣 marketers</div>
+        <div class="cr-room">✈️ travelers</div>
+        <div class="cr-room">💬 random</div>
+      </div>
+      <div style="padding:8px 10px;border-top:1px solid #2a2a4a;">
+        <div style="font-family:var(--font);font-size:12px;color:#8080c0;letter-spacing:.1em;margin-bottom:8px;">ONLINE NOW</div>
+        <div class="cr-user" style="color:#60c090;">● ivonne_a</div>
+        <div class="cr-user" style="color:#60c090;">● curious_one</div>
+        <div class="cr-user" style="color:#60c090;">● builder_99</div>
+        <div class="cr-user" style="color:#505070;">○ wanderer</div>
+        <div class="cr-user" style="color:#505070;">○ mk_strat</div>
+      </div>
+    </div>
+    <!-- Right: chat area with coming soon overlay -->
+    <div style="flex:1;display:flex;flex-direction:column;position:relative;">
+      <!-- Fake chat messages -->
+      <div style="flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;">
+        <div class="cr-msg"><span class="cr-name" style="color:#7a9fe0;">ivonne_a</span><span class="cr-text">hey everyone, welcome to the artists room 🎨</span></div>
+        <div class="cr-msg"><span class="cr-name" style="color:#e07a9f;">curious_one</span><span class="cr-text">this is giving major 2002 vibes and i'm here for it</span></div>
+        <div class="cr-msg"><span class="cr-name" style="color:#7ae0b0;">builder_99</span><span class="cr-text">found this through the lab portfolio — genuinely impressive</span></div>
+        <div class="cr-msg"><span class="cr-name" style="color:#7a9fe0;">ivonne_a</span><span class="cr-text">building something for people who are curious, creative, a little weird about the internet</span></div>
+        <div class="cr-msg"><span class="cr-name" style="color:#e07a9f;">curious_one</span><span class="cr-text">when does this actually launch??</span></div>
+        <div class="cr-msg cr-system">*** builder_99 has entered the room ***</div>
+        <div class="cr-msg"><span class="cr-name" style="color:#7ae0b0;">builder_99</span><span class="cr-text">i'd come back for this. drop a notify me or something</span></div>
+      </div>
+      <!-- Input bar (fake) -->
+      <div style="background:#12122a;border-top:1px solid #2a2a4a;padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <div style="flex:1;background:#0a0a1a;border:1px solid #2a2a4a;padding:5px 10px;font-family:var(--font);font-size:13px;color:#4a4a6a;">say something...</div>
+        <button style="background:#2a2a6a;border:1px solid #4a4a9a;color:#8a8aca;font-family:var(--font);font-size:13px;padding:4px 12px;cursor:default;">Send</button>
+      </div>
+      <!-- Coming soon overlay -->
+      <div style="position:absolute;inset:0;background:rgba(10,10,20,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;backdrop-filter:blur(2px);">
+        <div style="font-family:var(--font);font-size:28px;color:#7a9fe0;letter-spacing:.05em;">CHATROOM.exe</div>
+        <div style="font-family:var(--font);font-size:15px;color:#9090c0;text-align:center;line-height:1.7;max-width:300px;">a small corner of the internet<br>for curious people.<br><br>inspired by Yahoo Chat, AIM, MSN Messenger,<br>and the weird little communities<br>that made the early internet feel human.</div>
+        <div style="font-family:var(--font);font-size:14px;color:#7070b0;letter-spacing:.1em;">▓▓▓▓▓▓░░░░ building...</div>
+        <button onclick="openWin('note-form-win')" style="background:#1a1a4a;border:2px solid #4a4a9a;color:#8a8aca;font-family:var(--font);font-size:15px;padding:8px 24px;cursor:pointer;margin-top:4px;">📬 Notify Me</button>
+        <div style="font-family:var(--font);font-size:13px;color:#6060a0;">leave your email in the note — i'll reach out when it's ready</div>
+      </div>
+    </div>
+  </div>
+  <div style="background:#d4cfc8;border-top:2px solid var(--border-dark);padding:2px 8px;font-family:var(--font);font-size:12px;color:var(--dim);flex-shrink:0;display:flex;justify-content:space-between;">
+    <span style="color:var(--dim);">artists · 3 online</span>
+    <span style="color:var(--accent);">CHATROOM.exe v0.1 — coming soon</span>
+  </div>
+  <div class="resize-corner"></div>
+</div>
+
+<!-- WORK WITH ME -->
+<div class="win off" id="work-win" style="width:min(480px,94vw);height:min(520px,82vh);top:55px;left:calc(50% - 240px);display:none;" onmousedown="focusWin('work-win')">
+  <div class="tbar" onmousedown="dragStart(event,'work-win')">
+    <div class="tbar-title">📋 WORK_WITH_ME.exe</div>
+    <div class="tbar-btns">
+      <button class="tbtn" onclick="minWin('work-win')">_</button>
+      <button class="tbtn" onclick="maxWin('work-win')">□</button>
+      <button class="tbtn" onclick="closeWin('work-win')">✕</button>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;background:var(--win);padding:0;">
+    <!-- Header band -->
+    <div style="background:linear-gradient(135deg,var(--tbar1),var(--tbar2));padding:20px 24px 18px;">
+      <div style="font-family:var(--font);font-size:22px;color:#fff;letter-spacing:.02em;">WORK_WITH_ME.exe</div>
+      <div style="font-family:var(--font);font-size:13px;color:rgba(255,255,255,.65);margin-top:3px;">ivonne aldaz · brand strategy + creative direction</div>
+    </div>
+    <!-- Body -->
+    <div style="padding:20px 24px;">
+      <p style="font-family:var(--font);font-size:16px;line-height:1.75;color:var(--text);margin-bottom:18px;">Hi, I'm Ivonne.<br>I help brands, founders, and creative teams turn messy ideas into clear strategy, research-backed positioning, content systems, and useful digital experiences.</p>
+      <div style="font-family:var(--font);font-size:12px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:12px;">What can I help with?</div>
+      <!-- Service list -->
+      <div style="display:grid;gap:0;margin-bottom:20px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+        <div class="wm-row">
+          <span class="wm-icon">🎯</span>
+          <div><div class="wm-label">Strategy &amp; Research</div><div class="wm-desc">positioning, narrative, go-to-market</div></div>
+        </div>
+        <div class="wm-row">
+          <span class="wm-icon">🤖</span>
+          <div><div class="wm-label">AI &amp; Automation</div><div class="wm-desc">agents, workflows, AI-powered tools</div></div>
+        </div>
+        <div class="wm-row">
+          <span class="wm-icon">📊</span>
+          <div><div class="wm-label">Fractional Marketing</div><div class="wm-desc">embedded marketing leadership</div></div>
+        </div>
+        <div class="wm-row">
+          <span class="wm-icon">✍️</span>
+          <div><div class="wm-label">Brand &amp; Content Systems</div><div class="wm-desc">voice, messaging, content architecture</div></div>
+        </div>
+        <div class="wm-row">
+          <span class="wm-icon">🎤</span>
+          <div><div class="wm-label">Speaking &amp; Workshops</div><div class="wm-desc">brand strategy, AI, marketing</div></div>
+        </div>
+      </div>
+      <!-- Action buttons -->
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
+        <button class="wm-btn wm-primary" onclick="window.open('https://calendar.app.google/erkFvSTpYgavUZTZA','_blank')">📅 Book a Call</button>
+        <button class="wm-btn" onclick="window.open('mailto:hello@ivonnealdaz.com')">✉️ Email Me</button>
+      </div>
+      <div style="margin-top:16px;font-family:var(--font);font-size:13px;color:var(--dim);">hello@ivonnealdaz.com · bywhitespace.com</div>
+    </div>
+  </div>
+  <div class="resize-corner"></div>
+</div>
+
 <!-- VENTURES FOLDER -->
 <div class="win off" id="ventures-win" style="width:min(340px,94vw);height:min(280px,70vh);top:90px;left:calc(50% - 170px);display:none;" onmousedown="focusWin('ventures-win')">
   <div class="tbar" onmousedown="dragStart(event,'ventures-win')">
@@ -1033,6 +1220,16 @@ i wanted something you could actually
 move around in.
 
 so i vibecoded this instead.
+
+
+START HERE
+-----------
+new here? open:
+
+  → ask_eve.exe
+  → archive.exe
+  → notes.app
+  → WORK_WITH_ME.exe
 
 
 WHAT'S INSIDE
@@ -1179,6 +1376,8 @@ check back.</pre></div>
         <div class="si" onclick="window.open('https://calendar.app.google/oCJud9JDKNkZa8uH6','_blank');closeAll()">📅 calendar</div>
         <div class="si" onclick="openWin('snake-win');closeAll()">🐍 snake.exe</div>
         <div class="si" onclick="openWin('photos-win');closeAll()">📷 photos.exe</div>
+        <div class="si" onclick="openWin('work-win');closeAll()">📋 WORK_WITH_ME.exe</div>
+        <div class="si" onclick="openWin('chat-room-win');closeAll()">💬 CHATROOM.exe</div>
       </div>
     </div>
     <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
