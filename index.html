@@ -758,96 +758,30 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
 
 @media(max-width:520px){
-  /* chatroom window: full viewport */
-  #chat-room-win{width:100vw !important;left:0 !important;top:0 !important;transform:none !important;height:90vh !important;}
+  /* chatroom: compact height, floats above Spotify */
+  #chat-room-win{width:100vw !important;left:0 !important;top:0 !important;transform:none !important;height:72vh !important;z-index:9999 !important;}
 
-  /* hide the classic menu bar on mobile — too cramped */
+  /* hide menu bar and status bar */
   #cr-menubar { display:none !important; }
+  #cr-statusbar { display:none !important; }
 
   /* sidebar stacks above chat area */
   .cr-layout{flex-direction:column !important;}
-
-  /* sidebar: compact two-section strip */
-  .cr-sidebar{
-    width:100% !important;
-    flex-direction:column !important;
-    height:auto !important;
-    flex-shrink:0 !important;
-    border-right:none !important;
-    border-bottom:1px solid #2a2a4a !important;
-    overflow:visible !important;
-  }
-
-  /* rooms row: horizontal scrollable pill list */
-  .cr-sidebar > div:first-child { display:none !important; } /* "CHAT ROOMS" header */
-  .cr-sidebar > div:nth-child(2){
-    display:flex !important;
-    flex-direction:row !important;
-    overflow-x:auto !important;
-    overflow-y:hidden !important;
-    padding:6px 8px !important;
-    gap:4px !important;
-    border-bottom:1px solid #2a2a4a !important;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-  }
+  .cr-sidebar{width:100% !important;flex-direction:column !important;height:auto !important;flex-shrink:0 !important;border-right:none !important;border-bottom:1px solid #2a2a4a !important;overflow:visible !important;}
+  .cr-sidebar > div:first-child { display:none !important; }
+  .cr-sidebar > div:nth-child(2){display:flex !important;flex-direction:row !important;overflow-x:auto !important;overflow-y:hidden !important;padding:6px 8px !important;gap:4px !important;border-bottom:1px solid #2a2a4a !important;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   .cr-sidebar > div:nth-child(2)::-webkit-scrollbar { display:none; }
-  .cr-room{
-    white-space:nowrap !important;
-    padding:5px 12px !important;
-    font-size:13px !important;
-    border-radius:20px !important;
-    border:1px solid #2a2a4a !important;
-    flex-shrink:0 !important;
-  }
-  .cr-room.active{ background:#1e1e50 !important; border-color:#4a4a9a !important; }
-
-  /* online users: compact horizontal row */
-  .cr-sidebar > div:last-child{
-    display:flex !important;
-    flex-direction:row !important;
-    align-items:center !important;
-    padding:5px 10px !important;
-    gap:10px !important;
-    flex-wrap:nowrap !important;
-    overflow-x:auto !important;
-    border-top:none !important;
-    scrollbar-width:none;
-  }
+  .cr-room{white-space:nowrap !important;padding:5px 12px !important;font-size:13px !important;border-radius:20px !important;border:1px solid #2a2a4a !important;flex-shrink:0 !important;}
+  .cr-room.active{background:#1e1e50 !important;border-color:#4a4a9a !important;}
+  .cr-sidebar > div:last-child{display:flex !important;flex-direction:row !important;align-items:center !important;padding:5px 10px !important;gap:10px !important;flex-wrap:nowrap !important;overflow-x:auto !important;border-top:none !important;scrollbar-width:none;}
   .cr-sidebar > div:last-child::-webkit-scrollbar { display:none; }
-  .cr-sidebar > div:last-child > div:first-child{
-    /* "ONLINE NOW" label */
-    font-size:10px !important;
-    letter-spacing:.08em !important;
-    margin-bottom:0 !important;
-    white-space:nowrap !important;
-    color:#6060a0 !important;
-    flex-shrink:0 !important;
-  }
-  .cr-user{
-    font-size:12px !important;
-    padding:0 !important;
-    white-space:nowrap !important;
-    flex-shrink:0 !important;
-  }
+  .cr-sidebar > div:last-child > div:first-child{font-size:10px !important;letter-spacing:.08em !important;margin-bottom:0 !important;white-space:nowrap !important;color:#6060a0 !important;flex-shrink:0 !important;}
+  .cr-user{font-size:12px !important;padding:0 !important;white-space:nowrap !important;flex-shrink:0 !important;}
 
-  /* overlay: better centered, breathing room */
-  #chat-room-win .cr-layout > div:last-child > div[style*="position:absolute"]{
-    padding:24px 20px !important;
-    justify-content:center !important;
-  }
-  #chat-room-win .cr-layout > div:last-child > div[style*="position:absolute"] > div:first-child{
-    font-size:22px !important;
-    margin-bottom:4px !important;
-  }
-  #chat-room-win .cr-layout > div:last-child > div[style*="position:absolute"] > div:nth-child(2){
-    font-size:14px !important;
-    max-width:260px !important;
-    line-height:1.8 !important;
-  }
-
-  /* status bar: hide on mobile */
-  #cr-statusbar { display:none !important; }
+  /* overlay: tighter spacing, less dead air */
+  #chat-room-win .cr-layout > div:last-child > div[style*="position:absolute"]{padding:16px 20px 20px !important;justify-content:center !important;gap:10px !important;}
+  #chat-room-win .cr-layout > div:last-child > div[style*="position:absolute"] > div:first-child{font-size:20px !important;}
+  #chat-room-win .cr-layout > div:last-child > div[style*="position:absolute"] > div:nth-child(2){font-size:13px !important;max-width:260px !important;line-height:1.75 !important;}
 
   .cr-msg{margin-bottom:4px;}
 }
@@ -1243,7 +1177,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
         <div style="font-family:var(--font);font-size:28px;color:#7a9fe0;letter-spacing:.05em;">CHATROOM.exe</div>
         <div style="font-family:var(--font);font-size:15px;color:#9090c0;text-align:center;line-height:1.7;max-width:300px;">a small corner of the internet<br>for curious people.<br><br>inspired by Yahoo Chat, AIM, MSN Messenger,<br>and the weird little communities<br>that made the early internet feel human.</div>
         <div style="font-family:var(--font);font-size:14px;color:#7070b0;letter-spacing:.1em;">▓▓▓▓▓▓░░░░ building...</div>
-        <button onclick="openWin('note-form-win')" style="background:#1a1a4a;border:2px solid #4a4a9a;color:#8a8aca;font-family:var(--font);font-size:15px;padding:8px 24px;cursor:pointer;margin-top:4px;">📬 Notify Me</button>
+        <button onclick="if(typeof gtag==='function')gtag('event','chatroom_notify_me');openWin('note-form-win')" style="background:#1a1a4a;border:2px solid #4a4a9a;color:#8a8aca;font-family:var(--font);font-size:15px;padding:8px 24px;cursor:pointer;margin-top:4px;">📬 Notify Me</button>
         <div style="font-family:var(--font);font-size:13px;color:#6060a0;">leave your email in the note — i'll reach out when it's ready</div>
       </div>
     </div>
@@ -1694,6 +1628,10 @@ function openWin(id){
   if(id==='arc-win')renderArc('all');
   if(id==='notes-win'){renderNotes('movies');showNotesMobileBar();}
   if(id==='photos-win')loadPhotos();
+  if(typeof gtag==='function'){
+    var gaMap={'chat-win':'ask_eve','notes-win':'notes','arc-win':'archive','snake-win':'snake','photos-win':'photos','ventures-win':'ventures','note-form-win':'leave_a_note','about-win':'about','work-win':'work_with_me','chat-room-win':'chatroom','soc-win':'socials','music-win':'music'};
+    if(gaMap[id])gtag('event','open_window',{window_id:id,window_name:gaMap[id]});
+  }
 }
 function closeWin(id){var el=document.getElementById(id);if(el){el.style.display='none';el.dataset.min='0';}}
 function minWin(id){var el=document.getElementById(id);if(!el)return;if(el.dataset.min==='1'){el.style.display='flex';el.dataset.min='0';focusWin(id);}else{el.style.display='none';el.dataset.min='1';}}
