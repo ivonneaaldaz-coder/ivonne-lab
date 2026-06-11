@@ -758,13 +758,97 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
 
 @media(max-width:520px){
-  #chat-room-win{width:100vw !important;left:0 !important;top:0 !important;transform:none !important;height:88vh !important;}
+  /* chatroom window: full viewport */
+  #chat-room-win{width:100vw !important;left:0 !important;top:0 !important;transform:none !important;height:90vh !important;}
+
+  /* hide the classic menu bar on mobile — too cramped */
+  #cr-menubar { display:none !important; }
+
+  /* sidebar stacks above chat area */
   .cr-layout{flex-direction:column !important;}
-  .cr-sidebar{width:100% !important;flex-direction:row !important;height:auto !important;border-right:none !important;border-bottom:1px solid #2a2a4a !important;overflow-x:auto !important;overflow-y:hidden !important;}
-  .cr-sidebar .cr-rooms-header{display:none !important;}
-  .cr-sidebar .cr-users-section{display:none !important;}
-  .cr-sidebar .cr-rooms-list{display:flex !important;flex-direction:row !important;padding:0 !important;}
-  .cr-sidebar .cr-room{white-space:nowrap !important;padding:8px 14px !important;font-size:14px !important;}
+
+  /* sidebar: compact two-section strip */
+  .cr-sidebar{
+    width:100% !important;
+    flex-direction:column !important;
+    height:auto !important;
+    flex-shrink:0 !important;
+    border-right:none !important;
+    border-bottom:1px solid #2a2a4a !important;
+    overflow:visible !important;
+  }
+
+  /* rooms row: horizontal scrollable pill list */
+  .cr-sidebar > div:first-child { display:none !important; } /* "CHAT ROOMS" header */
+  .cr-sidebar > div:nth-child(2){
+    display:flex !important;
+    flex-direction:row !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding:6px 8px !important;
+    gap:4px !important;
+    border-bottom:1px solid #2a2a4a !important;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .cr-sidebar > div:nth-child(2)::-webkit-scrollbar { display:none; }
+  .cr-room{
+    white-space:nowrap !important;
+    padding:5px 12px !important;
+    font-size:13px !important;
+    border-radius:20px !important;
+    border:1px solid #2a2a4a !important;
+    flex-shrink:0 !important;
+  }
+  .cr-room.active{ background:#1e1e50 !important; border-color:#4a4a9a !important; }
+
+  /* online users: compact horizontal row */
+  .cr-sidebar > div:last-child{
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    padding:5px 10px !important;
+    gap:10px !important;
+    flex-wrap:nowrap !important;
+    overflow-x:auto !important;
+    border-top:none !important;
+    scrollbar-width:none;
+  }
+  .cr-sidebar > div:last-child::-webkit-scrollbar { display:none; }
+  .cr-sidebar > div:last-child > div:first-child{
+    /* "ONLINE NOW" label */
+    font-size:10px !important;
+    letter-spacing:.08em !important;
+    margin-bottom:0 !important;
+    white-space:nowrap !important;
+    color:#6060a0 !important;
+    flex-shrink:0 !important;
+  }
+  .cr-user{
+    font-size:12px !important;
+    padding:0 !important;
+    white-space:nowrap !important;
+    flex-shrink:0 !important;
+  }
+
+  /* overlay: better centered, breathing room */
+  #chat-room-win .cr-layout > div:last-child > div[style*="position:absolute"]{
+    padding:24px 20px !important;
+    justify-content:center !important;
+  }
+  #chat-room-win .cr-layout > div:last-child > div[style*="position:absolute"] > div:first-child{
+    font-size:22px !important;
+    margin-bottom:4px !important;
+  }
+  #chat-room-win .cr-layout > div:last-child > div[style*="position:absolute"] > div:nth-child(2){
+    font-size:14px !important;
+    max-width:260px !important;
+    line-height:1.8 !important;
+  }
+
+  /* status bar: hide on mobile */
+  #cr-statusbar { display:none !important; }
+
   .cr-msg{margin-bottom:4px;}
 }
 
@@ -1112,7 +1196,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     </div>
   </div>
   <!-- Classic toolbar -->
-  <div style="background:#d4cfc8;border-bottom:2px solid var(--border-dark);padding:3px 8px;font-family:var(--font);font-size:13px;color:var(--dim);display:flex;align-items:center;gap:16px;flex-shrink:0;">
+  <div id="cr-menubar" style="background:#d4cfc8;border-bottom:2px solid var(--border-dark);padding:3px 8px;font-family:var(--font);font-size:13px;color:var(--dim);display:flex;align-items:center;gap:16px;flex-shrink:0;">
     <span>File</span><span>Rooms</span><span>People</span><span>Help</span>
     <span style="margin-left:auto;font-size:11px;color:var(--accent);">● connected</span>
   </div>
@@ -1164,7 +1248,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
       </div>
     </div>
   </div>
-  <div style="background:#d4cfc8;border-top:2px solid var(--border-dark);padding:2px 8px;font-family:var(--font);font-size:12px;color:var(--dim);flex-shrink:0;display:flex;justify-content:space-between;">
+  <div id="cr-statusbar" style="background:#d4cfc8;border-top:2px solid var(--border-dark);padding:2px 8px;font-family:var(--font);font-size:12px;color:var(--dim);flex-shrink:0;display:flex;justify-content:space-between;">
     <span style="color:var(--dim);">artists · 3 online</span>
     <span style="color:var(--accent);">CHATROOM.exe v0.1 — coming soon</span>
   </div>
