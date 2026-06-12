@@ -1597,7 +1597,7 @@ function openWin(id){
   if(id==='photos-win')loadPhotos();
   if(id==='chat-room-win'){
     var cf=document.getElementById('chatroom-iframe');
-    if(cf&&!cf.dataset.loaded){cf.src='https://chat.ivonnealdaz.com';cf.dataset.loaded='1';}
+    if(cf)cf.src='https://chat.ivonnealdaz.com?t='+Date.now();
   }
   if(typeof gtag==='function'){
     var gaMap={'chat-win':'ask_eve','notes-win':'notes','arc-win':'archive','snake-win':'snake','photos-win':'photos','ventures-win':'ventures','note-form-win':'leave_a_note','about-win':'about','work-win':'work_with_me','chat-room-win':'chatroom','soc-win':'socials','music-win':'music'};
@@ -2323,15 +2323,7 @@ function openEntryWindow(path, title){
 
 // AUTO-OPEN ABOUT
 (function(){
-  var seen=sessionStorage.getItem('lab_visited');
-  if(!seen){
-    sessionStorage.setItem('lab_visited','1');
-    setTimeout(function(){
-      var el=document.getElementById('about-win');
-      if(el){el.style.left='60px';el.style.top='40px';el.style.transform='none';}
-      openWin('about-win');
-    },700);
-  }
+  // about.txt no longer auto-opens on visit
 })();
 
 
