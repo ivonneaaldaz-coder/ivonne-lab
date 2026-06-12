@@ -659,7 +659,9 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   }
   #smenu .sm-nested-trigger.open>.sm-nested{display:block !important;}
   #smenu .sm-nested-trigger{
-    display:block !important;
+    display:flex !important;
+    flex-wrap:wrap !important;
+    align-items:center !important;
     width:100% !important;
     padding:0 !important;
     border-bottom:.5px solid rgba(0,0,0,.06) !important;
@@ -667,15 +669,23 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     cursor:pointer !important;
   }
   #smenu .sm-nested-trigger>span:first-child{
-    display:flex !important;
+    display:inline-flex !important;
     align-items:center !important;
-    justify-content:space-between !important;
-    padding:9px 16px 9px 24px !important;
-    width:100% !important;
+    padding:13px 16px !important;
+    font-size:17px !important;
+    width:calc(100% - 40px) !important;
     box-sizing:border-box !important;
-    font-size:15px !important;
   }
-  #smenu .sm-nested-trigger>span:last-child{display:none !important;}
+  #smenu .sm-nested-trigger>.sm-arrow{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:40px !important;
+    padding:13px 0 !important;
+    font-size:12px !important;
+  }
+  #smenu .sm-nested-trigger.open>span:first-child{color:var(--navy) !important;}
+  #smenu .sm-nested-trigger.open>.sm-arrow{transform:rotate(90deg) !important;color:var(--navy) !important;}
   #smenu .sm-nested{
     position:static !important;
     width:100% !important;
@@ -700,7 +710,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   }
 
 
-/* ── WORK_WITH_ME ── */
+/* ── WORK_WITH_ME.exe ── */
 .wm-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--win);cursor:default;}
 .wm-row:hover{background:rgba(26,58,107,.05);}
 .wm-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center;}
@@ -817,8 +827,8 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   <div class="ico" id="ico-ventures" data-action="win" data-target="ventures-win"><div class="em">📁</div><div class="lb">ventures</div></div>
   <div class="ico" id="ico-note-form" data-action="win" data-target="note-form-win"><div class="em">✉️</div><div class="lb">leave a note</div></div>
   <div class="ico" id="ico-about" data-action="win" data-target="about-win"><div class="em">📄</div><div class="lb">about.txt</div></div>
-  <div class="ico" id="ico-work" data-action="win" data-target="work-win"><div class="em">📋</div><div class="lb">WORK_WITH_ME</div></div>
-  <div class="ico" id="ico-chat-room" data-action="win" data-target="chat-room-win"><div class="em">💬</div><div class="lb">CHATROOM.exe</div></div>
+  <div class="ico" id="ico-work" data-action="win" data-target="work-win"><div class="em">📋</div><div class="lb">WORK_WITH_ME.exe</div></div>
+  <div class="ico" id="ico-chat-room" data-action="external" data-target="https://chat.ivonnealdaz.com" data-title="CHATROOM.exe"><div class="em">💬</div><div class="lb">CHATROOM.exe</div></div>
 </div>
 
 <!-- SPOTIFY PIN -->
@@ -1192,7 +1202,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 <!-- WORK WITH ME -->
 <div class="win off" id="work-win" style="width:min(480px,94vw);height:min(520px,82vh);top:55px;left:calc(50% - 240px);display:none;" onmousedown="focusWin('work-win')">
   <div class="tbar" onmousedown="dragStart(event,'work-win')">
-    <div class="tbar-title">📋 WORK_WITH_ME</div>
+    <div class="tbar-title">📋 WORK_WITH_ME.exe</div>
     <div class="tbar-btns">
       <button class="tbtn" onclick="minWin('work-win')">_</button>
       <button class="tbtn" onclick="maxWin('work-win')">□</button>
@@ -1448,7 +1458,7 @@ check back.</pre></div>
         <div class="si" onclick="openWin('snake-win');closeAll()">🐍 snake.exe</div>
         <div class="si" onclick="openWin('photos-win');closeAll()">📷 photos.exe</div>
         <div class="si" onclick="openWin('work-win');closeAll()">📋 WORK_WITH_ME.exe</div>
-        <div class="si" onclick="openWin('chat-room-win');closeAll()">💬 CHATROOM.exe</div>
+        <div class="si" onclick="if(typeof gtag==='function')gtag('event','open_chatroom_ext');window.open('https://chat.ivonnealdaz.com','_blank');closeAll()">💬 CHATROOM.exe</div>
       </div>
     </div>
     <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
