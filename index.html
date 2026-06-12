@@ -1597,7 +1597,7 @@ function openWin(id){
   if(id==='photos-win')loadPhotos();
   if(id==='chat-room-win'){
     var cf=document.getElementById('chatroom-iframe');
-    if(cf)cf.src='https://chat.ivonnealdaz.com?t='+Date.now();
+    if(cf)cf.src='https://chat.ivonnealdaz.com?embedded=1&t='+Date.now();
   }
   if(typeof gtag==='function'){
     var gaMap={'chat-win':'ask_eve','notes-win':'notes','arc-win':'archive','snake-win':'snake','photos-win':'photos','ventures-win':'ventures','note-form-win':'leave_a_note','about-win':'about','work-win':'work_with_me','chat-room-win':'chatroom','soc-win':'socials','music-win':'music'};
