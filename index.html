@@ -768,32 +768,26 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
 
 @media(max-width:520px){
-  /* chatroom: compact height, floats above Spotify */
-  #chat-room-win{width:100vw !important;left:0 !important;top:0 !important;transform:none !important;height:72vh !important;z-index:9999 !important;}
-
-  /* hide menu bar and status bar */
-  #cr-menubar { display:none !important; }
-  #cr-statusbar { display:none !important; }
-
-  /* sidebar stacks above chat area */
-  .cr-layout{flex-direction:column !important;}
-  .cr-sidebar{width:100% !important;flex-direction:column !important;height:auto !important;flex-shrink:0 !important;border-right:none !important;border-bottom:1px solid #2a2a4a !important;overflow:visible !important;}
-  .cr-sidebar > div:first-child { display:none !important; }
-  .cr-sidebar > div:nth-child(2){display:flex !important;flex-direction:row !important;overflow-x:auto !important;overflow-y:hidden !important;padding:6px 8px !important;gap:4px !important;border-bottom:1px solid #2a2a4a !important;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-  .cr-sidebar > div:nth-child(2)::-webkit-scrollbar { display:none; }
-  .cr-room{white-space:nowrap !important;padding:5px 12px !important;font-size:13px !important;border-radius:20px !important;border:1px solid #2a2a4a !important;flex-shrink:0 !important;}
-  .cr-room.active{background:#1e1e50 !important;border-color:#4a4a9a !important;}
-  .cr-sidebar > div:last-child{display:flex !important;flex-direction:row !important;align-items:center !important;padding:5px 10px !important;gap:10px !important;flex-wrap:nowrap !important;overflow-x:auto !important;border-top:none !important;scrollbar-width:none;}
-  .cr-sidebar > div:last-child::-webkit-scrollbar { display:none; }
-  .cr-sidebar > div:last-child > div:first-child{font-size:10px !important;letter-spacing:.08em !important;margin-bottom:0 !important;white-space:nowrap !important;color:#6060a0 !important;flex-shrink:0 !important;}
-  .cr-user{font-size:12px !important;padding:0 !important;white-space:nowrap !important;flex-shrink:0 !important;}
-
-  /* overlay: tighter spacing, less dead air */
-  #chat-room-win .cr-layout > div:last-child > div[style*="position:absolute"]{padding:16px 20px 20px !important;justify-content:center !important;gap:10px !important;}
-  #chat-room-win .cr-layout > div:last-child > div[style*="position:absolute"] > div:first-child{font-size:20px !important;}
-  #chat-room-win .cr-layout > div:last-child > div[style*="position:absolute"] > div:nth-child(2){font-size:13px !important;max-width:260px !important;line-height:1.75 !important;}
-
-  .cr-msg{margin-bottom:4px;}
+  /* chatroom: true full screen, covers Spotify and taskbar */
+  #chat-room-win{
+    width:100vw !important;
+    height:100dvh !important;
+    left:0 !important;
+    top:0 !important;
+    transform:none !important;
+    z-index:10000 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    border:none !important;
+    margin:0 !important;
+  }
+  #chat-room-win .tbar { flex-shrink:0 !important; }
+  #chatroom-iframe {
+    flex:1 !important;
+    width:100% !important;
+    min-height:0 !important;
+    border:none !important;
+  }
 }
 
 </style>
@@ -803,7 +797,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 <canvas id="sky-canvas"></canvas>
 <div style="position:absolute;left:-9999px;width:1px;overflow:hidden;" aria-hidden="true">
   <h1>Ivonne Aldaz — Brand Strategist, Artist, Creative Director</h1>
-  <p>Ivonne Aldaz is a brand strategist and creative director based in San Antonio, TX. Founder of Whitespace (brand  studio) and Good World Living (lifestyle platform). Artist with residencies in Provence and Lake Como. This is her personal lab — an experimental portfolio built as a retro Windows desktop.</p>
+  <p>Ivonne Aldaz is a brand strategist and creative director based in San Antonio, TX. Founder of Whitespace (brand strategy studio) and Good World Living (lifestyle platform). Artist with residencies in Provence and Lake Como. This is her personal lab — an experimental portfolio built as a retro Windows desktop.</p>
   <p>Contact: hello@ivonnealdaz.com</p>
 </div>
 <div id="grain"></div>
@@ -979,7 +973,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 <!-- CALENDAR -->
 <div class="win off" id="cal-win" style="width:290px;height:220px;top:80px;left:calc(50% - 380px);display:none;" onmousedown="focusWin('cal-win')">
   <div class="tbar" onmousedown="dragStart(event,'cal-win')"><div class="tbar-title">📅 calendar.exe</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('cal-win')">_</button><button class="tbtn" onclick="maxWin('cal-win')">□</button><button class="tbtn" onclick="closeWin('cal-win')">✕</button></div></div>
-  <div class="cal-body"><div class="cal-h">Book Time With Ivonne</div><div class="cal-desc">Schedule a conversation about brand , a collaboration, or just to connect.</div><a class="cal-link" href="https://calendar.app.google/oCJud9JDKNkZa8uH6" target="_blank">📅 Open Calendar →</a><div style="font-size:13px;color:var(--dim);">or email <a href="mailto:hello@ivonnealdaz.com" style="color:var(--navy);">hello@ivonnealdaz.com</a></div></div>
+  <div class="cal-body"><div class="cal-h">Book Time With Ivonne</div><div class="cal-desc">Schedule a conversation about brand strategy, a collaboration, or just to connect.</div><a class="cal-link" href="https://calendar.app.google/oCJud9JDKNkZa8uH6" target="_blank">📅 Open Calendar →</a><div style="font-size:13px;color:var(--dim);">or email <a href="mailto:hello@ivonnealdaz.com" style="color:var(--navy);">hello@ivonnealdaz.com</a></div></div>
   <div class="resize-corner"></div>
 </div>
 
@@ -1163,7 +1157,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     <!-- Header band -->
     <div style="background:linear-gradient(135deg,var(--tbar1),var(--tbar2));padding:20px 24px 18px;">
       <div style="font-family:var(--font);font-size:22px;color:#fff;letter-spacing:.02em;">WORK_WITH_ME.exe</div>
-      <div style="font-family:var(--font);font-size:13px;color:rgba(255,255,255,.65);margin-top:3px;">ivonne aldaz · brand  + creative direction</div>
+      <div style="font-family:var(--font);font-size:13px;color:rgba(255,255,255,.65);margin-top:3px;">ivonne aldaz · brand strategy + creative direction</div>
     </div>
     <!-- Body -->
     <div style="padding:20px 24px;">
@@ -1175,22 +1169,18 @@ textarea.nf-input{resize:vertical;min-height:70px;}
           <span class="wm-icon">🎯</span>
           <div><div class="wm-label">Strategy &amp; Research</div><div class="wm-desc">positioning, narrative, go-to-market</div></div>
         </div>
-          <br>
         <div class="wm-row">
           <span class="wm-icon">🤖</span>
           <div><div class="wm-label">AI &amp; Automation</div><div class="wm-desc">agents, workflows, AI-powered tools</div></div>
         </div>
-        <br>
         <div class="wm-row">
           <span class="wm-icon">📊</span>
           <div><div class="wm-label">Fractional Marketing</div><div class="wm-desc">embedded marketing leadership</div></div>
         </div>
-          <br>
         <div class="wm-row">
           <span class="wm-icon">✍️</span>
           <div><div class="wm-label">Brand &amp; Content Systems</div><div class="wm-desc">voice, messaging, content architecture</div></div>
         </div>
-          <br>
         <div class="wm-row">
           <span class="wm-icon">🎤</span>
           <div><div class="wm-label">Speaking &amp; Workshops</div><div class="wm-desc">brand strategy, AI, marketing</div></div>
