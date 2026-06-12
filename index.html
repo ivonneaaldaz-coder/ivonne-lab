@@ -768,25 +768,25 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
 
 @media(max-width:520px){
-  /* chatroom: true full screen, covers Spotify and taskbar */
+  /* chatroom: true full screen, covers everything */
   #chat-room-win{
     width:100vw !important;
-    height:100dvh !important;
+    height:calc(100vh - 32px) !important;
     left:0 !important;
     top:0 !important;
     transform:none !important;
     z-index:10000 !important;
-    display:flex !important;
     flex-direction:column !important;
     border:none !important;
     margin:0 !important;
+    box-sizing:border-box !important;
   }
-  #chat-room-win .tbar { flex-shrink:0 !important; }
+  #chat-room-win .tbar { flex-shrink:0 !important; height:32px !important; }
   #chatroom-iframe {
-    flex:1 !important;
     width:100% !important;
-    min-height:0 !important;
+    height:calc(100% - 32px) !important;
     border:none !important;
+    display:block !important;
   }
 }
 
@@ -1572,12 +1572,19 @@ function openWin(id){
   var el=document.getElementById(id);if(!el)return;
   el.style.display='flex';el.dataset.min='0';
   if(window.innerWidth<=520){
-    var w=Math.min(parseInt(el.style.width)||360,window.innerWidth*0.96);
-    var h=Math.min(parseInt(el.style.height)||380,window.innerHeight*0.72);
-    el.style.width=w+'px';el.style.height=h+'px';
-    el.style.left=Math.round((window.innerWidth-w)/2)+'px';
-    el.style.top=Math.round((window.innerHeight-h)/4)+'px';
-    el.style.transform='none';
+    if(id==='chat-room-win'){
+      el.style.width='100vw';
+      el.style.height=(window.innerHeight-32)+'px';
+      el.style.left='0';el.style.top='0';
+      el.style.transform='none';
+    } else {
+      var w=Math.min(parseInt(el.style.width)||360,window.innerWidth*0.96);
+      var h=Math.min(parseInt(el.style.height)||380,window.innerHeight*0.72);
+      el.style.width=w+'px';el.style.height=h+'px';
+      el.style.left=Math.round((window.innerWidth-w)/2)+'px';
+      el.style.top=Math.round((window.innerHeight-h)/4)+'px';
+      el.style.transform='none';
+    }
   }
   focusWin(id);
   if(id==='arc-win')renderArc('all');
@@ -1585,7 +1592,7 @@ function openWin(id){
   if(id==='photos-win')loadPhotos();
   if(id==='chat-room-win'){
     var cf=document.getElementById('chatroom-iframe');
-    if(cf&&cf.src==='about:blank')cf.src='https://chat.ivonnealdaz.com';
+    if(cf&&!cf.dataset.loaded){cf.src='https://chat.ivonnealdaz.com';cf.dataset.loaded='1';}
   }
   if(typeof gtag==='function'){
     var gaMap={'chat-win':'ask_eve','notes-win':'notes','arc-win':'archive','snake-win':'snake','photos-win':'photos','ventures-win':'ventures','note-form-win':'leave_a_note','about-win':'about','work-win':'work_with_me','chat-room-win':'chatroom','soc-win':'socials','music-win':'music'};
