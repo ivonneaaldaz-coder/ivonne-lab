@@ -6,16 +6,18 @@
 
 var ENTRIES_DATA = {};
 
-var ARC_DATA=[
+var ARC_DATA = [
   // ── FEATURED ─────────────────────────────────────────────
-  {date:"2026",title:"CV Agent — Ask Ivonne",desc:"An AI agent trained on a decade of work. Ask it anything.",tags:["featured","built"],type:"built",url:"/entry",icon:"📄",featured:true},
-  {date:"2020–2023",title:"Future of Marketing Newsletter",desc:"130+ issues. 7K → 50K subscribers. Three years, zero missed issues.",tags:["featured","writing"],type:"newsletter",url:"/entry-newsletter",icon:"📧",featured:true},
-  {date:"2022–2025",title:"Building the Insights Function",desc:"Built and scaled a research function supporting CPG, beauty, and retail brands.",tags:["featured","leadership"],type:"leadership",url:"/entry-insights",icon:"📈",featured:true},
-  {date:"2021–2023",title:"Community-Powered Marketing Research Series",desc:"Three annual industry studies. Fueled an entire year of marketing each time.",tags:["featured","research"],type:"research",url:"/entry-research",icon:"📊",featured:true},
-  {date:"2024",title:"Omelette Rounds Rebrand",desc:"Consumer research supporting a product rename — from Egg Patties to Omelette Rounds.",tags:["featured","research"],type:"research",url:"/entry-omelette",icon:"🥚",featured:true},
+  {date:"2026",title:"CV Agent — Ask Ivonne",desc:"An AI agent trained on a decade of work. Ask it anything.",tags:["featured","built"],type:"built",url:"/entry",icon:"📄"},
+  {date:"2020–2023",title:"Future of Marketing Newsletter",desc:"130+ issues. 7K → 50K subscribers. Three years, zero missed issues.",tags:["featured","writing"],type:"newsletter",url:"/entry-newsletter",icon:"📧"},
+  {date:"2022–2025",title:"Building the Insights Function",desc:"Built and scaled a research function supporting CPG, beauty, and retail brands.",tags:["featured","leadership"],type:"leadership",url:"/entry-insights",icon:"📈"},
+  {date:"2021–2023",title:"Community-Powered Marketing Research Series",desc:"Three annual industry studies. Fueled an entire year of marketing each time.",tags:["featured","research"],type:"research",url:"/entry-research",icon:"📊"},
+  {date:"2024",title:"Omelette Rounds Rebrand",desc:"Consumer research supporting a product rename — from Egg Patties to Omelette Rounds.",tags:["featured","research"],type:"research",url:"/entry-omelette",icon:"🥚"},
   // ── RESEARCH ─────────────────────────────────────────────
   {date:"2024",title:"Purina: The Role of Video Reviews",desc:"Quantifying the influence of video reviews on purchase decisions in the pet care category.",tags:["research"],type:"research",url:"/entry-purina",icon:"📊"},
   {date:"2024",title:"Gaia Herbs: Concept Validation",desc:"Evaluated multivitamin concepts before launch to identify the strongest market opportunities.",tags:["research"],type:"research",url:"/entry-gaia",icon:"📊"},
+  // ── LEADERSHIP ───────────────────────────────────────────
+  // (Building the Insights Function is in Featured above)
   // ── BUILT ────────────────────────────────────────────────
   {date:"2025–Present",title:"Whitespace",desc:"Independent brand strategy studio — research, positioning, narrative, and execution.",tags:["built"],type:"studio",url:"https://bywhitespace.com",icon:"💼"},
   {date:"2024–Present",title:"Good World Living",desc:"Platform exploring creativity, travel, and intentional living.",tags:["built","writing"],type:"built",url:"https://goodworldliving.com",icon:"🌿"},
@@ -41,10 +43,10 @@ var STATS_DATA = [
   {n:'3',       label:'countries exhibited in'}
 ];
 
-var TYPE_LABELS={built:"Built",essay:"Essay",exhibition:"Exhibition",talk:"Talk",residency:"Residency",research:"Research",newsletter:"Newsletter",studio:"Studio",community:"Community",leadership:"Leadership",number:"Numbers"};
-var TYPE_COLORS={built:"#3a7fa8",essay:"#7a5a9a",exhibition:"#a06a30",talk:"#5a8a5a",residency:"#a06060",research:"#4a7a7a",newsletter:"#7a7a40",studio:"#3a6a3a",community:"#6a5a8a",leadership:"#5a6a9a",number:"#8a7a5a"};
-var TAG_L={featured:"Featured",built:"Built",research:"Research",writing:"Writing",speaking:"Speaking",leadership:"Leadership",art:"Art"};
-var arcFilter='all';
+var TYPE_LABELS = {built:"Built",essay:"Essay",exhibition:"Exhibition",talk:"Talk",residency:"Residency",research:"Research",newsletter:"Newsletter",studio:"Studio",community:"Community",leadership:"Leadership"};
+var TYPE_COLORS = {built:"#3a7fa8",essay:"#7a5a9a",exhibition:"#a06a30",talk:"#5a8a5a",residency:"#a06060",research:"#4a7a7a",newsletter:"#7a7a40",studio:"#3a6a3a",community:"#6a5a8a",leadership:"#5a6a9a"};
+var TAG_L = {featured:"Featured",built:"Built",research:"Research",writing:"Writing",speaking:"Speaking",leadership:"Leadership",art:"Art"};
+var arcFilter = 'all';
 
 // ============================================================
 // DETAIL PAGES
@@ -52,7 +54,7 @@ var arcFilter='all';
 
 ENTRIES_DATA['/entry'] = {
   title: 'CV Agent — Ask Ivonne',
-  date: '2026',
+  date: 'May 2026',
   tags: ['built'],
   lede: 'Parsed a 10-tab Google Sheet of personal CV data and vibecoded it into a navigable interactive profile + an AI agent that answers questions about the work. Built with Claude, zero templates, no design tools.',
   sections: [
@@ -96,7 +98,7 @@ ENTRIES_DATA['/entry-newsletter'] = {
   tags: ['writing'],
   lede: '130+ issues. Three years. A weekly dispatch on where marketing was going — and what it meant for brands trying to build something real.',
   sections: [
-    {label:'The Numbers', table:[['Issues','130+ published'],['Growth','7,000 → 50,000 subscribers'],['Run','3 years, zero missed issues']]},
+    {label:'The Numbers', table:[['Issues','130+ published'],['Growth','7,000 \u2192 50,000 subscribers'],['Run','3 years, zero missed issues']]},
     {label:'What It Was', body:'At TINT, one answer to positioning the company as an industry leader was creating a consistent source of original thinking. I researched, wrote, analyzed, and published a weekly newsletter focused on emerging trends in marketing, community, social media, creator economy, and technology.'},
     {label:'The Outcome', body:'The newsletter became one of the company\u2019s most important thought leadership assets. It helped establish authority, support partnerships, generate leads, and create a recognizable point of view within the industry.'},
     {label:'What I Learned', quote:'Writing every week forces intellectual honesty. You cannot hide behind vague opinions. A brand without a point of view is not a brand.'}
@@ -105,9 +107,9 @@ ENTRIES_DATA['/entry-newsletter'] = {
 
 ENTRIES_DATA['/entry-insights'] = {
   title: 'Building the Insights Function',
-  date: '2022 – 2025',
+  date: '2022 \u2013 2025',
   tags: ['leadership'],
-  lede: 'Research demand was growing faster than the systems supporting it. The challenge was not simply delivering insights — it was creating a function capable of consistently turning data into decisions.',
+  lede: 'Research demand was growing faster than the systems supporting it. The challenge was not simply delivering insights \u2014 it was creating a function capable of consistently turning data into decisions.',
   sections: [
     {label:'The Problem', body:'Most organizations don\u2019t suffer from a lack of information. They suffer from a lack of clarity.||I was brought in to help solve both problems: delivering insights in the short term while building the infrastructure to do it sustainably.'},
     {label:'What I Built', table:[['Scope','Research function supporting CPG, beauty, food & beverage, retail, and technology brands'],['Team','Hired analysts, created onboarding systems, standardized reporting'],['Process','Introduced AI-assisted synthesis workflows, improved project management'],['Outcome','A team capable of delivering strategic recommendations across multiple clients simultaneously']]},
@@ -118,14 +120,13 @@ ENTRIES_DATA['/entry-insights'] = {
 
 ENTRIES_DATA['/entry-research'] = {
   title: 'Community-Powered Marketing Research Series',
-  date: '2021 – 2023',
+  date: '2021 \u2013 2023',
   tags: ['research'],
   lede: 'Three annual industry benchmark studies. Each one became the cornerstone content asset that fueled an entire year of marketing.',
   sections: [
-    {label:'The Problem', body:'How do you create one piece of content capable of fueling an entire year of marketing?||At TINT (now TrueLoyal), we wanted to better understand how brands were approaching user-generated content, community, creator partnerships, and customer advocacy. Rather than publish another opinion piece, we built industry benchmark studies.'},
     {label:'The Studies', table:[['State of UGC 2021','Annual research report cited by Forbes, Adweek, and Digiday. Focused on how brands were using user-generated content.'],['State of Social & UGC 2022','Expanded scope to social commerce and creator partnerships.'],['State of Community Powered Marketing 2023','Explored community-led brand growth and customer advocacy at scale.']]},
     {label:'My Role', body:'I led each initiative end-to-end: survey design, methodology, data analysis, insight generation, and strategic narrative development.||I worked closely with sales, marketing, partners, industry experts, and executive leadership.'},
-    {label:'The Impact', body:'The reports became cornerstone content assets that fueled demand generation, sales enablement, webinars, thought leadership, partner campaigns, and industry presentations.||Much of the year\u2019s marketing activity traced back to these studies.'},
+    {label:'The Impact', body:'The reports became cornerstone content assets that fueled demand generation, sales enablement, webinars, thought leadership, partner campaigns, and industry presentations.'},
     {label:'What I Learned', quote:'The best research does more than answer questions. It creates a shared narrative that influences an entire organization.'}
   ]
 };
@@ -171,7 +172,7 @@ ENTRIES_DATA['/entry-gaia'] = {
 
 ENTRIES_DATA['/entry-speaking'] = {
   title: 'Selected Talks, Panels & Podcasts',
-  date: '2016 – Present',
+  date: '2016 \u2013 Present',
   tags: ['speaking'],
   lede: 'Speaking at universities, industry conferences, and podcasts on marketing, brand strategy, community, and the future of creative work.',
   sections: [
