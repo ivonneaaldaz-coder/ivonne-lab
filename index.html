@@ -916,16 +916,13 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   <div class="notes-shell">
     <div class="notes-sidebar" id="notes-sidebar">
       <div class="ns-hdr">CATEGORIES <span class="ns-toggle" id="ns-toggle" onclick="toggleSidebar()">✕</span></div>
-      <div class="ns-cat active" onclick="showCat(this,'movies')">🎬 movies</div>
+      <div class="ns-cat active" onclick="showCat(this,'movies')">🎬 movies / tv</div>
       <div class="ns-cat" onclick="showCat(this,'books')">📚 books</div>
-      <div class="ns-cat" onclick="showCat(this,'quotes')">💬 quotes</div>
+      <div class="ns-cat" onclick="showCat(this,'thoughts')">💭 thoughts</div>
       <div class="ns-cat" onclick="showCat(this,'music')">🎵 music</div>
       <div class="ns-cat" onclick="showCat(this,'travel')">✈️ travel</div>
-      <div class="ns-cat" onclick="showCat(this,'ideas')">💡 ideas</div>
       <div class="ns-cat" onclick="showCat(this,'recipes')">🍳 recipes</div>
-      <div class="ns-cat" onclick="showCat(this,'reminders')">📌 reminders</div>
-      <div class="ns-cat" onclick="showCat(this,'thoughts')">🌙 thoughts</div>
-      <div class="ns-cat" onclick="showCat(this,'references')">🗂️ references</div>
+      <div class="ns-cat" onclick="showCat(this,'resources')">🗂️ resources</div>
     </div>
     <div class="notes-main" id="notes-main">
       <div class="notes-list" id="notes-list"></div>
@@ -1861,40 +1858,32 @@ function arcClick(e){
 // NOTES
 var NOTES={
   movies:[
-    {t:"favorite films",d:"ongoing",c:"1. Interstellar\n2. Pursuit of Happyness\n3. 50 First Dates\n4. Mean Girls\n5. The Notebook\n6. When Harry Met Sally\n7. Eat, Pray, Love\n8. Wolf of Wall Street\n9. White Chicks\n10. Pineapple Express\n11. Pretty Woman"},
-    {t:"favorite TV shows",d:"ongoing",c:"1. Sex and the City\n2. Mad Men\n3. The Office\n4. Dark\n5. Handmaid\u2019s Tale\n6. Gossip Girl\n7. Breaking Bad\n8. Game of Thrones"}
+    {t:"favorite movies",d:"ongoing",c:"Interstellar\nPursuit of Happyness\nWhite Chicks\nHow to Lose a Guy in 10 Days\nBefore Sunrise\nEat, Pray, Love\n50 First Dates\nMean Girls\nThe Notebook\nPineapple Express\nWhen Harry Met Sally\nPretty Woman"},
+    {t:"favorite shows",d:"ongoing",c:"Dark\nSex and the City\nGossip Girl\nMad Men\nBreaking Bad\nThe Office\nHandmaid\u2019s Tale\nGame of Thrones\nDesperate Housewives\nOzark"}
   ],
   books:[
-    {t:"favorite books",d:"ongoing",c:"1. A New Earth\n2. The Alchemist\n3. Power\n4. Four Agreements\n5. Atomic Habits\n6. Daily Stoic"},
-    {t:"currently reading",d:"2026",c:"Becoming Supernatural"}
+    {t:"favorite books",d:"ongoing",c:"A New Earth\nThe Alchemist\nPower\nFour Agreements\nAtomic Habits\nDaily Stoic"},
+    {t:"currently reading",d:"2026",c:"Becoming Supernatural\nDear Theo: The Autobiography of Vincent Van Gogh"}
   ],
-  quotes:[
-    {t:"things i keep coming back to",d:"ongoing",c:"\u201cThat it will never come again is what makes life so sweet.\u201d\n\u2014 Emily Dickinson"}
+  thoughts:[
+    {t:"quotes",d:"ongoing",c:"\u201cThat it will never come again is what makes life so sweet.\u201d\n\u2014 Emily Dickinson"},
+    {t:"reminders",d:"ongoing",c:"Everything is temporary.\nBe as you wish to seem.\nAlways do your best.\nEvery yes costs something.\nAudacity creates opportunities."}
   ],
   music:[
     {t:"favorite songs",d:"ongoing",c:"Vienna \u2014 Billy Joel\nHotel California \u2014 The Eagles\nTime \u2014 Pink Floyd\nEl Lugar Correcto \u2014 Natalia Lafourcade"}
   ],
   travel:[
-    {t:"places that stayed",d:"ongoing",c:"Croatia\nDolomites\nCorfu\nSouth of France\n\nAlso: Provence \u2014 September 2024\nLake Como \u2014 March 2024, July 2025\nSt. Antonin Noble Val \u2014 May 2023"},
+    {t:"favorite places",d:"ongoing",c:"Croatia\nDolomites\nCorfu\nSouth of France\nBacalar"},
     {t:"travel bucket list",d:"wishlist",c:"Madeira\nIceland\nThailand\nJapan\nVietnam\nCamino de Santiago\nYellowstone"}
   ],
-  ideas:[
-    {t:"things i want to build",d:"2026",c:"An AI that does my laundry."}
-  ],
   recipes:[
-    {t:"my famous orange beet salad",d:"ongoing",c:"[recipe details coming soon]"}
+    {t:"orange beet salad",d:"ongoing",c:"(coming soon)"},
+    {t:"camarones zarandeados",d:"ongoing",c:"(coming soon)"}
   ],
-  reminders:[
-    {t:"things to remember",d:"ongoing",c:"Everything is temporary.\nBe as you wish to seem.\nAlways do your best."}
-  ],
-  thoughts:[
-    {t:"notes to self",d:"ongoing",c:"TBD"}
-  ],
-  references:[
-    {t:"references",d:"ongoing",c:"TBD"}
+  resources:[
+    {t:"tools",d:"ongoing",c:"Claude\nGithub\nVercel\nSupabase"}
   ]
 };
-
 function showNotesMobileBar(){
   var bar=document.getElementById('notes-mobile-bar');
   if(bar&&window.innerWidth<=520){bar.style.display='flex';bar.style.alignItems='center';}
