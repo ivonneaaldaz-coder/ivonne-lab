@@ -583,7 +583,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
 
 
-#arc-body{flex:1;overflow-y:auto;background:#fff;display:block;padding:0;min-height:0;}
+#arc-body{flex:1;overflow-y:auto;background:#fff;display:block;padding:0;min-height:0;padding-bottom:40px;}
 
 
 @media(max-width:520px){
@@ -942,7 +942,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 </div>
 
 <!-- ARCHIVE -->
-<div class="win off" id="arc-win" style="width:min(640px,94vw);height:min(480px,80vh);top:40px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('arc-win')">
+<div class="win off" id="arc-win" style="width:min(640px,94vw);height:min(540px,84vh);top:40px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('arc-win')">
   <div class="tbar" onmousedown="dragStart(event,'arc-win')">
     <div class="tbar-title">🗂️ archive.exe — ivonne aldaz</div>
     <div class="tbar-btns"><button class="tbtn" onclick="minWin('arc-win')">_</button><button class="tbtn" onclick="maxWin('arc-win')">□</button><button class="tbtn" onclick="closeWin('arc-win')">✕</button></div>
@@ -1342,6 +1342,9 @@ check back.</pre></div>
   <div class="tbar" onmousedown="dragStart(event,'entry-win')">
     <div class="tbar-title">📄 <span id="entry-win-title">entry</span></div>
     <div class="tbar-btns"><button class="tbtn" onclick="minWin('entry-win')">_</button><button class="tbtn" onclick="maxWin('entry-win')">□</button><button class="tbtn" onclick="closeWin('entry-win')">✕</button></div>
+  </div>
+  <div style="background:var(--win-dark);border-bottom:1px solid var(--border);padding:3px 10px;flex-shrink:0;">
+    <button onclick="closeWin('entry-win');openWin('arc-win');renderArc('all');" style="font-family:var(--font);font-size:12px;background:none;border:none;cursor:pointer;color:var(--dim);padding:0;">← back to archive</button>
   </div>
   <div class="entry-content" id="entry-win-content"></div>
   <div class="resize-corner"></div>
