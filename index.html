@@ -1924,7 +1924,6 @@ function renderNotes(cat){
     });
     viewer.innerHTML='<h2>'+n.t+'</h2><div class="note-meta">'+(n.d||'')+'</div><div class="note-content">'+bodyHtml+'</div>';
     if(window.innerWidth<=520){
-          if(navTitle)navTitle.textContent=n.t;
       notesSetView('content');
     }
   }
