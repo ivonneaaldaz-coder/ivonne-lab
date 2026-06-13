@@ -11,7 +11,7 @@ var ARC_DATA = [
   {date:"2020–2023",title:"Future of Marketing Newsletter",desc:"130+ issues. 7K → 50K subscribers. Three years, zero missed issues.",tags:["featured","writing"],type:"newsletter",url:"/entry-newsletter",icon:"📧"},
   {date:"2022–2025",title:"Building the Insights Function",desc:"Built and scaled a research function supporting CPG, beauty, and retail brands.",tags:["featured","leadership"],type:"leadership",url:"/entry-insights",icon:"📈"},
   {date:"2021–2023",title:"Community-Powered Marketing Research Series",desc:"Three annual industry studies. Fueled an entire year of marketing each time.",tags:["featured","research"],type:"research",url:"/entry-research",icon:"📊"},
-  {date:"2024",title:"Omelette Rounds Rebrand",desc:"Consumer research supporting a product rename — from Egg Patties to Omelette Rounds.",tags:["featured","research"],type:"research",url:"/entry-omelette",icon:"🥚"},
+  {date:"2024",title:"Veggies Made Great: Omelette Rounds Rebrand",desc:"Consumer research supporting a product rename — from Egg Patties to Omelette Rounds.",tags:["featured","research"],type:"research",url:"/entry-omelette",icon:"🥚"},
   // ── RESEARCH ─────────────────────────────────────────────
   {date:"2024",title:"Purina: The Role of Video Reviews",desc:"Quantifying the influence of video reviews on purchase decisions in the pet care category.",tags:["research"],type:"research",url:"/entry-purina",icon:"📊"},
   {date:"2024",title:"Gaia Herbs: Concept Validation",desc:"Evaluated multivitamin concepts before launch to identify the strongest market opportunities.",tags:["research"],type:"research",url:"/entry-gaia",icon:"📊"},
@@ -25,11 +25,11 @@ var ARC_DATA = [
   // ── SPEAKING ─────────────────────────────────────────────
   {date:"2016–Present",title:"Selected Talks, Panels & Podcasts",desc:"Adweek, University of Portland, Texas Tech, Hootsuite, ICSMAX, San Antonio Startup Week, and more.",tags:["speaking"],type:"talk",url:"/entry-speaking",icon:"🎤"},
   // ── ART ──────────────────────────────────────────────────
-  {date:"2026",title:"UTSA Subversive Exhibition",desc:"Group exhibition exploring personal and cultural narratives. San Antonio.",tags:["art"],type:"exhibition",url:null,icon:"🎨"},
-  {date:"March 2026",title:"The Dominion Exhibition",desc:"Abstract expressionism and landscape. Sold two large paintings.",tags:["art"],type:"exhibition",url:"/entry-dominion",icon:"🎨"},
-  {date:"2025",title:"Torre Delle Arti",desc:"International exhibition. Lake Como, Italy. Themes of memory, place, and reflection.",tags:["art"],type:"exhibition",url:"https://www.goodworldliving.com/articles/when-the-universe-hands-you-a-yes",icon:"🎨"},
-  {date:"Sept 2024",title:"NG Art Residency, Provence",desc:"Three weeks in Maussane-les-Alpilles. Abstraction, color, landscape, and daily practice.",tags:["art"],type:"residency",url:"https://www.goodworldliving.com/articles/how-an-art-residency-in-provence-transformed-my-creative-path",icon:"🎨"},
-  {date:"May 2023",title:"La Roane Residency, France",desc:"Art retreat in St. Antonin Noble Val. First European residency.",tags:["art"],type:"residency",url:"https://www.goodworldliving.com/articles/france-art-retreat",icon:"🎨"}
+  {date:"2026",title:"UTSA Exhibition",desc:"Group exhibition exploring personal and cultural narratives. San Antonio.",tags:["art"],type:"exhibition",url:null,icon:"🎨"},
+  {date:"March 2026",title:"Dominion Exhibition",desc:"Abstract expressionism and landscape. Sold two large paintings.",tags:["art"],type:"exhibition",url:"/entry-dominion",icon:"🎨"},
+  {date:"2025",title:"Torre Delle Arti, Lake Como, Italy",desc:"International exhibition. Lake Como, Italy. Themes of memory, place, and reflection.",tags:["art"],type:"exhibition",url:"https://www.goodworldliving.com/articles/when-the-universe-hands-you-a-yes",icon:"🎨"},
+  {date:"Sept 2024",title:"NG Art Residency, Provence, France",desc:"Three weeks in Maussane-les-Alpilles. Abstraction, color, landscape, and daily practice.",tags:["art"],type:"residency",url:"https://www.goodworldliving.com/articles/how-an-art-residency-in-provence-transformed-my-creative-path",icon:"🎨"},
+  {date:"May 2023",title:"La Roane Residency, Saint-Antonin-Noble-Val, France",desc:"Art retreat in St. Antonin Noble Val. First European residency.",tags:["art"],type:"residency",url:"https://www.goodworldliving.com/articles/france-art-retreat",icon:"🎨"}
 ];
 
 // Stats — 4 only (no countries to avoid mobile overlap)
