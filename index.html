@@ -199,18 +199,29 @@ a{color:inherit;text-decoration:none;}
 }
 
 @media(max-width:520px){
-  /* Show all 3 columns on mobile, scaled down */
-  .notes-sidebar{width:90px !important;position:relative !important;transform:none !important;flex-shrink:0 !important;}
-  .ns-cat{font-size:12px !important;padding:5px 6px !important;}
-  .ns-hdr{font-size:10px !important;padding:4px 6px !important;}
-  .notes-list{width:110px !important;flex-shrink:0 !important;}
-  .note-item{padding:6px 8px !important;}
-  .note-title-row{font-size:13px !important;}
-  .note-preview-row{display:none !important;}
-  .note-date-row{display:none !important;}
-  .note-viewer{flex:1 !important;min-width:0 !important;padding:8px 10px !important;font-size:14px !important;overflow-y:auto !important;display:block !important;}
-  .note-viewer h2{font-size:15px !important;}
+  /* Mobile notes: full-screen navigation stack — one panel at a time */
+  .notes-shell{overflow:hidden;}
+  /* Default: show sidebar (categories), hide main */
+  .notes-sidebar{width:100% !important;position:absolute !important;top:0;left:0;right:0;bottom:0;z-index:2;transform:none !important;}
+  .ns-cat{font-size:15px !important;padding:12px 14px !important;}
+  .ns-hdr{font-size:11px !important;padding:6px 10px !important;}
+  .notes-main{display:none !important;}
   .ns-toggle{display:none !important;}
+  /* State: notes list */
+  .notes-shell[data-view="notes"] .notes-sidebar{display:none !important;}
+  .notes-shell[data-view="notes"] .notes-main{display:flex !important;flex-direction:column !important;width:100% !important;height:100% !important;}
+  .notes-shell[data-view="notes"] .notes-list{display:block !important;width:100% !important;overflow-y:auto;flex:1;}
+  .notes-shell[data-view="notes"] .note-viewer{display:none !important;}
+  /* State: content view */
+  .notes-shell[data-view="content"] .notes-sidebar{display:none !important;}
+  .notes-shell[data-view="content"] .notes-main{display:flex !important;flex-direction:column !important;width:100% !important;height:100% !important;}
+  .notes-shell[data-view="content"] .notes-list{display:none !important;}
+  .notes-shell[data-view="content"] .note-viewer{display:block !important;flex:1 !important;padding:10px 12px !important;font-size:15px !important;overflow-y:auto !important;}
+  .notes-shell[data-view="content"] .note-viewer h2{font-size:16px !important;}
+  .note-item{padding:10px 12px !important;}
+  .note-title-row{font-size:15px !important;}
+  .note-preview-row{font-size:12px !important;}
+  .note-date-row{display:none !important;}
 }
   .ns-cat{font-size:12px !important;padding:5px 6px !important;}
   .ns-hdr{font-size:10px !important;padding:4px 6px !important;}
@@ -391,7 +402,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   #smenu .sm-items{width:100%;padding:0;}
   #smenu .sm-cat{width:100%;padding:0 !important;font-size:17px !important;border-bottom:1px solid var(--border);position:static !important;background:var(--win) !important;color:var(--text) !important;display:block !important;}
   #smenu .sm-cat.open{background:rgba(26,58,107,.08) !important;color:var(--navy) !important;}
-  #smenu .sm-cat>span:first-child{display:flex;align-items:center;justify-content:space-between;padding:0;}
+  #smenu .sm-cat>span:first-child{display:flex;align-items:center;justify-content:space-between;padding:0;flex-wrap:nowrap;white-space:nowrap;}
   #smenu .sm-cat.open .sm-arrow{transform:rotate(90deg);}
   #smenu .sm-sub{position:static !important;left:auto !important;top:auto !important;width:100% !important;min-width:unset !important;display:none !important;background:#ede9e2;border:none !important;border-bottom:1px solid var(--border) !important;box-shadow:none !important;padding:4px 0 !important;}
   #smenu .sm-cat.open>.sm-sub{display:block !important;}
@@ -824,7 +835,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   <div class="ico" id="ico-ventures" data-action="win" data-target="ventures-win"><div class="em">📁</div><div class="lb">ventures</div></div>
   <div class="ico" id="ico-note-form" data-action="win" data-target="note-form-win"><div class="em">✉️</div><div class="lb">leave a note</div></div>
   <div class="ico" id="ico-about" data-action="win" data-target="about-win"><div class="em">📄</div><div class="lb">about.txt</div></div>
-  <div class="ico" id="ico-work" data-action="win" data-target="work-win"><div class="em">📋</div><div class="lb">WORK_WITH_ME.exe</div></div>
+  <div class="ico" id="ico-work" data-action="win" data-target="work-win"><div class="em">📋</div><div class="lb">Work With Me</div></div>
   <div class="ico" id="ico-chat-room" data-action="win" data-target="chat-room-win"><div class="em">💬</div><div class="lb">CHATROOM.exe</div></div>
 </div>
 
@@ -840,44 +851,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     <div class="tbar-title">🌚 ask_eve.exe — ivonne_aldaz [online]</div>
     <div class="tbar-btns"><button class="tbtn" onclick="minWin('chat-win')">_</button><button class="tbtn" onclick="maxWin('chat-win')">□</button><button class="tbtn" onclick="closeWin('chat-win')">✕</button></div>
   </div>
-  <div class="mbar">
-    <div class="mi" onclick="toggleMenu(this)">File<div class="dd">
-      <div class="di" onclick="event.stopPropagation();newChat();closeAll()">💬 New Chat</div>
-      <div class="dsep"></div>
-      <div class="di" onclick="event.stopPropagation();openWin('notes-win');closeAll()">📓 Open Notes</div>
-      <div class="di" onclick="event.stopPropagation();openWin('arc-win');closeAll()">🗂️ Open Archive</div>
-      <div class="di" onclick="event.stopPropagation();openWin('music-win');closeAll()">🎵 Open Music</div>
-      <div class="dsep"></div>
-      <a class="di" href="https://bywhitespace.com" target="_blank" onclick="closeAll()">💼 Whitespace</a>
-      <a class="di" href="https://goodworldliving.com" target="_blank" onclick="closeAll()">🌿 Good World Living</a>
-      <div class="dsep"></div>
-      <a class="di" href="/" onclick="closeAll()">🏠 Exit to Lab</a>
-    </div></div>
-    <div class="mi" onclick="toggleMenu(this)">View<div class="dd">
-      <div class="di" onclick="event.stopPropagation();minWin('chat-win');closeAll()">_ Minimize</div>
-      <div class="di" onclick="event.stopPropagation();maxWin('chat-win');closeAll()">□ Fullscreen</div>
-      <a class="di" href="/ask-eve" target="_blank" onclick="closeAll()">↗ Open in New Tab</a>
-      <div class="dsep"></div>
-      <a class="di" href="/field-notes" onclick="closeAll()">📁 Field Notes (web)</a>
-      <a class="di" href="/ask" onclick="closeAll()">✨ Ask Eve (minimal)</a>
-    </div></div>
-    <div class="mi" onclick="toggleMenu(this)">Actions<div class="dd">
-      <div class="di" onclick="quickAsk('tell me about ivonne\'s work')">💼 About the work</div>
-      <div class="di" onclick="quickAsk('what inspires ivonne?')">✨ What inspires her?</div>
-      <div class="di" onclick="quickAsk('what are ivonne\'s favorite projects?')">⭐ Favorite projects</div>
-      <div class="di" onclick="quickAsk('what are ivonne\'s current obsessions?')">🔥 Current obsessions</div>
-      <div class="di" onclick="quickAsk('what are ivonne\'s favorite places?')">📍 Favorite places</div>
-      <div class="di" onclick="quickAsk('tell me something unexpected about ivonne')">🎲 Something random</div>
-      <div class="dsep"></div>
-      <a class="di" href="mailto:hello@ivonnealdaz.com" onclick="closeAll()">📧 Send Email</a>
-    </div></div>
-    <div class="mi" onclick="toggleMenu(this)">Help<div class="dd">
-      <div class="di" onclick="event.stopPropagation();openWin('about-win');closeAll()">📄 About this Lab</div>
-      <div class="dsep"></div>
-      <a class="di" href="https://ivonnealdaz.com" target="_blank" onclick="closeAll()">👤 ivonnealdaz.com</a>
-      <a class="di" href="https://ivonnealdaz.com/gallery" target="_blank" onclick="closeAll()">🎨 Art Gallery</a>
-    </div></div>
-  </div>
+
   <div class="chat-hdr">
     <div style="font-size:28px;line-height:1;flex-shrink:0;">🌚</div>
     <div><div class="chat-name">eve ✦</div><div class="chat-status">● online · moon-powered · trained on ivonne's cv</div></div>
@@ -913,7 +887,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     <div class="tbar-title">📓 notes.app</div>
     <div class="tbar-btns"><button class="tbtn" onclick="minWin('notes-win')">_</button><button class="tbtn" onclick="maxWin('notes-win')">□</button><button class="tbtn" onclick="closeWin('notes-win')">✕</button></div>
   </div>
-  <div class="notes-shell">
+  <div class="notes-shell" id="notes-shell">
     <div class="notes-sidebar" id="notes-sidebar">
       <div class="ns-hdr">CATEGORIES <span class="ns-toggle" id="ns-toggle" onclick="toggleSidebar()">✕</span></div>
       <div class="ns-cat active" onclick="showCat(this,'movies')">🎬 movies / tv</div>
@@ -927,13 +901,12 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     <div class="notes-main" id="notes-main">
       <div class="notes-list" id="notes-list"></div>
       <div class="note-viewer" id="note-viewer">
-        <div style="color:var(--dim);font-size:15px;padding-top:20px;text-align:center;">select a note to read it</div>
       </div>
     </div>
   </div>
   <div id="notes-mobile-bar" style="display:none;padding:4px 8px;background:#e8e4de;border-top:1px solid var(--border);flex-shrink:0;align-items:center;gap:8px;">
-    <button class="fbtn" onclick="toggleSidebar()">☰ Categories</button>
-    <span id="notes-current-cat" style="font-size:13px;color:var(--dim);"></span>
+    <button class="fbtn" id="notes-back-btn" onclick="notesMobileBack()" style="display:none;">← back</button>
+    <span id="notes-current-cat" style="font-size:13px;color:var(--dim);flex:1;text-align:center;"></span>
   </div>
   <div class="resize-corner"></div>
 </div>
@@ -1147,7 +1120,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 <!-- WORK WITH ME -->
 <div class="win off" id="work-win" style="width:min(480px,94vw);height:min(520px,82vh);top:55px;left:calc(50% - 240px);display:none;" onmousedown="focusWin('work-win')">
   <div class="tbar" onmousedown="dragStart(event,'work-win')">
-    <div class="tbar-title">📋 WORK_WITH_ME.exe</div>
+    <div class="tbar-title">📋 Work With Me</div>
     <div class="tbar-btns">
       <button class="tbtn" onclick="minWin('work-win')">_</button>
       <button class="tbtn" onclick="maxWin('work-win')">□</button>
@@ -1399,29 +1372,18 @@ check back.</pre></div>
       <span>📁 Programs</span><span class="sm-arrow">▶</span>
       <div class="sm-sub" style="bottom:auto;top:0;">
         <div class="si" onclick="openWin('chat-win');closeAll()">🌚 ask_eve.exe</div>
-        <div class="si" onclick="openWin('notes-win');closeAll()">📓 notes.app</div>
-        <a class="si" href="https://ivonnealdaz.com/gallery" target="_blank" onclick="closeAll()">🎨 gallery.exe</a>
-        <div class="si" onclick="openWin('music-win');closeAll()">🎵 music.exe</div>
-        <div class="si" onclick="window.open('https://calendar.app.google/oCJud9JDKNkZa8uH6','_blank');closeAll()">📅 calendar</div>
+        <div class="si" onclick="openWin('chat-room-win');closeAll()">💬 chatroom.exe</div>
         <div class="si" onclick="openWin('snake-win');closeAll()">🐍 snake.exe</div>
-        <div class="si" onclick="openWin('photos-win');closeAll()">📷 photos.exe</div>
-        <div class="si" onclick="openWin('work-win');closeAll()">📋 WORK_WITH_ME.exe</div>
-        <div class="si" onclick="openWin('chat-room-win');closeAll()">💬 CHATROOM.exe</div>
       </div>
     </div>
     <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
       <span>🗺️ Explore</span><span class="sm-arrow">▶</span>
       <div class="sm-sub" style="bottom:auto;top:0;">
-        <a class="si" href="/field-notes" onclick="closeAll()">📁 field_notes</a>
         <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ archive.exe</div>
-        <div class="sm-cat sm-nested-trigger" onmouseenter="openNested(this)" onclick="toggleNested(this)" style="border-bottom:none;">
-          <span>📁 ventures</span><span class="sm-arrow">▶</span>
-          <div class="sm-sub sm-nested">
-            <div class="si" onclick="openWin('ventures-win');closeAll()">📁 open folder</div>
-            <div class="si" onclick="openBrowser('https://bywhitespace.com','Whitespace');closeAll()">💼 whitespace</div>
-            <div class="si" onclick="openBrowser('https://goodworldliving.com','Good World Living');closeAll()">🌿 good_world</div>
-          </div>
-        </div>
+        <div class="si" onclick="openWin('ventures-win');closeAll()">📁 ventures</div>
+        <div class="si" onclick="openWin('notes-win');closeAll()">📓 notes.app</div>
+        <div class="si" onclick="openWin('photos-win');closeAll()">📷 photos.exe</div>
+        <a class="si" href="https://ivonnealdaz.com/gallery" target="_blank" onclick="closeAll()">🎨 gallery.exe</a>
       </div>
     </div>
     <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
@@ -1430,6 +1392,7 @@ check back.</pre></div>
         <div class="si" onclick="openWin('soc-win');closeAll()">🌐 socials</div>
         <a class="si" href="mailto:hello@ivonnealdaz.com" onclick="closeAll()">📧 contact</a>
         <div class="si" onclick="openWin('note-form-win');closeAll()">✉️ leave a note</div>
+        <div class="si" onclick="openWin('work-win');closeAll()">📋 work with me</div>
       </div>
     </div>
     <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
@@ -1886,7 +1849,30 @@ var NOTES={
 };
 function showNotesMobileBar(){
   var bar=document.getElementById('notes-mobile-bar');
-  if(bar&&window.innerWidth<=520){bar.style.display='flex';bar.style.alignItems='center';}
+  if(bar&&window.innerWidth<=520){
+    bar.style.display='flex';bar.style.alignItems='center';
+    var shell=document.getElementById('notes-shell');
+    if(shell){shell.removeAttribute('data-view');}
+    var back=document.getElementById('notes-back-btn');
+    if(back)back.style.display='none';
+    var nc=document.getElementById('notes-current-cat');if(nc)nc.textContent='';
+  }
+}
+function notesMobileBack(){
+  var shell=document.getElementById('notes-shell');
+  if(!shell)return;
+  var view=shell.getAttribute('data-view');
+  var back=document.getElementById('notes-back-btn');
+  var nc=document.getElementById('notes-current-cat');
+  if(view==='content'){
+    shell.setAttribute('data-view','notes');
+    if(nc)nc.textContent=notesCat;
+    if(back)back.style.display='inline-block';
+  } else {
+    shell.removeAttribute('data-view');
+    if(nc)nc.textContent='';
+    if(back)back.style.display='none';
+  }
 }
 function toggleSidebar(){
   var sb=document.getElementById('notes-sidebar');
@@ -1897,11 +1883,10 @@ function showCat(el,cat){
   el.classList.add('active');
   var nc=document.getElementById('notes-current-cat');if(nc)nc.textContent=cat;
   if(window.innerWidth<=520){
-    var sb=document.getElementById('notes-sidebar');if(sb)sb.classList.remove('open');
-    var list=document.getElementById('notes-list');
-    var viewer=document.getElementById('note-viewer');
-    if(list)list.style.display='block';
-    if(viewer)viewer.style.display='none';
+    var shell=document.getElementById('notes-shell');
+    if(shell)shell.setAttribute('data-view','notes');
+    var back=document.getElementById('notes-back-btn');
+    if(back)back.style.display='inline-block';
   }
   renderNotes(cat);
 }
@@ -1938,10 +1923,7 @@ function renderNotes(cat){
   else if(notes.length===0){viewer.innerHTML='<div style="color:var(--dim);padding-top:20px;text-align:center;">no notes here yet.</div>';}
 }
 function nmViewerBack(){
-  var list=document.getElementById('notes-list');
-  var viewer=document.getElementById('note-viewer');
-  if(list)list.style.display='block';
-  if(viewer){viewer.style.display='none';viewer.style.width='';}
+  notesMobileBack();
 }
 
 // LEAVE A NOTE

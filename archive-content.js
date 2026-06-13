@@ -11,13 +11,15 @@ var ARC_DATA = [
   {date:"2020–2023",title:"Future of Marketing Newsletter",desc:"130+ issues. 7K → 50K subscribers. Three years, zero missed issues.",tags:["featured","writing"],type:"newsletter",url:"/entry-newsletter",icon:"📧"},
   {date:"2022–2025",title:"Building the Insights Function",desc:"Built and scaled a research function supporting CPG, beauty, and retail brands.",tags:["featured","leadership"],type:"leadership",url:"/entry-insights",icon:"📈"},
   {date:"2021–2023",title:"Community-Powered Marketing Research Series",desc:"Three annual industry studies. Fueled an entire year of marketing each time.",tags:["featured","research"],type:"research",url:"/entry-research",icon:"📊"},
-  {date:"2024",title:"Veggies Made Great: Omelette Rounds Rebrand",desc:"Consumer research supporting a product rename — from Egg Patties to Omelette Rounds.",tags:["featured","research"],type:"research",url:"/entry-omelette",icon:"🥚"},
+  {date:"2024",title:"Omelette Rounds Rebrand",desc:"Consumer research supporting a product rename — from Egg Patties to Omelette Rounds.",tags:["featured","research"],type:"research",url:"/entry-omelette",icon:"🥚"},
   // ── RESEARCH ─────────────────────────────────────────────
   {date:"2024",title:"Purina: The Role of Video Reviews",desc:"Quantifying the influence of video reviews on purchase decisions in the pet care category.",tags:["research"],type:"research",url:"/entry-purina",icon:"📊"},
+  {date:"2024",title:"ARM & HAMMER: Shelf Placement & Pricing Strategy",desc:"Understanding where a new product should live in retail — and what consumers would pay for it.",tags:["research"],type:"research",url:"/entry-armhammer",icon:"📊"},
   {date:"2024",title:"Gaia Herbs: Concept Validation",desc:"Evaluated multivitamin concepts before launch to identify the strongest market opportunities.",tags:["research"],type:"research",url:"/entry-gaia",icon:"📊"},
   // ── BUILT ────────────────────────────────────────────────
   {date:"2025–Present",title:"Whitespace",desc:"Independent brand strategy studio — research, positioning, narrative, and execution.",tags:["built"],type:"studio",url:"/entry-whitespace",icon:"💼"},
   {date:"2024–Present",title:"Good World Living",desc:"Platform exploring creativity, travel, and intentional living.",tags:["built","writing"],type:"built",url:"/entry-gwl",icon:"🌿"},
+  {date:"2026",title:"CHATROOM.exe",desc:"A retro internet chat room built for curiosity, not engagement. Public rooms, private DMs, persistent usernames.",tags:["built"],type:"built",url:"/entry-chatroom",icon:"💬"},
   // ── WRITING ──────────────────────────────────────────────
   {date:"2025",title:"AI and the Art of Creative Direction",desc:"What AI can't replace in creative work — and why taste still wins.",tags:["writing"],type:"essay",url:"https://www.bywhitespace.com/blog/ai-and-the-art-of-creative-direction-why-taste-still-wins",icon:"📝"},
   {date:"2025",title:"The Shift Toward Intentional Branding",desc:"On why brands that stand for something specific outperform brands that try to stand for everything.",tags:["writing"],type:"essay",url:"https://www.bywhitespace.com/blog/intentional-branding-designing-with-meaning-in-a-noisy-world",icon:"📝"},
@@ -25,19 +27,19 @@ var ARC_DATA = [
   // ── SPEAKING ─────────────────────────────────────────────
   {date:"2016–Present",title:"Selected Talks, Panels & Podcasts",desc:"Adweek, University of Portland, Texas Tech, Hootsuite, ICSMAX, San Antonio Startup Week, and more.",tags:["speaking"],type:"talk",url:"/entry-speaking",icon:"🎤"},
   // ── ART ──────────────────────────────────────────────────
-  {date:"2026",title:"UTSA Exhibition",desc:"Group exhibition exploring personal and cultural narratives. San Antonio.",tags:["art"],type:"exhibition",url:null,icon:"🎨"},
-  {date:"March 2026",title:"Dominion Exhibition",desc:"Abstract expressionism and landscape. Sold two large paintings.",tags:["art"],type:"exhibition",url:"/entry-dominion",icon:"🎨"},
-  {date:"2025",title:"Torre Delle Arti, Lake Como, Italy",desc:"International exhibition. Lake Como, Italy. Themes of memory, place, and reflection.",tags:["art"],type:"exhibition",url:"https://www.goodworldliving.com/articles/when-the-universe-hands-you-a-yes",icon:"🎨"},
-  {date:"Sept 2024",title:"NG Art Residency, Provence, France",desc:"Three weeks in Maussane-les-Alpilles. Abstraction, color, landscape, and daily practice.",tags:["art"],type:"residency",url:"https://www.goodworldliving.com/articles/how-an-art-residency-in-provence-transformed-my-creative-path",icon:"🎨"},
-  {date:"May 2023",title:"La Roane Residency, Saint-Antonin-Noble-Val, France",desc:"Art retreat in St. Antonin Noble Val. First European residency.",tags:["art"],type:"residency",url:"https://www.goodworldliving.com/articles/france-art-retreat",icon:"🎨"}
+  {date:"2026",title:"UTSA Subversive Exhibition",desc:"Group exhibition exploring personal and cultural narratives. San Antonio.",tags:["art"],type:"exhibition",url:null,icon:"🎨"},
+  {date:"March 2026",title:"The Dominion Exhibition",desc:"Abstract expressionism and landscape. Sold two large paintings.",tags:["art"],type:"exhibition",url:"/entry-dominion",icon:"🎨"},
+  {date:"2025",title:"Torre Delle Arti",desc:"International exhibition. Lake Como, Italy. Themes of memory, place, and reflection.",tags:["art"],type:"exhibition",url:"https://www.goodworldliving.com/articles/when-the-universe-hands-you-a-yes",icon:"🎨"},
+  {date:"Sept 2024",title:"NG Art Residency, Provence",desc:"Three weeks in Maussane-les-Alpilles. Abstraction, color, landscape, and daily practice.",tags:["art"],type:"residency",url:"https://www.goodworldliving.com/articles/how-an-art-residency-in-provence-transformed-my-creative-path",icon:"🎨"},
+  {date:"May 2023",title:"La Roane Residency, France",desc:"Art retreat in St. Antonin Noble Val. First European residency.",tags:["art"],type:"residency",url:"https://www.goodworldliving.com/articles/france-art-retreat",icon:"🎨"}
 ];
 
 // Stats — 4 only (no countries to avoid mobile overlap)
 var STATS_DATA = [
-  {n:'50,000+', label:'subscribers'},
-  {n:'130+',    label:'newsletters'},
-  {n:'12+',     label:'years in marketing'},
-  {n:'20+',     label:'speaking engagements'}
+  {n:'50,000+', label:'newsletter subscribers'},
+  {n:'130+',    label:'newsletter issues'},
+  {n:'10+',     label:'years in marketing'},
+  {n:'15+',     label:'speaking engagements'}
 ];
 
 var TYPE_LABELS = {built:"Built",essay:"Essay",exhibition:"Exhibition",talk:"Talk",residency:"Residency",research:"Research",newsletter:"Newsletter",studio:"Studio",community:"Community",leadership:"Leadership"};
@@ -282,5 +284,41 @@ ENTRIES_DATA['/entry-provence'] = {
       ['Week 3','The shift. Less observational, more interior. Started working larger.']
     ]},
     {label:'What I Learned', quote:'Consistency matters more than inspiration.'}
+  ]
+};
+
+ENTRIES_DATA['/entry-chatroom'] = {
+  title: 'CHATROOM.exe',
+  date: '2026',
+  tags: ['built'],
+  lede: 'The internet has become increasingly optimized. Feeds are algorithmic. Platforms compete for attention. I wanted to explore a different question: what would happen if you built a small corner of the internet designed for curiosity instead of engagement?',
+  sections: [
+    {label:'The Problem', body:'Most online spaces feel less like communities and more like distribution channels.||No feeds. No followers. No algorithms. Just people in rooms.'},
+    {label:'The Idea', body:'A retro chat room inspired by Yahoo Chat, AIM, MSN Messenger, and the early web.||Not as a nostalgia project. As an experiment in community design.||The goal wasn’t to maximize time on site. The goal was to create a place people wanted to return to.'},
+    {label:'The Approach', table:[
+      ['Public rooms','Six themed spaces: lobby, artists, builders, marketers, travelers, random'],
+      ['Private messaging','Direct messages between users, persistent across sessions'],
+      ['Usernames','Claimed with a PIN — yours to keep'],
+      ['Interface','Retro-inspired, mobile-friendly, no social patterns'],
+      ['Built with','Next.js, Supabase, TypeScript, deployed on Vercel']
+    ]},
+    {label:'The Outcome', body:'The project became an exploration of what digital spaces might look like when optimized for interaction rather than attention.||It also served as a testing ground for future community and product ideas.'},
+    {label:'What I Learned', quote:'Technology changes. Human behavior changes more slowly. People still want places to gather, share ideas, and feel part of something larger than themselves.'}
+  ]
+};
+
+ENTRIES_DATA['/entry-armhammer'] = {
+  title: 'ARM & HAMMER: Shelf Placement & Pricing Strategy',
+  date: '2024',
+  tags: ['research'],
+  lede: 'A product can succeed or fail before a customer ever picks it up. Placement matters. Pricing matters. Context matters.',
+  sections: [
+    {label:'The Problem', body:'ARM & HAMMER wanted to understand where a new product should live within the retail environment and how consumers would evaluate it once they found it.||The challenge wasn’t simply whether consumers liked the product. It was understanding where they expected to find it and what they were willing to pay for it.'},
+    {label:'The Approach', table:[
+      ['Retail Placement','Which aisle consumers expected to find the product in, whether it belonged in cooking, cleaning, or adjacent categories, and how category context influenced perception'],
+      ['Pricing Strategy','Consumer willingness to pay, pricing thresholds, value perception, and purchase intent across different price points']
+    ]},
+    {label:'The Outcome', body:'The research provided actionable guidance around retail category placement, shelf positioning, consumer expectations, pricing strategy, and purchase barriers.||The findings helped reduce uncertainty around how the product should be introduced to market and how consumers would encounter it in-store.'},
+    {label:'What I Learned', quote:'Consumers don’t evaluate products in isolation. Where a product appears often influences how people understand what it is, what it does, and whether it belongs in their lives. Sometimes the shelf is part of the positioning strategy.'}
   ]
 };
