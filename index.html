@@ -1778,7 +1778,6 @@ function openBrowser(url,title){
 function browserNav(url){if(!url.startsWith('http'))url='https://'+url;openBrowser(url);}
 
 // ── ARCHIVE FILE EXPLORER ──
-// Archive data in archive-content.js
 
 function filterArc(f,btn){
   if(typeof arcFilter!=='undefined')arcFilter=f;
@@ -2237,9 +2236,7 @@ function toggleNested(el){
 
 
 // ── ENTRY VIEWER ──
-var ENTRIES_DATA = {};
-
-// Entry detail data in archive-content.js
+// ENTRIES_DATA populated by archive-content.js
 
 function openEntryWindow(path, title){
   var data = (typeof ENTRIES_DATA!=='undefined') ? ENTRIES_DATA[path] : null;
