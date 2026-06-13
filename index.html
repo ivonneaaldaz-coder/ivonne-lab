@@ -199,29 +199,33 @@ a{color:inherit;text-decoration:none;}
 }
 
 @media(max-width:520px){
-  /* Mobile notes: full-screen navigation stack — one panel at a time */
-  .notes-shell{overflow:hidden;}
-  /* Default: show sidebar (categories), hide main */
-  .notes-sidebar{width:100% !important;position:absolute !important;top:0;left:0;right:0;bottom:0;z-index:2;transform:none !important;}
-  .ns-cat{font-size:15px !important;padding:12px 14px !important;}
-  .ns-hdr{font-size:11px !important;padding:6px 10px !important;}
+  /* Mobile notes: navigation stack — one panel at a time */
+  #notes-nav-bar{display:flex !important;}
+  .ns-hdr{display:none !important;}
+  .notes-shell{overflow:hidden;position:relative;}
+
+  /* Default state (no data-view): show categories only */
+  .notes-sidebar{width:100% !important;position:static !important;transform:none !important;border-right:none !important;flex-shrink:0 !important;}
   .notes-main{display:none !important;}
+  .ns-cat{font-size:15px !important;padding:12px 14px !important;border-bottom:1px solid var(--border) !important;}
   .ns-toggle{display:none !important;}
+
   /* State: notes list */
   .notes-shell[data-view="notes"] .notes-sidebar{display:none !important;}
   .notes-shell[data-view="notes"] .notes-main{display:flex !important;flex-direction:column !important;width:100% !important;height:100% !important;}
-  .notes-shell[data-view="notes"] .notes-list{display:block !important;width:100% !important;overflow-y:auto;flex:1;}
+  .notes-shell[data-view="notes"] .notes-list{display:block !important;width:100% !important;overflow-y:auto !important;flex:1 !important;}
   .notes-shell[data-view="notes"] .note-viewer{display:none !important;}
+  .note-item{padding:12px 14px !important;border-bottom:1px solid var(--border) !important;}
+  .note-title-row{font-size:15px !important;}
+  .note-preview-row{font-size:12px !important;color:var(--dim) !important;}
+  .note-date-row{display:none !important;}
+
   /* State: content view */
   .notes-shell[data-view="content"] .notes-sidebar{display:none !important;}
   .notes-shell[data-view="content"] .notes-main{display:flex !important;flex-direction:column !important;width:100% !important;height:100% !important;}
   .notes-shell[data-view="content"] .notes-list{display:none !important;}
-  .notes-shell[data-view="content"] .note-viewer{display:block !important;flex:1 !important;padding:10px 12px !important;font-size:15px !important;overflow-y:auto !important;}
+  .notes-shell[data-view="content"] .note-viewer{display:block !important;flex:1 !important;min-width:0 !important;padding:12px 14px !important;font-size:15px !important;overflow-y:auto !important;}
   .notes-shell[data-view="content"] .note-viewer h2{font-size:16px !important;}
-  .note-item{padding:10px 12px !important;}
-  .note-title-row{font-size:15px !important;}
-  .note-preview-row{font-size:12px !important;}
-  .note-date-row{display:none !important;}
 }
   .ns-cat{font-size:12px !important;padding:5px 6px !important;}
   .ns-hdr{font-size:10px !important;padding:4px 6px !important;}
@@ -887,9 +891,14 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     <div class="tbar-title">📓 notes.app</div>
     <div class="tbar-btns"><button class="tbtn" onclick="minWin('notes-win')">_</button><button class="tbtn" onclick="maxWin('notes-win')">□</button><button class="tbtn" onclick="closeWin('notes-win')">✕</button></div>
   </div>
+  <!-- Mobile nav bar: sits under titlebar, hidden on desktop -->
+  <div id="notes-nav-bar" style="display:none;background:#e8e4de;border-bottom:1px solid var(--border);padding:5px 10px;flex-shrink:0;align-items:center;gap:8px;flex-wrap:nowrap;">
+    <button class="fbtn" id="notes-back-btn" onclick="notesMobileBack()" style="display:none;flex-shrink:0;">← back</button>
+    <span id="notes-nav-title" style="font-size:13px;font-family:var(--font);color:var(--navy);font-weight:bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">CATEGORIES</span>
+  </div>
   <div class="notes-shell" id="notes-shell">
     <div class="notes-sidebar" id="notes-sidebar">
-      <div class="ns-hdr">CATEGORIES <span class="ns-toggle" id="ns-toggle" onclick="toggleSidebar()">✕</span></div>
+      <div class="ns-hdr">CATEGORIES</div>
       <div class="ns-cat active" onclick="showCat(this,'movies')">🎬 movies / tv</div>
       <div class="ns-cat" onclick="showCat(this,'books')">📚 books</div>
       <div class="ns-cat" onclick="showCat(this,'thoughts')">💭 thoughts</div>
@@ -900,13 +909,12 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     </div>
     <div class="notes-main" id="notes-main">
       <div class="notes-list" id="notes-list"></div>
-      <div class="note-viewer" id="note-viewer">
-      </div>
+      <div class="note-viewer" id="note-viewer"></div>
     </div>
   </div>
-  <div id="notes-mobile-bar" style="display:none;padding:4px 8px;background:#e8e4de;border-top:1px solid var(--border);flex-shrink:0;align-items:center;gap:8px;">
-    <button class="fbtn" id="notes-back-btn" onclick="notesMobileBack()" style="display:none;">← back</button>
-    <span id="notes-current-cat" style="font-size:13px;color:var(--dim);flex:1;text-align:center;"></span>
+  <!-- Bottom bar: shows current category label only -->
+  <div id="notes-mobile-bar" style="display:none;padding:3px 10px;background:#e8e4de;border-top:1px solid var(--border);flex-shrink:0;align-items:center;">
+    <span id="notes-current-cat" style="font-size:11px;color:var(--dim);font-family:var(--font);"></span>
   </div>
   <div class="resize-corner"></div>
 </div>
@@ -1847,84 +1855,107 @@ var NOTES={
     {t:"tools",d:"ongoing",c:"Claude\nGithub\nVercel\nSupabase"}
   ]
 };
-function showNotesMobileBar(){
-  var bar=document.getElementById('notes-mobile-bar');
-  if(bar&&window.innerWidth<=520){
-    bar.style.display='flex';bar.style.alignItems='center';
-    var shell=document.getElementById('notes-shell');
-    if(shell){shell.removeAttribute('data-view');}
-    var back=document.getElementById('notes-back-btn');
+function notesSetView(view){
+  // view: 'categories' | 'notes' | 'content'
+  var shell=document.getElementById('notes-shell');
+  var nav=document.getElementById('notes-nav-bar');
+  var back=document.getElementById('notes-back-btn');
+  var navTitle=document.getElementById('notes-nav-title');
+  var nc=document.getElementById('notes-current-cat');
+  if(!shell)return;
+  if(window.innerWidth>520)return; // desktop: never touch
+  if(view==='categories'){
+    shell.removeAttribute('data-view');
+    if(nav)nav.style.display='flex';
     if(back)back.style.display='none';
-    var nc=document.getElementById('notes-current-cat');if(nc)nc.textContent='';
+    if(navTitle)navTitle.textContent='CATEGORIES';
+    if(nc)nc.textContent='';
+  } else if(view==='notes'){
+    shell.setAttribute('data-view','notes');
+    if(nav)nav.style.display='flex';
+    if(back)back.style.display='inline-block';
+    if(navTitle)navTitle.textContent=notesCat;
+    if(nc)nc.textContent=notesCat;
+  } else if(view==='content'){
+    shell.setAttribute('data-view','content');
+    if(nav)nav.style.display='flex';
+    if(back)back.style.display='inline-block';
+    if(nc)nc.textContent=notesCat;
   }
 }
 function notesMobileBack(){
   var shell=document.getElementById('notes-shell');
   if(!shell)return;
   var view=shell.getAttribute('data-view');
-  var back=document.getElementById('notes-back-btn');
-  var nc=document.getElementById('notes-current-cat');
   if(view==='content'){
-    shell.setAttribute('data-view','notes');
-    if(nc)nc.textContent=notesCat;
-    if(back)back.style.display='inline-block';
+    notesSetView('notes');
   } else {
-    shell.removeAttribute('data-view');
-    if(nc)nc.textContent='';
-    if(back)back.style.display='none';
+    notesSetView('categories');
   }
 }
+function showNotesMobileBar(){
+  var bar=document.getElementById('notes-mobile-bar');
+  if(bar&&window.innerWidth<=520){bar.style.display='flex';}
+  notesSetView('categories');
+}
 function toggleSidebar(){
-  var sb=document.getElementById('notes-sidebar');
-  if(sb)sb.classList.toggle('open');
+  if(window.innerWidth<=520){notesSetView('categories');}
+  else{var sb=document.getElementById('notes-sidebar');if(sb)sb.classList.toggle('open');}
 }
 function showCat(el,cat){
   document.querySelectorAll('.ns-cat').forEach(function(c){c.classList.remove('active');});
   el.classList.add('active');
-  var nc=document.getElementById('notes-current-cat');if(nc)nc.textContent=cat;
-  if(window.innerWidth<=520){
-    var shell=document.getElementById('notes-shell');
-    if(shell)shell.setAttribute('data-view','notes');
-    var back=document.getElementById('notes-back-btn');
-    if(back)back.style.display='inline-block';
-  }
   renderNotes(cat);
+  if(window.innerWidth<=520){notesSetView('notes');}
 }
 function renderNotes(cat){
+  notesCat=cat||notesCat;
   var list=document.getElementById('notes-list');
   var viewer=document.getElementById('note-viewer');
   if(!list||!viewer)return;
-  var notes=NOTES[cat]||[];
+  var notes=NOTES[notesCat]||[];
   list.innerHTML='';
-  function selectNote(n,el){
+  viewer.innerHTML='';
+  function selectNote(n,itemEl){
     document.querySelectorAll('.note-item').forEach(function(x){x.classList.remove('active');});
-    el.classList.add('active');
+    itemEl.classList.add('active');
     var lines=n.c.split('\n');
     var bodyHtml='';
     lines.forEach(function(line){
       if(line.trim()===''){bodyHtml+='<br>';}
-      else if(line.startsWith('•')){bodyHtml+='<div style="padding-left:12px;margin:2px 0;">'+line+'</div>';}
+      else if(line.startsWith('\u2022')){bodyHtml+='<div style="padding-left:12px;margin:2px 0;">'+line+'</div>';}
       else{bodyHtml+='<div style="margin:2px 0;">'+line+'</div>';}
     });
-    viewer.innerHTML='<h2>'+n.t+'</h2><div class="note-meta">'+n.d+'</div><div class="note-content">'+bodyHtml+'</div>';
-    if(window.innerWidth<=520){list.style.display='none';viewer.style.display='block';viewer.style.width='100%';}
+    viewer.innerHTML='<h2>'+n.t+'</h2><div class="note-meta">'+(n.d||'')+'</div><div class="note-content">'+bodyHtml+'</div>';
+    if(window.innerWidth<=520){
+      var navTitle=document.getElementById('notes-nav-title');
+      if(navTitle)navTitle.textContent=n.t;
+      notesSetView('content');
+    }
   }
   notes.forEach(function(n,i){
     var item=document.createElement('div');
     item.className='note-item'+(i===0?' active':'');
     var preview=n.c.split('\n')[0].substring(0,50)+(n.c.length>50?'...':'');
-    item.innerHTML='<div class="note-title-row">'+n.t+'</div><div class="note-preview-row">'+preview+'</div><div class="note-date-row">'+n.d+'</div>';
-    item.addEventListener('click',function(e){e.preventDefault();selectNote(n,item);});
-    item.addEventListener('touchend',function(e){e.preventDefault();selectNote(n,item);},{passive:false});
+    item.innerHTML='<div class="note-title-row">'+n.t+'</div><div class="note-preview-row">'+preview+'</div><div class="note-date-row">'+(n.d||'')+'</div>';
+    // Use touchend for mobile, click for desktop — not both (avoids double-fire)
+    if('ontouchstart' in window){
+      item.addEventListener('touchend',function(e){e.preventDefault();selectNote(n,item);},{passive:false});
+    } else {
+      item.addEventListener('click',function(){selectNote(n,item);});
+    }
     list.appendChild(item);
   });
-  if(window.innerWidth<=520){list.style.display='block';viewer.style.display='none';}
-  if(notes.length>0&&window.innerWidth>520){var fi=list.querySelector('.note-item');if(fi)fi.click();}
-  else if(notes.length===0){viewer.innerHTML='<div style="color:var(--dim);padding-top:20px;text-align:center;">no notes here yet.</div>';}
+  // Desktop: auto-select first note
+  if(window.innerWidth>520&&notes.length>0){
+    var fi=list.querySelector('.note-item');
+    if(fi)fi.click();
+  }
+  if(notes.length===0){
+    viewer.innerHTML='<div style="color:var(--dim);padding-top:20px;text-align:center;">no notes here yet.</div>';
+  }
 }
-function nmViewerBack(){
-  notesMobileBack();
-}
+function nmViewerBack(){notesMobileBack();}
 
 // LEAVE A NOTE
 async function submitNote(){
