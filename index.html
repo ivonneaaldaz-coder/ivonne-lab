@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ask Eve — Ivonne Aldaz</title>
-<meta name="description" content="A retro Windows desktop built as a portfolio. Ask Eve, an AI trained on Ivonne's CV. Browse a decade of brand strategy, art, and built things. Play Snake. Leave a note.">
+<title>Ivonne Aldaz — Personal OS</title>
+<meta name="description" content="Explore the personal OS of Ivonne Aldaz — strategist, researcher, artist, and builder. Browse case studies, experiments, writing, art, and AI projects.">
 <!-- Open Graph -->
 <meta property="og:title" content="lab.ivonnealdaz.com — a personal OS">
 <meta property="og:description" content="Brand strategist. Artist. Builder. A Windows 95 desktop vibecoded from scratch — AI agent, archive, notes, photos, and a global Snake leaderboard.">
-<meta property="og:url" content="https://lab.ivonnealdaz.com/ask-eve">
+<meta property="og:url" content="https://lab.ivonnealdaz.com">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://lab.ivonnealdaz.com/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -27,7 +27,7 @@
   gtag('js', new Date());
   gtag('config', 'G-0EQPFFGRQV');
 </script>
-<link rel="canonical" href="https://lab.ivonnealdaz.com/ask-eve">
+<link rel="canonical" href="https://lab.ivonnealdaz.com">
 <meta name="robots" content="index, follow">
 <meta name="author" content="Ivonne Aldaz">
 <meta name="keywords" content="Ivonne Aldaz, brand strategy, creative director, artist, San Antonio, Whitespace, Good World Living, portfolio">
@@ -892,9 +892,8 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     <div class="tbar-btns"><button class="tbtn" onclick="minWin('notes-win')">_</button><button class="tbtn" onclick="maxWin('notes-win')">□</button><button class="tbtn" onclick="closeWin('notes-win')">✕</button></div>
   </div>
   <!-- Mobile nav bar: sits under titlebar, hidden on desktop -->
-  <div id="notes-nav-bar" style="display:none;background:#e8e4de;border-bottom:1px solid var(--border);padding:5px 10px;flex-shrink:0;align-items:center;gap:8px;flex-wrap:nowrap;">
-    <button class="fbtn" id="notes-back-btn" onclick="notesMobileBack()" style="display:none;flex-shrink:0;">← back</button>
-    <span id="notes-nav-title" style="font-size:13px;font-family:var(--font);color:var(--navy);font-weight:bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">CATEGORIES</span>
+  <div id="notes-nav-bar" style="display:none;background:#e8e4de;border-bottom:1px solid var(--border);padding:5px 10px;flex-shrink:0;align-items:center;gap:8px;">
+    <button class="fbtn" id="notes-back-btn" onclick="notesMobileBack()" style="display:none;">← back</button>
   </div>
   <div class="notes-shell" id="notes-shell">
     <div class="notes-sidebar" id="notes-sidebar">
@@ -1860,7 +1859,6 @@ function notesSetView(view){
   var shell=document.getElementById('notes-shell');
   var nav=document.getElementById('notes-nav-bar');
   var back=document.getElementById('notes-back-btn');
-  var navTitle=document.getElementById('notes-nav-title');
   var nc=document.getElementById('notes-current-cat');
   if(!shell)return;
   if(window.innerWidth>520)return; // desktop: never touch
@@ -1868,13 +1866,11 @@ function notesSetView(view){
     shell.removeAttribute('data-view');
     if(nav)nav.style.display='flex';
     if(back)back.style.display='none';
-    if(navTitle)navTitle.textContent='CATEGORIES';
     if(nc)nc.textContent='';
   } else if(view==='notes'){
     shell.setAttribute('data-view','notes');
     if(nav)nav.style.display='flex';
     if(back)back.style.display='inline-block';
-    if(navTitle)navTitle.textContent=notesCat;
     if(nc)nc.textContent=notesCat;
   } else if(view==='content'){
     shell.setAttribute('data-view','content');
@@ -1928,8 +1924,7 @@ function renderNotes(cat){
     });
     viewer.innerHTML='<h2>'+n.t+'</h2><div class="note-meta">'+(n.d||'')+'</div><div class="note-content">'+bodyHtml+'</div>';
     if(window.innerWidth<=520){
-      var navTitle=document.getElementById('notes-nav-title');
-      if(navTitle)navTitle.textContent=n.t;
+          if(navTitle)navTitle.textContent=n.t;
       notesSetView('content');
     }
   }
