@@ -19,16 +19,16 @@ var ARC_DATA = [
   {date:"2025–Present",title:"Whitespace",desc:"Independent brand strategy studio — research, positioning, narrative, and execution.",tags:["built"],type:"studio",url:"/entry-whitespace",icon:"💼"},
   {date:"2024–Present",title:"Good World Living",desc:"Platform exploring creativity, travel, and intentional living.",tags:["built","writing"],type:"built",url:"/entry-gwl",icon:"🌿"},
   // ── WRITING ──────────────────────────────────────────────
-  {date:"2025",title:"AI and the Art of Creative Direction",desc:"What AI can't replace in creative work — and why taste still wins.",tags:["writing"],type:"essay",url:"/entry-essay-ai",icon:"📝"},
-  {date:"2025",title:"The Shift Toward Intentional Branding",desc:"On why brands that stand for something specific outperform brands that try to stand for everything.",tags:["writing"],type:"essay",url:"/entry-essay-branding",icon:"📝"},
-  {date:"2025",title:"From Brand to Atmosphere",desc:"What it means to build a brand that feels like something before anyone says a word.",tags:["writing"],type:"essay",url:"/entry-essay-atmosphere",icon:"📝"},
+  {date:"2025",title:"AI and the Art of Creative Direction",desc:"What AI can't replace in creative work — and why taste still wins.",tags:["writing"],type:"essay",url:"https://www.bywhitespace.com/blog/ai-and-the-art-of-creative-direction-why-taste-still-wins",icon:"📝"},
+  {date:"2025",title:"The Shift Toward Intentional Branding",desc:"On why brands that stand for something specific outperform brands that try to stand for everything.",tags:["writing"],type:"essay",url:"https://www.bywhitespace.com/blog/intentional-branding-designing-with-meaning-in-a-noisy-world",icon:"📝"},
+  {date:"2025",title:"From Brand to Atmosphere",desc:"What it means to build a brand that feels like something before anyone says a word.",tags:["writing"],type:"essay",url:"https://www.bywhitespace.com/blog/designing-experiences-that-feel-like-worlds",icon:"📝"},
   // ── SPEAKING ─────────────────────────────────────────────
   {date:"2016–Present",title:"Selected Talks, Panels & Podcasts",desc:"Adweek, University of Portland, Texas Tech, Hootsuite, ICSMAX, San Antonio Startup Week, and more.",tags:["speaking"],type:"talk",url:"/entry-speaking",icon:"🎤"},
   // ── ART ──────────────────────────────────────────────────
   {date:"2026",title:"UTSA Subversive Exhibition",desc:"Group exhibition exploring personal and cultural narratives. San Antonio.",tags:["art"],type:"exhibition",url:null,icon:"🎨"},
   {date:"March 2026",title:"The Dominion Exhibition",desc:"Abstract expressionism and landscape. Sold two large paintings.",tags:["art"],type:"exhibition",url:"/entry-dominion",icon:"🎨"},
-  {date:"2025",title:"Torre Delle Arti",desc:"International exhibition. Lake Como, Italy. Themes of memory, place, and reflection.",tags:["art"],type:"exhibition",url:"/entry-torre",icon:"🎨"},
-  {date:"Sept 2024",title:"NG Art Residency, Provence",desc:"Three weeks in Maussane-les-Alpilles. Abstraction, color, landscape, and daily practice.",tags:["art"],type:"residency",url:"/entry-provence",icon:"🎨"},
+  {date:"2025",title:"Torre Delle Arti",desc:"International exhibition. Lake Como, Italy. Themes of memory, place, and reflection.",tags:["art"],type:"exhibition",url:"https://www.goodworldliving.com/articles/when-the-universe-hands-you-a-yes",icon:"🎨"},
+  {date:"Sept 2024",title:"NG Art Residency, Provence",desc:"Three weeks in Maussane-les-Alpilles. Abstraction, color, landscape, and daily practice.",tags:["art"],type:"residency",url:"https://www.goodworldliving.com/articles/how-an-art-residency-in-provence-transformed-my-creative-path",icon:"🎨"},
   {date:"May 2023",title:"La Roane Residency, France",desc:"Art retreat in St. Antonin Noble Val. First European residency.",tags:["art"],type:"residency",url:"https://www.goodworldliving.com/articles/france-art-retreat",icon:"🎨"}
 ];
 
@@ -158,6 +158,8 @@ ENTRIES_DATA['/entry-whitespace'] = {
   title: 'Whitespace',
   date: '2025 – Present',
   tags: ['built'],
+  externalLink: 'https://www.bywhitespace.com',
+  externalLinkLabel: 'visit bywhitespace.com',
   lede: 'Independent brand strategy studio built on the idea that clarity is the most undervalued form of creativity.',
   sections: [
     {label:'The Problem', body:'Most brand strategy engagements are too long, too expensive, and too disconnected from execution.||Whitespace was built to solve that.'},
@@ -171,6 +173,8 @@ ENTRIES_DATA['/entry-gwl'] = {
   title: 'Good World Living',
   date: '2024 – Present',
   tags: ['built'],
+  externalLink: 'https://www.goodworldliving.com',
+  externalLinkLabel: 'visit goodworldliving.com',
   lede: 'A platform built around creativity, travel, and intentional living. Most platforms optimize for attention. This one optimizes for curiosity.',
   sections: [
     {label:'The Problem', body:'Most platforms optimize for attention.||I wanted to explore what happens when you optimize for curiosity instead.'},
