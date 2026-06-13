@@ -80,6 +80,7 @@ ENTRIES_DATA['/entry-provence'] = {
   title: 'NG Art Residency, Provence',
   date: 'September 2024',
   tags: ['art'],
+  externalLink: 'https://www.goodworldliving.com/articles/how-an-art-residency-in-provence-transformed-my-creative-path',
   lede: 'Four weeks in Maussane-les-Alpilles. Painting from life, painting from memory, and learning to tell the difference between the two.',
   sections: [
     {label:'Why Provence', body:'I applied without expecting to get in. A full month in Provence felt like a different scale of commitment — to the practice, to myself, to the idea that this was real and not a hobby I was managing around the rest of my life.||I got in. I went. It changed things.'},
@@ -176,7 +177,7 @@ ENTRIES_DATA['/entry-speaking'] = {
   sections: [
     {label:'Organizations', speaks:[
       {org:'Adweek', type:'Industry panel'},
-      {org:'University of Portland', type:'Invited lecture \u2014 B2B Marketing in SaaS, delivered twice for the School of Business'},
+      {org:'University of Portland', type:'Guest lecture'},
       {org:'St. Mary\u2019s University', type:'Guest lecture'},
       {org:'Texas Tech University', type:'Guest lecture'},
       {org:'San Antonio Startup Week', type:'Panel'},
