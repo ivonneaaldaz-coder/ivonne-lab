@@ -864,7 +864,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   <div class="chat-area" id="chat-area">
     <div class="mrow eve">
       <div class="mhead"><span class="he">eve ✦</span> <span id="init-time"></span></div>
-      <div class="mbody">hey ✦ i'm eve — i know everything about ivonne's work, what drives her, where she's been, and what she's building. what do you want to know?</div>
+      <div class="mbody">hey ✦ i'm eve — ask me about ivonne's work, what drives her, where she's been, or what she's building. what do you want to know?</div>
       <div class="rx-row"><span class="rx">♥</span><span class="rx">👁</span><span class="rx">✦</span></div>
     </div>
   </div>
@@ -881,7 +881,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   </div>
   <div class="iarea">
     <div class="irow"><span class="ilbl">you:</span><input class="ifield" id="user-input" type="text" placeholder="type something..." autocomplete="off" onkeydown="if(event.key==='Enter')sendMessage()"/><button class="sbtn" id="send-btn" onclick="sendMessage()">Send ►</button></div>
-    <div class="ihint">ask_eve v1.0 · trained on ivonne's actual cv · powered by claude</div>
+    <div class="ihint">ask_eve v2.0 · moon-powered · grounded in ivonne's work · powered by claude</div>
   </div>
   <div class="resize-corner"></div>
 </div>
@@ -1669,20 +1669,42 @@ function addMsg(role,content,thinking){
   if(!thinking&&role==='eve'){var rr=document.createElement('div');rr.className='rx-row';rr.innerHTML='<span class="rx">♥</span><span class="rx">👁</span><span class="rx">✦</span>';row.appendChild(rr);}
   ca.appendChild(row);ca.scrollTop=ca.scrollHeight;
 }
+function endEveSession(){
+  var inp=document.getElementById('user-input');
+  var btn=document.getElementById('send-btn');
+  var prompts=document.getElementById('prompts');
+
+  if(inp){
+    inp.value='';
+    inp.disabled=true;
+    inp.placeholder='session ended';
+  }
+
+  if(btn)btn.disabled=true;
+  if(prompts)prompts.style.display='none';
+}
+
 async function sendMessage(){
   var inp=document.getElementById('user-input'),btn=document.getElementById('send-btn'),q=inp.value.trim();
-  if(!q)return;inp.value='';btn.disabled=true;
+  if(!q||inp.disabled)return;
+  inp.value='';btn.disabled=true;
   addMsg('user',q);msgs.push({role:'user',content:q});addMsg('eve','',true);
   if(typeof gtag!=='undefined') gtag('event','eve_message',{message_count:msgs.filter(function(m){return m.role==='user';}).length});
   try{
     var res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:msgs})});
     var data=await res.json();var tr=document.getElementById('tr');if(tr)tr.remove();
+
+    if(data.ended){
+      endEveSession();
+      return;
+    }
+
     if(data.error){addMsg('eve','something went wrong. please try again.');}
     else{
       var r=data.content[0].text;
       msgs.push({role:'assistant',content:r});
       addMsg('eve',r);
-      // After 3 exchanges, gently surface the leave a note option
+
       if(msgs.filter(function(m){return m.role==='user';}).length===3){
         setTimeout(function(){
           var ca=document.getElementById('chat-area');
@@ -1700,8 +1722,15 @@ async function sendMessage(){
         },800);
       }
     }
-  }catch(ex){var tr2=document.getElementById('tr');if(tr2)tr2.remove();addMsg('eve','connection error. please try again.');}
-  btn.disabled=false;document.getElementById('user-input').focus();
+  }catch(ex){
+    var tr2=document.getElementById('tr');if(tr2)tr2.remove();
+    addMsg('eve','connection error. please try again.');
+  }
+
+  if(!inp.disabled){
+    btn.disabled=false;
+    inp.focus();
+  }
 }
 
 // ── BROWSER ──
