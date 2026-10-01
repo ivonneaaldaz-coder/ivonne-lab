@@ -36,10 +36,10 @@ var ARC_DATA = [
 
 // Stats — 4 only (no countries to avoid mobile overlap)
 var STATS_DATA = [
-  {n:'50,000+', label:'newsletter subscribers'},
-  {n:'130+',    label:'newsletter issues'},
-  {n:'10+',     label:'years in marketing'},
-  {n:'15+',     label:'speaking engagements'}
+  {n:'12+',    label:'years building'},
+  {n:'30+',    label:'brands + teams'},
+  {n:'50K+',   label:'audience grown'},
+  {n:'∞',      label:'endless side quests'}
 ];
 
 var TYPE_LABELS = {built:"Built",essay:"Essay",exhibition:"Exhibition",talk:"Talk",residency:"Residency",research:"Research",newsletter:"Newsletter",studio:"Studio",community:"Community",leadership:"Leadership"};
