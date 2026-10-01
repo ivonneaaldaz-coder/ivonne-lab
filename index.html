@@ -810,43 +810,6 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 }
 
 
-/* ── ARCHIVE SUMMARY STRIP ── */
-.arc-stats-strip{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-  min-height:26px;
-  padding:4px 8px;
-  background:#f5f2ee;
-  border-bottom:1px solid var(--border);
-  font-family:var(--font);
-  font-size:10px;
-  line-height:1.2;
-  letter-spacing:.035em;
-  text-transform:uppercase;
-  color:var(--dim);
-  white-space:nowrap;
-  overflow-x:auto;
-  overflow-y:hidden;
-  scrollbar-width:none;
-  -webkit-overflow-scrolling:touch;
-}
-.arc-stats-strip::-webkit-scrollbar{display:none;}
-.arc-stat-item{flex-shrink:0;}
-.arc-stat-item strong{color:var(--navy);font-weight:900;}
-.arc-stats-sep{color:var(--dimmer);flex-shrink:0;}
-
-@media(max-width:520px){
-  .arc-stats-strip{
-    justify-content:flex-start;
-    min-height:24px;
-    padding:4px 8px;
-    gap:6px;
-    font-size:9px;
-  }
-}
-
 /* ── ARCHIVE: MOBILE LIST VIEW ── */
 @media(max-width:520px){
   #arc-win{
@@ -1082,15 +1045,6 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     <button class="arc-tb-btn arc-filter-btn" onclick="filterArc('art',this)">Art</button>
   </div>
   <div class="arc-path" id="arc-path">📁 archive / all entries</div>
-  <div class="arc-stats-strip" id="arc-stats-strip" aria-label="Archive highlights">
-    <span class="arc-stat-item"><strong>12+</strong> years building</span>
-    <span class="arc-stats-sep">·</span>
-    <span class="arc-stat-item"><strong>30+</strong> brands + teams</span>
-    <span class="arc-stats-sep">·</span>
-    <span class="arc-stat-item"><strong>50K+</strong> audience grown</span>
-    <span class="arc-stats-sep">·</span>
-    <span class="arc-stat-item"><strong>∞</strong> endless side quests</span>
-  </div>
   <div id="arc-body"></div>
   <div class="arc-detail" id="arc-detail">14 items</div>
   <div class="resize-corner"></div>
