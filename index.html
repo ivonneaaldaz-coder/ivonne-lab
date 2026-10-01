@@ -1082,6 +1082,15 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     <button class="arc-tb-btn arc-filter-btn" onclick="filterArc('art',this)">Art</button>
   </div>
   <div class="arc-path" id="arc-path">📁 archive / all entries</div>
+  <div class="arc-stats-strip" id="arc-stats-strip" aria-label="Archive highlights">
+    <span class="arc-stat-item"><strong>12+</strong> years building</span>
+    <span class="arc-stats-sep">·</span>
+    <span class="arc-stat-item"><strong>30+</strong> brands + teams</span>
+    <span class="arc-stats-sep">·</span>
+    <span class="arc-stat-item"><strong>50K+</strong> audience grown</span>
+    <span class="arc-stats-sep">·</span>
+    <span class="arc-stat-item"><strong>∞</strong> endless side quests</span>
+  </div>
   <div id="arc-body"></div>
   <div class="arc-detail" id="arc-detail">14 items</div>
   <div class="resize-corner"></div>
@@ -1556,7 +1565,7 @@ check back later.</pre></div>
   <div id="tb-clock">12:00 PM</div>
 </div>
 
-<script src="archive-content.js"></script>
+<script src="archive-content.js?v=20261001c"></script>
 <script>
 var SB='https://ploijdxywrajyycemmua.supabase.co';
 var SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsb2lqZHh5d3Jhanl5Y2VtbXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjQwMzgsImV4cCI6MjA5NDcwMDAzOH0.m9ggHCLfINex_Wj8GL381PFjU-Eu7aovaNF001PqaQs';
@@ -1918,36 +1927,6 @@ function renderArc(filter){
   if(detail)detail.textContent=filtered.length+' item'+(filtered.length!==1?'s':'');
   body.innerHTML='';
 
-  // Compact archive summary: proof of scale without turning the archive
-  // into a dashboard. Kept to a single metadata-style strip.
-  if(filter==='all' && typeof STATS_DATA!=='undefined'){
-    var statsStrip=document.createElement('div');
-    statsStrip.className='arc-stats-strip';
-
-    STATS_DATA.forEach(function(stat,i){
-      if(i){
-        var sep=document.createElement('span');
-        sep.className='arc-stats-sep';
-        sep.textContent='·';
-        statsStrip.appendChild(sep);
-      }
-
-      var item=document.createElement('span');
-      item.className='arc-stat-item';
-
-      var number=document.createElement('strong');
-      number.textContent=stat.n;
-
-      var label=document.createElement('span');
-      label.textContent=' '+stat.label;
-
-      item.appendChild(number);
-      item.appendChild(label);
-      statsStrip.appendChild(item);
-    });
-
-    body.appendChild(statsStrip);
-  }
 
   // Desktop remains the original Windows-style Name / Type / Date table.
   if(!isMobile){
