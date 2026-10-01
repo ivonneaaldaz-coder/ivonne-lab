@@ -98,7 +98,7 @@ a { color: inherit; text-decoration: none; }
   <div>
     <div class="page-eyebrow">Ivonne Aldaz</div>
     <h1 class="page-title">Ask <em>Eve.</em></h1>
-    <p class="page-desc">About the work, the practice, the path. Trained on my actual CV. </p>
+    <p class="page-desc">About the work, the practice, the path. Meet Eve, Ivonne's AI portfolio assistant. </p>
   </div>
   <div class="suggested-wrap" id="suggestions">
     <button class="suggested-btn" onclick="ask(this.textContent)">What kind of brands do you work with?</button>
@@ -116,7 +116,7 @@ a { color: inherit; text-decoration: none; }
         <svg viewBox="0 0 14 14"><path d="M1 7L13 1L7 13L6.5 7.5L1 7Z"/></svg>
       </button>
     </div>
-    <div class="input-hint">Answers drawn from Ivonne's actual CV · Powered by Claude</div>
+    <div class="input-hint">Moon-powered · grounded in Ivonne's work · powered by Claude</div>
   </div>
 </div>
 <footer class="site-footer">
@@ -142,35 +142,71 @@ function addMsg(role, content, thinking=false) {
   const div = document.createElement('div');
   div.className = 'msg ' + role;
   if (thinking) div.id = 'thinking-el';
-  const label = role === 'user' ? 'you' : 'ivonne';
+  const label = role === 'user' ? 'you' : 'eve';
   const body = thinking ? '<div class="thinking"><span></span><span></span><span></span></div>' : escHtml(content);
   div.innerHTML = '<div class="msg-label">' + label + '</div><div class="msg-divider"></div><div class="msg-text">' + body + '</div>';
   wrap.appendChild(div);
   div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   return div;
 }
+function endEveSession() {
+  const input = document.getElementById('user-input');
+  const btn = document.getElementById('send-btn');
+  const suggestions = document.getElementById('suggestions');
+
+  if (input) {
+    input.value = '';
+    input.disabled = true;
+    input.placeholder = 'session ended';
+  }
+
+  if (btn) btn.disabled = true;
+  if (suggestions) suggestions.style.display = 'none';
+}
+
 async function sendMessage() {
   const input = document.getElementById('user-input');
   const btn = document.getElementById('send-btn');
   const q = input.value.trim();
-  if (!q) return;
+
+  if (!q || input.disabled) return;
+
   document.getElementById('suggestions').style.display = 'none';
   input.value = '';
   btn.disabled = true;
+
   addMsg('user', q);
   messages.push({ role: 'user', content: q });
+
   const thinking = addMsg('assistant', '', true);
+
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages })
     });
+
     const data = await res.json();
     thinking.remove();
-    if (data.error) { addMsg('assistant', 'Something went wrong — try again in a moment.'); }
-    else { const reply = data.content[0].text; messages.push({ role: 'assistant', content: reply }); addMsg('assistant', reply); }
-  } catch(e) { thinking.remove(); addMsg('assistant', 'Something went wrong — try again in a moment.'); }
+
+    if (data.ended) {
+      endEveSession();
+      return;
+    }
+
+    if (data.error) {
+      addMsg('assistant', 'Something went wrong — try again in a moment.');
+    } else {
+      const reply = data.content[0].text;
+      messages.push({ role: 'assistant', content: reply });
+      addMsg('assistant', reply);
+    }
+  } catch(e) {
+    thinking.remove();
+    addMsg('assistant', 'Something went wrong — try again in a moment.');
+  }
+
   btn.disabled = false;
   input.focus();
 }
