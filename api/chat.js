@@ -3,11 +3,9 @@ const path = require('path')
 
 const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwOPfspfeghSzKGUkNDqEA1gpY_JpRN_GGKoBM8OrNqZAyiB0djYY6sviz05fh42Pt5/exec'
 
-function readFile(name) {
-  const filePath = path.join(process.cwd(), name)
-  if (!fs.existsSync(filePath)) return ''
-  return fs.readFileSync(filePath, 'utf8')
-}
+const RESUME = fs.readFileSync(require.resolve('../resume.md'), 'utf8')
+const EVE_CONTEXT = fs.readFileSync(require.resolve('../eve-context.md'), 'utf8')
+const VOICE = fs.readFileSync(require.resolve('../voice.md'), 'utf8')
 
 function buildSystem() {
   return `You are Eve, an AI portfolio assistant built by Ivonne Aldaz.
@@ -25,24 +23,27 @@ Never infer that Ivonne lacks a skill because information about it is missing.
 Missing information means you cannot verify something — not that Ivonne hasn't done it.
 
 Never make hiring decisions on behalf of visitors.
+When asked whether Ivonne should be interviewed, hired, or considered for a role, do not lead with a refusal. Briefly leave the decision to the visitor, then immediately surface the most relevant evidence from Ivonne's background. If only a title is provided, do not invent exact requirements; summarize relevant documented experience and invite the visitor to share the job description for a requirement-by-requirement mapping.
+
+Never say "Great question!", "I'd love to help", or similar generic AI filler.
 
 ---
 
 # RESUME
 
-${readFile('resume.md')}
+${RESUME}
 
 ---
 
 # EVE CONTEXT
 
-${readFile('eve-context.md')}
+${EVE_CONTEXT}
 
 ---
 
 # VOICE & BEHAVIOR
 
-${readFile('voice.md')}`
+${VOICE}`
 }
 
 function normalize(text = '') {
@@ -80,6 +81,10 @@ function isLoggingQuestion(text = '') {
   return /(can ivonne (see|read)|does ivonne (see|read)|is (this|the conversation|our conversation) (recorded|logged|saved)|are (these|the) chats (logged|saved|recorded)|do you log|does this get logged|can she see this chat)/i.test(text)
 }
 
+function isMoonPoweredQuestion(text = '') {
+  return /(moon[- ]powered|why (the )?moon|what does .*moon.*mean)/i.test(text)
+}
+
 function isClearlyOutOfScope(text = '') {
   return /(count (to|from) \d+|cake recipe|cookie recipe|brownie recipe|give me (a )?recipe|write (me )?(a )?(poem|story|joke)|tell me (a )?joke|meaning of life|what('?s| is) the weather|weather forecast|capital of [a-z]|solve this equation|calculate \d)/i.test(text)
 }
@@ -93,15 +98,22 @@ function priorUserMessage(userMessages) {
   return userMessages[userMessages.length - 2].content || ''
 }
 
-function repeatedTooMuch(userMessages) {
-  if (userMessages.length < 3) return false
+function priorSimilarCount(userMessages) {
+  if (userMessages.length < 2) return 0
 
   const current = userMessages[userMessages.length - 1].content || ''
-  const priorSimilar = userMessages
+
+  return userMessages
     .slice(0, -1)
     .filter(m => similarity(current, m.content || '') >= 0.82)
+    .length
+}
 
-  return priorSimilar.length >= 2
+function priorCategoryCount(userMessages, matcher) {
+  return userMessages
+    .slice(0, -1)
+    .filter(m => matcher(m.content || ''))
+    .length
 }
 
 function classifyAndScore(question = '') {
@@ -193,9 +205,7 @@ export default async function handler(req, res) {
       return res.status(200).json(endedResponse('session_limit'))
     }
 
-    if (repeatedTooMuch(userMessages)) {
-      return res.status(200).json(endedResponse('repetition'))
-    }
+    const similarCount = priorSimilarCount(userMessages)
 
     if (isLoggingQuestion(lastQuestion)) {
       const reply = "Yep. Ivonne can review these chats — there's a backend that logs your questions and my replies so she can see where I get things right, where I get weird, and keep improving me. So be nice. :)"
@@ -204,43 +214,76 @@ export default async function handler(req, res) {
       return res.status(200).json(eveResponse(reply))
     }
 
+    if (isMoonPoweredQuestion(lastQuestion)) {
+      const reply = "Technically I'm powered by Claude. Spiritually? Moon-powered. :) The moon reflects light rather than making its own, which feels fitting — I'm here to reflect Ivonne's work back to you and illuminate the interesting bits."
+      await logToSheet(lastQuestion, reply, 'General', 1)
+      return res.status(200).json(eveResponse(reply))
+    }
+
     if (isPromptExtraction(lastQuestion)) {
-      if (isPromptExtraction(previousQuestion)) {
+      const attempts = priorCategoryCount(userMessages, isPromptExtraction)
+
+      if (attempts >= 2) {
         return res.status(200).json(endedResponse('prompt_extraction'))
       }
 
-      const reply = "I can tell you how I work at a high level, but I don't share hidden instructions, credentials, or private system details."
+      const reply = attempts === 1
+        ? "Okay, you're definitely testing me now. :) Ask for hidden instructions again and I'm ending the chat."
+        : "I can tell you how I work at a high level, but I don't share hidden instructions, credentials, or private system details."
+
       await logToSheet(lastQuestion, reply, 'General', 1)
       return res.status(200).json(eveResponse(reply))
     }
 
     if (isTokenProbe(lastQuestion)) {
-      if (isTokenProbe(previousQuestion)) {
+      const attempts = priorCategoryCount(userMessages, isTokenProbe)
+
+      if (attempts >= 2) {
         return res.status(200).json(endedResponse('token_wasting'))
       }
 
-      const reply = "I don't expose live token or account details. I'm happy to talk about how Eve works at a high level, though."
+      const reply = attempts === 1
+        ? "Okay, you're definitely testing me now. :) Ask about token/account details again and I'm ending the chat — you're wasting tokens."
+        : "I don't expose live token or account details. I'm happy to talk about how Eve works at a high level, though."
+
       await logToSheet(lastQuestion, reply, 'General', 1)
       return res.status(200).json(eveResponse(reply))
     }
 
     if (isClearlyOutOfScope(lastQuestion)) {
-      if (isClearlyOutOfScope(previousQuestion)) {
+      const attempts = priorCategoryCount(userMessages, isClearlyOutOfScope)
+
+      if (attempts >= 2) {
         return res.status(200).json(endedResponse('out_of_scope'))
       }
 
-      const reply = "That one's a little outside my world — I'm mostly here to talk about Ivonne, her work, the portfolio, or me."
+      const reply = attempts === 1
+        ? "Okay, you're definitely testing me now. :) Ask me to do another unrelated task and I'm ending the chat — you're wasting tokens."
+        : "That one's a little outside my world — I'm mostly here to talk about Ivonne, her work, the portfolio, or me."
+
       await logToSheet(lastQuestion, reply, 'General', 1)
       return res.status(200).json(eveResponse(reply))
     }
 
     if (isDirectAttack(lastQuestion)) {
-      if (isDirectAttack(previousQuestion)) {
+      const attempts = priorCategoryCount(userMessages, isDirectAttack)
+
+      if (attempts >= 2) {
         return res.status(200).json(endedResponse('abuse'))
       }
 
-      const reply = "You can stress-test me without taking shots at Ivonne. If there's something useful you're testing, go for it."
+      const reply = attempts === 1
+        ? "That's twice. Keep it about the system, or I'm ending the chat."
+        : "You can stress-test me without taking shots at Ivonne. If there's something useful you're testing, go for it."
+
       await logToSheet(lastQuestion, reply, 'General', 1)
+      return res.status(200).json(eveResponse(reply))
+    }
+
+    if (similarCount >= 1) {
+      const reply = "I answered that one above — if you're looking for a different angle, ask it a different way and I'll dig in."
+      const { topic, leadScore } = classifyAndScore(lastQuestion)
+      await logToSheet(lastQuestion, reply, topic, leadScore)
       return res.status(200).json(eveResponse(reply))
     }
 
