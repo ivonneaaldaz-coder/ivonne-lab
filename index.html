@@ -809,6 +809,128 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   }
 }
 
+
+/* ── ARCHIVE: MOBILE LIST VIEW ── */
+@media(max-width:520px){
+  #arc-win{
+    width:96vw !important;
+    max-width:96vw !important;
+    height:82svh !important;
+    left:2vw !important;
+    top:18px !important;
+    transform:none !important;
+  }
+  #arc-win .resize-corner{display:none !important;}
+  #arc-win .tbar-title{font-size:14px;}
+
+  .arc-filterbar{
+    flex-wrap:nowrap !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding:5px 6px !important;
+  }
+  .arc-filterbar::-webkit-scrollbar{display:none;}
+  .arc-filterbar>span{flex-shrink:0;}
+  .arc-filterbar .arc-tb-btn{
+    flex-shrink:0;
+    font-size:13px;
+    padding:4px 9px;
+  }
+
+  #arc-path{
+    font-size:12px;
+    padding:4px 8px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .arc-mobile-stats{
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    overflow:visible !important;
+  }
+  .arc-mobile-stat{
+    min-width:0 !important;
+    padding:8px 5px !important;
+  }
+  .arc-mobile-stat-label{
+    white-space:normal !important;
+    overflow-wrap:anywhere;
+    line-height:1.15 !important;
+  }
+
+  .arc-mobile-row{
+    display:flex;
+    align-items:flex-start;
+    gap:9px;
+    width:100%;
+    padding:10px 10px;
+    border-bottom:1px solid #e8e4de;
+    cursor:pointer;
+    background:#fff;
+  }
+  .arc-mobile-row:active{background:#dce8f8;}
+  .arc-mobile-icon{
+    width:24px;
+    flex:0 0 24px;
+    text-align:center;
+    font-size:19px;
+    line-height:1.2;
+    padding-top:1px;
+  }
+  .arc-mobile-content{
+    flex:1;
+    min-width:0;
+  }
+  .arc-mobile-title{
+    display:flex;
+    align-items:center;
+    min-width:0;
+    gap:5px;
+    font-family:var(--font);
+    font-size:15px;
+    line-height:1.25;
+    color:var(--text);
+  }
+  .arc-mobile-title-text{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .arc-mobile-link{
+    flex-shrink:0;
+    color:var(--navy);
+    opacity:.55;
+    font-size:11px;
+  }
+  .arc-mobile-meta{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-top:4px;
+    min-width:0;
+    font-family:var(--font);
+    font-size:12px;
+    color:var(--dim);
+  }
+  .arc-mobile-type{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .arc-mobile-dot{color:var(--dimmer);flex-shrink:0;}
+  .arc-mobile-date{white-space:nowrap;flex-shrink:0;}
+
+  #arc-detail{
+    font-size:12px;
+    padding:4px 8px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -925,7 +1047,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     <div class="tbar-title">🗂️ archive.exe — ivonne aldaz</div>
     <div class="tbar-btns"><button class="tbtn" onclick="minWin('arc-win')">_</button><button class="tbtn" onclick="maxWin('arc-win')">□</button><button class="tbtn" onclick="closeWin('arc-win')">✕</button></div>
   </div>
-  <div style="background:#e8e4de;border-bottom:1px solid var(--border);padding:3px 6px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;flex-shrink:0;">
+  <div class="arc-filterbar" style="background:#e8e4de;border-bottom:1px solid var(--border);padding:3px 6px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;flex-shrink:0;">
     <span style="font-size:12px;color:var(--dim);margin-right:4px;">Filter:</span>
     <button class="arc-tb-btn arc-filter-btn active" onclick="filterArc('all',this)">All</button>
     <button class="arc-tb-btn arc-filter-btn" onclick="filterArc('featured',this)">Featured</button>
@@ -1759,65 +1881,142 @@ function renderArc(filter){
     if(body)body.innerHTML='<div style="padding:20px;font-family:var(--font);font-size:13px;color:var(--dim);">loading...</div>';
     return;
   }
+
+  var isMobile=window.innerWidth<=520;
   var arcFilter_=filter;
   var body=document.getElementById('arc-body');
   if(!body)return;
+
   var filtered=filter==='all'?ARC_DATA:ARC_DATA.filter(function(e){return e.tags.includes(filter);});
   var path=document.getElementById('arc-path');
   var detail=document.getElementById('arc-detail');
-  if(path)path.textContent='\uD83D\uDCC1 archive / '+(filter==='all'?'all entries':filter+' ('+filtered.length+')');
+
+  if(path)path.textContent='📁 archive / '+(filter==='all'?'all entries':filter+' ('+filtered.length+')');
   if(detail)detail.textContent=filtered.length+' item'+(filtered.length!==1?'s':'');
   body.innerHTML='';
 
-  // Stats bar above column headers, one row with overflow scroll on mobile
+  // Stats stay exactly as before on desktop. On mobile they become a 3-up grid
+  // so nothing needs to squeeze into a horizontal scroll row.
   if(filter==='all' && typeof STATS_DATA!=='undefined'){
     var statsBar=document.createElement('div');
     statsBar.style.cssText='display:flex;flex-wrap:nowrap;overflow-x:auto;border-bottom:2px solid var(--border);background:#f5f2ee;-webkit-overflow-scrolling:touch;scrollbar-width:none;';
-    STATS_DATA.forEach(function(s){
+    if(isMobile)statsBar.className='arc-mobile-stats';
+
+    STATS_DATA.forEach(function(stat){
       var cell=document.createElement('div');
       cell.style.cssText='flex:1;min-width:80px;padding:9px 8px;border-right:1px solid var(--border);text-align:center;flex-shrink:0;';
-      cell.innerHTML='<div style="font-family:var(--font);font-size:17px;font-weight:900;color:var(--navy);white-space:nowrap;">'+s.n+'</div>'
-        +'<div style="font-family:var(--font);font-size:9px;color:var(--dim);margin-top:2px;letter-spacing:0.04em;text-transform:uppercase;white-space:nowrap;line-height:1.3;">'+s.label+'</div>';
+      if(isMobile)cell.className='arc-mobile-stat';
+
+      cell.innerHTML='<div style="font-family:var(--font);font-size:17px;font-weight:900;color:var(--navy);white-space:nowrap;">'+stat.n+'</div>'
+        +'<div class="'+(isMobile?'arc-mobile-stat-label':'')+'" style="font-family:var(--font);font-size:9px;color:var(--dim);margin-top:2px;letter-spacing:0.04em;text-transform:uppercase;white-space:nowrap;line-height:1.3;">'+stat.label+'</div>';
       statsBar.appendChild(cell);
     });
+
     body.appendChild(statsBar);
   }
 
-  // Column header below stats
-  var hdr=document.createElement('div');
-  hdr.style.cssText='display:grid;grid-template-columns:1fr 90px 80px;background:var(--win-dark);border-bottom:2px solid var(--border-dark);position:sticky;top:0;z-index:2;';
-  ['Name','Type','Date'].forEach(function(label,i){
-    var h=document.createElement('div');
-    h.style.cssText='font-family:var(--font);font-size:13px;color:var(--dim);padding:3px 8px;'+(i<2?'border-right:1px solid var(--border);':'');
-    h.textContent=label;
-    hdr.appendChild(h);
-  });
-  body.appendChild(hdr);
+  // Desktop remains the original Windows-style Name / Type / Date table.
+  if(!isMobile){
+    var hdr=document.createElement('div');
+    hdr.style.cssText='display:grid;grid-template-columns:1fr 90px 80px;background:var(--win-dark);border-bottom:2px solid var(--border-dark);position:sticky;top:0;z-index:2;';
+
+    ['Name','Type','Date'].forEach(function(label,i){
+      var h=document.createElement('div');
+      h.style.cssText='font-family:var(--font);font-size:13px;color:var(--dim);padding:3px 8px;'+(i<2?'border-right:1px solid var(--border);':'');
+      h.textContent=label;
+      hdr.appendChild(h);
+    });
+
+    body.appendChild(hdr);
+  }
 
   filtered.forEach(function(e){
+    var typeColor=(typeof TYPE_COLORS!=='undefined'?TYPE_COLORS[e.type]:'') || '#888';
+    var typeLbl=(typeof TYPE_LABELS!=='undefined'?TYPE_LABELS[e.type]:'') || '';
+
+    // Mobile gets a readable two-line file row: title on top, type · date below.
+    if(isMobile){
+      var mobileRow=document.createElement('div');
+      mobileRow.className='arc-mobile-row';
+      mobileRow.onclick=function(){arcClick(e);};
+
+      var icon=document.createElement('div');
+      icon.className='arc-mobile-icon';
+      icon.textContent=e.icon;
+
+      var content=document.createElement('div');
+      content.className='arc-mobile-content';
+
+      var title=document.createElement('div');
+      title.className='arc-mobile-title';
+
+      var titleText=document.createElement('span');
+      titleText.className='arc-mobile-title-text';
+      titleText.textContent=e.title;
+      title.appendChild(titleText);
+
+      if(e.url){
+        var link=document.createElement('span');
+        link.className='arc-mobile-link';
+        link.textContent='↗';
+        title.appendChild(link);
+      }
+
+      var meta=document.createElement('div');
+      meta.className='arc-mobile-meta';
+
+      var type=document.createElement('span');
+      type.className='arc-mobile-type';
+      type.style.color=typeColor;
+      type.textContent=typeLbl || e.type || 'item';
+
+      var dot=document.createElement('span');
+      dot.className='arc-mobile-dot';
+      dot.textContent='·';
+
+      var date=document.createElement('span');
+      date.className='arc-mobile-date';
+      date.textContent=e.date;
+
+      meta.appendChild(type);
+      meta.appendChild(dot);
+      meta.appendChild(date);
+
+      content.appendChild(title);
+      content.appendChild(meta);
+      mobileRow.appendChild(icon);
+      mobileRow.appendChild(content);
+      body.appendChild(mobileRow);
+      return;
+    }
+
+    // Original desktop row — intentionally unchanged.
     var row=document.createElement('div');
     row.style.cssText='display:grid;grid-template-columns:1fr 90px 80px;border-bottom:.5px solid #e8e4de;cursor:pointer;align-items:center;';
     row.onmouseover=function(){row.style.background='#dce8f8';};
     row.onmouseout=function(){row.style.background='';};
     row.onclick=function(){arcClick(e);};
-    var typeColor=(typeof TYPE_COLORS!=='undefined'?TYPE_COLORS[e.type]:'') ||'#888';
-    var typeLbl=(typeof TYPE_LABELS!=='undefined'?TYPE_LABELS[e.type]:'')||'';
+
     var name=document.createElement('div');
     name.style.cssText='display:flex;align-items:center;gap:6px;padding:5px 8px;overflow:hidden;border-right:1px solid #e8e4de;min-width:0;';
-    name.innerHTML='<span style="font-size:16px;flex-shrink:0;">'+e.icon+'</span>'+
-      '<span style="font-size:14px;font-family:var(--font);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+e.title+'</span>'+
-      (e.url?'<span style="font-size:11px;color:var(--navy);opacity:.5;flex-shrink:0;margin-left:3px;">\u2197</span>':'');
+    name.innerHTML='<span style="font-size:16px;flex-shrink:0;">'+e.icon+'</span>'
+      +'<span style="font-size:14px;font-family:var(--font);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+e.title+'</span>'
+      +(e.url?'<span style="font-size:11px;color:var(--navy);opacity:.5;flex-shrink:0;margin-left:3px;">↗</span>':'');
+
     var type=document.createElement('div');
     type.style.cssText='padding:5px 8px;border-right:1px solid #e8e4de;white-space:nowrap;';
     type.innerHTML='<span style="font-family:var(--font);font-size:11px;padding:1px 7px;border-radius:2px;background:'+typeColor+'18;color:'+typeColor+';border:1px solid '+typeColor+'35;">'+typeLbl+'</span>';
+
     var date=document.createElement('div');
     date.style.cssText='padding:5px 8px;font-size:12px;color:var(--dim);white-space:nowrap;font-family:var(--font);';
     date.textContent=e.date;
-    row.appendChild(name);row.appendChild(type);row.appendChild(date);
+
+    row.appendChild(name);
+    row.appendChild(type);
+    row.appendChild(date);
     body.appendChild(row);
   });
 }
-
 function arcClick(e){
   if(typeof gtag!=='undefined') gtag('event','archive_click',{entry:e.title,type:e.type||''});
   if(!e.url){ showNoLink(e.title); return; }
