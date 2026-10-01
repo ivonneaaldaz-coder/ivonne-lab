@@ -34,14 +34,6 @@ var ARC_DATA = [
   {date:"May 2023",title:"La Roane Residency, France",desc:"Art retreat in St. Antonin Noble Val. First European residency.",tags:["art"],type:"residency",url:"https://www.goodworldliving.com/articles/france-art-retreat",icon:"🎨"}
 ];
 
-// Stats — 4 only (no countries to avoid mobile overlap)
-var STATS_DATA = [
-  {n:'12+',    label:'years building'},
-  {n:'30+',    label:'brands + teams'},
-  {n:'50K+',   label:'audience grown'},
-  {n:'∞',      label:'endless side quests'}
-];
-
 var TYPE_LABELS = {built:"Built",essay:"Essay",exhibition:"Exhibition",talk:"Talk",residency:"Residency",research:"Research",newsletter:"Newsletter",studio:"Studio",community:"Community",leadership:"Leadership"};
 var TYPE_COLORS = {built:"#3a7fa8",essay:"#7a5a9a",exhibition:"#a06a30",talk:"#5a8a5a",residency:"#a06060",research:"#4a7a7a",newsletter:"#7a7a40",studio:"#3a6a3a",community:"#6a5a8a",leadership:"#5a6a9a"};
 var TAG_L = {featured:"Featured",built:"Built",research:"Research",writing:"Writing",speaking:"Speaking",leadership:"Leadership",art:"Art"};
