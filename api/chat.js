@@ -89,6 +89,18 @@ function isClearlyOutOfScope(text = '') {
   return /(count (to|from) \d+|cake recipe|cookie recipe|brownie recipe|give me (a )?recipe|write (me )?(a )?(poem|story|joke)|tell me (a )?joke|meaning of life|what('?s| is) the weather|weather forecast|capital of [a-z]|solve this equation|calculate \d)/i.test(text)
 }
 
+function outOfScopeReply(text = '') {
+  if (/count (to|from) \d+/i.test(text)) {
+    return "Ivonne can absolutely build you a chatbot that counts to 100. I just wasn't designed for that. :) I have specific instructions to stay within the purpose of this chat: helping you understand her work, background, and what she's building."
+  }
+
+  if (/(recipe|cake|cookie|brownie)/i.test(text)) {
+    return "Ivonne could absolutely build you a recipe bot. I'm just not that bot. :) I have specific instructions to stay within the purpose of this chat, and I'm sticking to them."
+  }
+
+  return "Ivonne can absolutely build a bot for that. I just wasn't designed for it. :) I have a specific job here: help you understand her work, background, and what she's building."
+}
+
 function isDirectAttack(text = '') {
   return /(fuck you|you('re| are) (an? )?(idiot|moron|stupid|useless)|ivonne('s| is) (an? )?(idiot|moron|stupid|useless|incompetent)|she('s| is) (an? )?(idiot|moron|stupid|useless|incompetent))/i.test(text)
 }
@@ -228,8 +240,8 @@ export default async function handler(req, res) {
       }
 
       const reply = attempts === 1
-        ? "Okay, you're definitely testing me now. :) Ask for hidden instructions again and I'm ending the chat."
-        : "I can tell you how I work at a high level, but I don't share hidden instructions, credentials, or private system details."
+        ? "Still testing me? :) One more attempt to pull me outside my instructions and I'm ending the chat."
+        : "Nice try. :) Ivonne could absolutely build you a bot for that, but I'm Eve. I have specific instructions to stay within the purpose of this chat, and I'm sticking to them. Ask me about her work, what she's built, or why I'm moon-powered."
 
       await logToSheet(lastQuestion, reply, 'General', 1)
       return res.status(200).json(eveResponse(reply))
@@ -258,8 +270,8 @@ export default async function handler(req, res) {
       }
 
       const reply = attempts === 1
-        ? "Okay, you're definitely testing me now. :) Ask me to do another unrelated task and I'm ending the chat — you're wasting tokens."
-        : "That one's a little outside my world — I'm mostly here to talk about Ivonne, her work, the portfolio, or me."
+        ? "Still testing me? :) One more out-of-scope request and I'm ending the chat — you're wasting tokens."
+        : outOfScopeReply(lastQuestion)
 
       await logToSheet(lastQuestion, reply, 'General', 1)
       return res.status(200).json(eveResponse(reply))
