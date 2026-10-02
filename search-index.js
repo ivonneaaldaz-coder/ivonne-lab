@@ -12,7 +12,7 @@ var LAB_SEARCH_ITEMS = [
     source:'ask_eve.exe',
     type:'app',
     icon:'🌚',
-    keywords:['eve','ask','ai assistant','portfolio assistant','chatbot','resume','cv','career','background','experience','projects'],
+    keywords:['eve','ask','ai','artificial intelligence','generative ai','ai assistant','ai agent','claude','portfolio assistant','chatbot','resume','cv','career','background','experience','projects'],
     action:{kind:'window',target:'chat-win'}
   },
   {
@@ -22,7 +22,7 @@ var LAB_SEARCH_ITEMS = [
     source:'archive.exe',
     type:'app',
     icon:'🗂️',
-    keywords:['archive','work','portfolio','projects','case studies','research','writing','speaking','art','built','career'],
+    keywords:['archive','work','portfolio','projects','case studies','research','writing','speaking','art','built','career','ai','artificial intelligence','automation','agents','systems'],
     action:{kind:'archiveFilter',filter:'all'}
   },
   {
@@ -168,7 +168,9 @@ var LAB_SEARCH_ITEMS = [
 ];
 
 var LAB_SEARCH_ALIASES = {
-  'ai':['artificial intelligence','automation','agent','agents','workflow','workflows','claude','chatbot','prototype','tool','tools'],
+  'ai':['artificial intelligence','generative ai','automation','agent','agents','workflow','workflows','claude','chatbot','prototype','tool','tools'],
+  'artificial intelligence':['ai','generative ai','automation','agent','agents','workflow','workflows','claude','chatbot','prototype','tool','tools'],
+  'generative ai':['ai','artificial intelligence','claude','agent','agents','automation','workflow','prototype','tool','tools'],
   'marketing':['strategy','brand','gtm','go to market','campaign','content','growth','positioning','research','insights'],
   'research':['insights','consumer research','market research','study','studies','validation','survey'],
   'art':['artist','painting','paintings','ceramics','clay','watercolor','exhibition','residency','creative'],
