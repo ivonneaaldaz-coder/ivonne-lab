@@ -356,6 +356,67 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 .si{font-size:15px;padding:4px 16px 4px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);white-space:nowrap;}
 .si:hover{background:var(--tbar1);color:#fff;}
 
+/* ── LAB SEARCH ── */
+#tb-search-btn{
+  width:218px;height:26px;display:flex;align-items:center;gap:7px;
+  background:#f5f2ed;border:2px solid;
+  border-color:var(--border-dark) #fff #fff var(--border-dark);
+  padding:1px 7px;font-family:var(--font);font-size:13px;color:var(--dim);
+  cursor:text;flex-shrink:0;text-align:left;
+}
+#tb-search-btn:hover{background:#fff;color:var(--text);}
+#tb-search-btn .tb-search-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#tb-search-btn .tb-search-key{margin-left:auto;color:var(--dimmer);font-size:11px;white-space:nowrap;}
+
+.lab-search-shell{display:flex;flex-direction:column;height:100%;background:var(--win);}
+.lab-search-input-wrap{
+  margin:12px 14px 7px;display:flex;align-items:center;gap:8px;
+  background:#fff;border:2px solid;border-color:var(--border-dark) #fff #fff var(--border-dark);
+  padding:7px 9px;
+}
+.lab-search-prompt{font-size:20px;color:var(--navy);line-height:1;}
+#lab-search-input{
+  flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--text);
+  font-family:var(--font);font-size:20px;caret-color:var(--navy);
+}
+#lab-search-input::placeholder{color:var(--dimmer);}
+.lab-search-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 15px 7px;font-size:11px;color:var(--dim);min-height:20px;
+}
+#lab-search-results{flex:1;min-height:0;overflow-y:auto;padding:0 8px 8px;}
+.lab-search-section{
+  padding:5px 7px 4px;font-size:11px;color:var(--dim);
+  text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border);
+}
+.lab-search-row{
+  display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center;
+  padding:7px 8px;border-bottom:1px solid rgba(176,168,152,.45);cursor:pointer;
+  font-family:var(--font);
+}
+.lab-search-row:hover,.lab-search-row.active{background:var(--tbar1);color:#fff;}
+.lab-search-row.active .lab-search-sub,
+.lab-search-row:hover .lab-search-sub,
+.lab-search-row.active .lab-search-source,
+.lab-search-row:hover .lab-search-source{color:rgba(255,255,255,.72);}
+.lab-search-icon{font-size:18px;text-align:center;}
+.lab-search-main{min-width:0;}
+.lab-search-title{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lab-search-sub{font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.lab-search-source{font-size:10px;color:var(--dim);white-space:nowrap;padding-left:8px;}
+.lab-search-empty{padding:18px 14px;color:var(--dim);font-size:13px;line-height:1.5;}
+.lab-search-quick{display:flex;gap:5px;flex-wrap:wrap;padding:8px 14px 11px;border-top:1px solid var(--border);background:var(--win-dark);}
+.lab-search-quick-label{font-size:11px;color:var(--dim);align-self:center;margin-right:2px;text-transform:uppercase;}
+.lab-search-chip{
+  font-family:var(--font);font-size:11px;color:var(--text);background:var(--silver);
+  border:1px solid var(--border);padding:2px 8px;cursor:pointer;
+}
+.lab-search-chip:hover{background:var(--tbar1);color:#fff;}
+.sm-start-title{padding:7px 10px 5px;font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;}
+.sm-search-row{border-bottom:1px solid var(--border);margin-bottom:2px;background:#e8e4de;}
+.sm-search-key{margin-left:auto;color:var(--dim);font-size:11px;}
+.si:hover .sm-search-key{color:#fff;}
+
 /* ── TASKBAR ── */
 #taskbar{height:32px;background:linear-gradient(to bottom,#d4cfc8,#b8b0a8);border-top:2px solid #fff;display:flex;align-items:center;padding:0 2px;gap:2px;position:fixed;bottom:0;left:0;right:0;z-index:500;}
 #start-btn{background:linear-gradient(to bottom,var(--silver),#a8a098);border:2px solid;border-color:#fff var(--border-dark) var(--border-dark) #fff;padding:1px 10px;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:4px;flex-shrink:0;}
@@ -389,6 +450,12 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   /* mobile taskbar: taller, 2-zone */
   #taskbar{height:44px;padding:0 4px;gap:3px;}
   #start-btn{font-size:13px;padding:2px 8px;}
+  #tb-search-btn{width:32px;height:30px;padding:0;justify-content:center;cursor:pointer;}
+  #tb-search-btn .tb-search-label,#tb-search-btn .tb-search-key{display:none;}
+  #search-win{width:96vw!important;height:72vh!important;left:2vw!important;top:6vh!important;transform:none!important;}
+  .lab-search-row{grid-template-columns:26px minmax(0,1fr);padding:8px 7px;}
+  .lab-search-source{grid-column:2;font-size:10px;padding-left:0;margin-top:-5px;}
+  #lab-search-input{font-size:18px;}
   /* show first 4 app icons only */
   #tb-apps .tb-app:nth-child(n+5){display:none;}
   #tb-apps .tb-app{width:30px;height:30px;font-size:17px;}
@@ -1467,50 +1534,30 @@ check back later.</pre></div>
   </div>
 </div>
 <div id="smenu">
-  <div class="sm-side"><span>ivonne aldaz</span></div>
+  <div class="sm-side"><span>ivonne lab</span></div>
   <div class="sm-items">
-    <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
-      <span>📁 Programs</span><span class="sm-arrow">▶</span>
-      <div class="sm-sub" style="bottom:auto;top:0;">
-        <div class="si" onclick="openWin('chat-win');closeAll()">🌚 ask_eve.exe</div>
-        <div class="si" onclick="openWin('chat-room-win');closeAll()">💬 chatroom.exe</div>
-        <div class="si" onclick="openWin('snake-win');closeAll()">🐍 snake.exe</div>
-      </div>
+    <div class="sm-start-title">IVONNE LAB</div>
+    <div class="si sm-search-row" onclick="openLabSearch();closeAll()">
+      <span>🔍 Search the lab…</span><span class="sm-search-key" id="sm-search-key">⌘K</span>
     </div>
-    <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
-      <span>🗺️ Explore</span><span class="sm-arrow">▶</span>
-      <div class="sm-sub" style="bottom:auto;top:0;">
-        <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ archive.exe</div>
-        <div class="si" onclick="openWin('ventures-win');closeAll()">📁 ventures</div>
-        <div class="si" onclick="openWin('notes-win');closeAll()">📓 notes.app</div>
-        <div class="si" onclick="openWin('photos-win');closeAll()">📷 photos.exe</div>
-        <a class="si" href="https://ivonnealdaz.com/gallery" target="_blank" onclick="closeAll()">🎨 gallery.exe</a>
-      </div>
-    </div>
-    <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
-      <span>🔗 Connect</span><span class="sm-arrow">▶</span>
-      <div class="sm-sub" style="bottom:auto;top:0;">
-        <div class="si" onclick="openWin('soc-win');closeAll()">🌐 socials</div>
-        <a class="si" href="mailto:hello@ivonnealdaz.com" onclick="closeAll()">📧 contact</a>
-        <div class="si" onclick="openWin('note-form-win');closeAll()">✉️ leave a note</div>
-        <div class="si" onclick="openWin('work-win');closeAll()">📋 work with me</div>
-      </div>
-    </div>
-    <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
-      <span>ℹ️ About</span><span class="sm-arrow">▶</span>
-      <div class="sm-sub" style="bottom:auto;top:0;">
-        <div class="si" onclick="openWin('about-win');closeAll()">📄 about.txt</div>
-        <a class="si" href="https://ivonnealdaz.com" target="_blank" onclick="closeAll()">👤 ivonnealdaz.com</a>
-      </div>
-    </div>
+    <div class="si" onclick="openWin('chat-win');closeAll()">🌚 Ask Eve</div>
+    <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ Archive</div>
+    <div class="si" onclick="openWin('notes-win');closeAll()">📓 Notes</div>
+    <div class="si" onclick="openWin('photos-win');closeAll()">📷 Photos</div>
+    <div class="si" onclick="openWin('work-win');closeAll()">📋 Work With Me</div>
     <div class="sm-div"></div>
-    <a class="si" href="/" style="padding-left:12px;" onclick="closeAll()">🏠 exit to lab</a>
+    <div class="si" onclick="surpriseMe();closeAll()">✦ Surprise me</div>
+    <div class="si" onclick="openWin('note-form-win');closeAll()">✉️ Leave a note</div>
+    <div class="si" onclick="openWin('about-win');closeAll()">📄 About the Lab</div>
   </div>
 </div>
 
 <!-- TASKBAR -->
 <div id="taskbar">
   <button id="start-btn" onclick="toggleStart()">🪟 Start</button>
+  <button id="tb-search-btn" onclick="openLabSearch()" title="Search the Lab">
+    <span>🔍</span><span class="tb-search-label">Search the lab…</span><span class="tb-search-key" id="tb-search-key">⌘K</span>
+  </button>
   <div class="tb-sep"></div>
   <div id="tb-apps">
     <div class="tb-app" onclick="toggleWin('chat-win')" title="Ask Eve">🌚</div>
@@ -1535,6 +1582,7 @@ check back later.</pre></div>
 </div>
 
 <script src="archive-content.js?v=20261001c"></script>
+<script src="search-index.js?v=20261001"></script>
 <script>
 var SB='https://ploijdxywrajyycemmua.supabase.co';
 var SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsb2lqZHh5d3Jhanl5Y2VtbXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjQwMzgsImV4cCI6MjA5NDcwMDAzOH0.m9ggHCLfINex_Wj8GL381PFjU-Eu7aovaNF001PqaQs';
