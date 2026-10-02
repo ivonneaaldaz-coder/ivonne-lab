@@ -258,14 +258,117 @@ a{color:inherit;text-decoration:none;}
 .arc-detail{position:absolute;bottom:0;left:0;right:0;background:#e8e4de;border-top:1px solid var(--border);padding:4px 10px;font-size:13px;color:var(--dim);flex-shrink:0;}
 
 /* ── MUSIC ── */
-.music-body{flex:1;display:flex;flex-direction:column;padding:8px;background:#191414;overflow:hidden;}
-.music-hdr{padding:8px 0;color:#fff;border-bottom:1px solid #2a2a2a;margin-bottom:8px;}
-.music-hdr .now-lbl{font-size:12px;color:#1DB954;margin-bottom:2px;}
-.music-hdr .now-title{font-size:17px;color:#fff;}
-.music-hdr .now-sub{font-size:13px;color:#888;}
-.music-hdr .now-sub a{color:#1DB954;}
-.sp-embed{flex:1;min-height:200px;}
-.sp-embed iframe{width:100%;height:100%;border:none;}
+.music-shell{flex:1;display:flex;flex-direction:column;min-height:0;background:#141212;color:#eee;overflow:hidden;}
+.music-toolbar{height:39px;background:linear-gradient(to bottom,#ece9e1,#cfc8bd);border-bottom:1px solid #6f695f;display:flex;align-items:stretch;flex-shrink:0;}
+.music-tab{font-family:var(--font);font-size:13px;color:#1f1f1f;background:transparent;border:0;border-right:1px solid #9b9489;padding:0 16px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.music-tab:hover{background:#e7edf7;}
+.music-tab.active{background:linear-gradient(to bottom,#eaf4ff,#bdd7f2);box-shadow:inset 0 -2px 0 #4d83bd;color:#102846;}
+.music-search-wrap{margin-left:auto;display:flex;align-items:center;padding:5px 8px;}
+.music-search{width:190px;background:#fff;border:2px solid;border-color:#7a746c #fff #fff #7a746c;padding:3px 7px;font-family:var(--font);font-size:12px;outline:none;color:#222;}
+.music-view{display:none;flex:1;min-height:0;overflow:hidden;padding:10px;background:radial-gradient(circle at 50% 0%,#252121 0,#171414 55%,#111 100%);}
+.music-view.active{display:flex;flex-direction:column;}
+.music-now-top{display:grid;grid-template-columns:180px minmax(210px,.9fr) minmax(300px,1.6fr);gap:12px;min-height:178px;}
+.music-cover-card{background:#1d1a1a;border:1px solid #343030;padding:8px;display:flex;align-items:center;justify-content:center;}
+.music-cover{width:100%;aspect-ratio:1;border-radius:8px;box-shadow:0 8px 25px rgba(0,0,0,.45);background:linear-gradient(135deg,#9c1d62,#ec334d 30%,#f2b342 55%,#542bb0 78%,#071051);}
+.music-now-info{padding:15px 4px 6px;display:flex;flex-direction:column;justify-content:center;min-width:0;}
+.music-kicker{font-family:var(--font);font-size:11px;color:#34d36c;letter-spacing:.08em;margin-bottom:8px;}
+.music-title{font-family:var(--font);font-size:26px;color:#fff;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.music-artist{font-family:var(--font);font-size:15px;color:#ddd;margin-top:4px;}
+.music-album{font-family:var(--font);font-size:12px;color:#98908f;margin-top:3px;}
+.music-progress-meta{display:flex;justify-content:space-between;margin-top:22px;font-family:var(--font);font-size:11px;color:#bbb;}
+.music-progress{height:8px;border-radius:5px;background:#303030;border:1px solid #484848;overflow:hidden;margin-top:4px;}
+.music-progress>span{display:block;width:48%;height:100%;background:linear-gradient(to right,#2a72bb,#38a8ef);}
+.music-viz-wrap{position:relative;background:#0f0c12;border:1px solid #423a42;overflow:hidden;min-height:178px;}
+#music-viz{width:100%;height:100%;display:block;}
+.music-viz-label{position:absolute;top:8px;right:10px;font-family:var(--font);font-size:10px;color:#a99fab;letter-spacing:.04em;z-index:2;}
+.music-controls{height:67px;margin-top:10px;background:linear-gradient(to bottom,#2b2929,#1c1a1a);border:1px solid #393535;display:flex;align-items:center;justify-content:center;gap:16px;flex-shrink:0;position:relative;}
+.music-ctl{width:38px;height:38px;border-radius:50%;border:1px solid #4c4848;background:linear-gradient(to bottom,#3c3939,#1d1b1b);color:#eee;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.music-ctl:hover{background:linear-gradient(to bottom,#514c4c,#282525);}
+.music-ctl.main{width:54px;height:54px;font-size:22px;background:linear-gradient(to bottom,#565151,#232020);}
+.music-ctl.small{width:31px;height:31px;font-size:13px;}
+.music-volume{position:absolute;right:18px;display:flex;align-items:center;gap:8px;color:#ddd;font-size:13px;}
+.music-volume-line{width:120px;height:7px;border-radius:4px;background:#343232;border:1px solid #454141;overflow:hidden;}
+.music-volume-line span{display:block;width:54%;height:100%;background:linear-gradient(to right,#2c75bf,#48adf3);}
+.music-main-grid{display:grid;grid-template-columns:205px minmax(0,1fr);gap:8px;flex:1;min-height:0;margin-top:8px;}
+.music-playlist-pane{background:#151313;border:1px solid #363232;overflow-y:auto;}
+.music-pane-head{height:30px;padding:0 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #363232;font-family:var(--font);font-size:12px;color:#bbb;letter-spacing:.05em;}
+.music-pl-row{display:grid;grid-template-columns:22px minmax(0,1fr);gap:7px;align-items:center;padding:7px 9px;font-family:var(--font);font-size:12px;color:#d7d2d2;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.035);}
+.music-pl-row:hover{background:#262226;}
+.music-pl-row.active{background:#174d9d;color:#fff;}
+.music-pl-dot{width:15px;height:15px;border-radius:2px;background:#555;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16);}
+.music-pl-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.music-profile-link{display:block;color:#7ba8de;text-decoration:none;padding:9px 10px;font-family:var(--font);font-size:11px;border-top:1px solid #363232;}
+.music-profile-link:hover{color:#fff;background:#1e3f72;}
+.music-tracks{background:#151313;border:1px solid #363232;overflow:auto;}
+.music-track-head,.music-track-row{display:grid;grid-template-columns:34px minmax(150px,1.2fr) minmax(120px,1fr) 90px;align-items:center;}
+.music-track-head{position:sticky;top:0;background:linear-gradient(to bottom,#ece9e1,#c9c2b8);color:#222;border-bottom:1px solid #777;z-index:2;font-family:var(--font);font-size:11px;}
+.music-track-head>div{padding:6px 8px;border-right:1px solid #aaa;}
+.music-track-row{font-family:var(--font);font-size:12px;color:#d9d4d4;border-bottom:1px solid rgba(255,255,255,.055);cursor:pointer;}
+.music-track-row>div{padding:7px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.music-track-row:hover{background:#262226;}
+.music-track-row.active{background:#174d9d;color:#fff;}
+.music-track-num{color:#9a9494;text-align:center;}
+.music-track-row.active .music-track-num{color:#8bf59d;}
+.music-track-empty{padding:22px;font-family:var(--font);font-size:12px;color:#918b8b;line-height:1.7;}
+.music-track-empty a{color:#7ba8de;}
+.music-status{height:28px;background:linear-gradient(to bottom,#e6e1d8,#cfc7bd);border-top:1px solid #79736b;color:#282828;display:flex;align-items:center;gap:8px;padding:0 10px;font-family:var(--font);font-size:11px;flex-shrink:0;}
+.music-status .spotify-state{margin-left:auto;display:flex;align-items:center;gap:5px;}
+.music-status-dot{width:7px;height:7px;border-radius:50%;background:#35b85d;box-shadow:0 0 5px rgba(53,184,93,.55);}
+.music-library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px;overflow-y:auto;padding:4px;align-content:start;}
+.music-card{background:#1c1919;border:1px solid #3a3535;padding:10px;cursor:pointer;transition:transform .12s,background .12s;}
+.music-card:hover{background:#292424;transform:translateY(-1px);}
+.music-card-cover{aspect-ratio:1;border-radius:7px;margin-bottom:9px;box-shadow:0 5px 16px rgba(0,0,0,.35);}
+.music-card-title{font-family:var(--font);font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.music-card-sub{font-family:var(--font);font-size:10px;color:#8f8888;margin-top:3px;}
+.music-list-view{overflow-y:auto;background:#151313;border:1px solid #363232;}
+.music-list-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 11px;border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer;font-family:var(--font);}
+.music-list-row:hover{background:#252121;}
+.music-list-cover{width:34px;height:34px;border-radius:4px;}
+.music-list-name{font-size:14px;color:#fff;}
+.music-list-meta{font-size:10px;color:#8f8888;margin-top:2px;}
+.music-list-action{font-size:11px;color:#75a8e4;}
+.music-radio{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:12px;min-height:0;}
+.music-radio-viz{position:relative;background:#0d0a10;border:1px solid #39333d;min-height:260px;overflow:hidden;}
+#music-radio-viz{width:100%;height:100%;display:block;}
+.music-radio-panel{background:#191616;border:1px solid #3b3636;padding:16px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;}
+.music-radio-label{font-family:var(--font);font-size:11px;color:#35d36b;letter-spacing:.08em;margin-bottom:8px;}
+.music-radio-title{font-family:var(--font);font-size:25px;color:#fff;margin-bottom:7px;}
+.music-radio-copy{font-family:var(--font);font-size:12px;line-height:1.65;color:#9b9494;margin-bottom:16px;}
+.music-radio-btn{font-family:var(--font);font-size:12px;background:#d7d1c8;color:#222;border:2px solid;border-color:#fff #6e675e #6e675e #fff;padding:6px 12px;cursor:pointer;}
+.music-radio-btn:hover{background:#eee8df;}
+
+@media(max-width:760px){
+  #music-win{width:96vw!important;height:78vh!important;left:2vw!important;top:4vh!important;transform:none!important;}
+  .music-toolbar{height:36px;}
+  .music-tab{font-size:11px;padding:0 9px;}
+  .music-search-wrap{display:none;}
+  .music-view{padding:7px;}
+  .music-now-top{grid-template-columns:92px minmax(0,1fr);min-height:105px;}
+  .music-cover-card{padding:5px;}
+  .music-viz-wrap{grid-column:1/-1;height:120px;min-height:120px;}
+  .music-title{font-size:19px;}
+  .music-progress-meta{margin-top:10px;}
+  .music-controls{height:58px;gap:10px;}
+  .music-volume{display:none;}
+  .music-main-grid{grid-template-columns:150px minmax(0,1fr);}
+  .music-track-head,.music-track-row{grid-template-columns:28px minmax(140px,1fr) minmax(100px,.8fr);}
+  .music-track-head>div:nth-child(4),.music-track-row>div:nth-child(4){display:none;}
+  .music-library-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .music-radio{grid-template-columns:1fr;}
+  .music-radio-panel{min-height:150px;}
+}
+@media(max-width:520px){
+  .music-main-grid{grid-template-columns:1fr;}
+  .music-playlist-pane{max-height:130px;}
+  .music-now-top{grid-template-columns:78px minmax(0,1fr);}
+  .music-viz-wrap{height:96px;min-height:96px;}
+  .music-controls{margin-top:7px;}
+  .music-ctl{width:34px;height:34px;}
+  .music-ctl.main{width:45px;height:45px;}
+  .music-track-head,.music-track-row{grid-template-columns:26px minmax(130px,1fr);}
+  .music-track-head>div:nth-child(3),.music-track-row>div:nth-child(3){display:none;}
+  .music-library-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+}
 
 /* ── CALENDAR ── */
 .cal-body{flex:1;padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--win);}
@@ -1121,11 +1224,84 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 </div>
 
 <!-- MUSIC -->
-<div class="win off" id="music-win" style="width:320px;height:400px;top:60px;left:calc(50% + 240px);display:none;" onmousedown="focusWin('music-win')">
-  <div class="tbar" onmousedown="dragStart(event,'music-win')"><div class="tbar-title">🎵 music.exe</div><div class="tbar-btns"><button class="tbtn" onclick="minWin('music-win')">_</button><button class="tbtn" onclick="maxWin('music-win')">□</button><button class="tbtn" onclick="closeWin('music-win')">✕</button></div></div>
-  <div class="music-body">
-    <div class="music-hdr"><div class="now-lbl">▶ NOW PLAYING</div><div class="now-title">ivonne's playlist</div><div class="now-sub"><a href="https://open.spotify.com/user/1244680102" target="_blank">view all playlists ↗</a></div></div>
-    <div class="sp-embed"><iframe src="https://open.spotify.com/embed/playlist/3MJORK5D5v7d5cSG1Cte6a?utm_source=generator&theme=0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+<div class="win off" id="music-win" style="width:min(860px,94vw);height:min(620px,86vh);top:34px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('music-win')">
+  <div class="tbar" onmousedown="dragStart(event,'music-win')">
+    <div class="tbar-title">🎵 music.exe — ivonne aldaz</div>
+    <div class="tbar-btns"><button class="tbtn" onclick="minWin('music-win')">_</button><button class="tbtn" onclick="maxWin('music-win')">□</button><button class="tbtn" onclick="closeWin('music-win')">✕</button></div>
+  </div>
+
+  <div class="music-shell">
+    <div class="music-toolbar">
+      <button class="music-tab active" data-music-tab="now" onclick="musicTab('now',this)">▶ Now Playing</button>
+      <button class="music-tab" data-music-tab="library" onclick="musicTab('library',this)">📁 Library</button>
+      <button class="music-tab" data-music-tab="playlists" onclick="musicTab('playlists',this)">☷ Playlists</button>
+      <button class="music-tab" data-music-tab="radio" onclick="musicTab('radio',this)">◉ Radio</button>
+      <div class="music-search-wrap"><input id="music-search" class="music-search" placeholder="Search music..." oninput="musicFilter(this.value)"></div>
+    </div>
+
+    <div id="music-view-now" class="music-view active">
+      <div class="music-now-top">
+        <div class="music-cover-card"><div id="music-cover" class="music-cover"></div></div>
+        <div class="music-now-info">
+          <div class="music-kicker">▶ NOW PLAYING</div>
+          <div id="music-now-title" class="music-title">Self Aware</div>
+          <div id="music-now-artist" class="music-artist">Temper City</div>
+          <div id="music-now-album" class="music-album">playlist: ...</div>
+          <div class="music-progress-meta"><span id="music-progress-left">1:22</span><span id="music-progress-right">-0:55</span></div>
+          <div class="music-progress"><span></span></div>
+        </div>
+        <div class="music-viz-wrap">
+          <canvas id="music-viz"></canvas>
+          <div class="music-viz-label">VISUALIZER · WAVE</div>
+        </div>
+      </div>
+
+      <div class="music-controls">
+        <button class="music-ctl small" title="shuffle playlists" onclick="musicRandomPlaylist()">⤨</button>
+        <button class="music-ctl" title="previous playlist" onclick="musicStep(-1)">◀|</button>
+        <button class="music-ctl main" title="open selected playlist in Spotify" onclick="musicOpenSelected()">▶</button>
+        <button class="music-ctl" title="next playlist" onclick="musicStep(1)">|▶</button>
+        <button class="music-ctl small" title="cycle visualizer" onclick="musicCycleViz()">↻</button>
+        <div class="music-volume"><span>🔈</span><div class="music-volume-line"><span></span></div></div>
+      </div>
+
+      <div class="music-main-grid">
+        <div class="music-playlist-pane">
+          <div class="music-pane-head"><span>PLAYLISTS</span><span>public</span></div>
+          <div id="music-playlist-sidebar"></div>
+          <a class="music-profile-link" href="https://open.spotify.com/user/ivonnealdaz" target="_blank">view all on Spotify ↗</a>
+        </div>
+        <div class="music-tracks">
+          <div class="music-track-head"><div>#</div><div>Title</div><div>Artist</div><div>Playlist</div></div>
+          <div id="music-track-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="music-view-library" class="music-view">
+      <div id="music-library-grid" class="music-library-grid"></div>
+    </div>
+
+    <div id="music-view-playlists" class="music-view">
+      <div id="music-playlists-list" class="music-list-view"></div>
+    </div>
+
+    <div id="music-view-radio" class="music-view">
+      <div class="music-radio">
+        <div class="music-radio-viz"><canvas id="music-radio-viz"></canvas><div class="music-viz-label">LAB RADIO · RANDOM SIGNAL</div></div>
+        <div class="music-radio-panel">
+          <div class="music-radio-label">● LAB RADIO</div>
+          <div id="music-radio-title" class="music-radio-title">shuffle the mood</div>
+          <div class="music-radio-copy">pull a random playlist from ivonne's public collection and open it in the player shell.</div>
+          <button class="music-radio-btn" onclick="musicRadioShuffle()">tune in →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="music-status">
+      <span id="music-status-copy">playlist: ...</span>
+      <span class="spotify-state"><span class="music-status-dot"></span><a href="https://open.spotify.com/user/ivonnealdaz" target="_blank" style="color:#222;text-decoration:none;">Spotify ↗</a></span>
+    </div>
   </div>
   <div class="resize-corner"></div>
 </div>
@@ -1740,6 +1916,7 @@ function openWin(id){
   if(id==='arc-win')renderArc('all');
   if(id==='notes-win'){renderNotes('movies');showNotesMobileBar();}
   if(id==='photos-win')loadPhotos();
+  if(id==='music-win')musicInit();
   if(id==='chat-room-win'){
     var cf=document.getElementById('chatroom-iframe');
     if(cf)cf.src='https://chat.ivonnealdaz.com?embedded=1&t='+Date.now();
@@ -2289,6 +2466,294 @@ async function sendMessage(){
     btn.disabled=false;
     inp.focus();
   }
+}
+
+// ── MUSIC.EXE ──
+// Playlist names are intentionally kept exactly as they appear on Ivonne's
+// public Spotify profile. The first playlist is the existing embedded playlist;
+// the others remain discoverable here and link back to the public profile until
+// their individual Spotify IDs are wired in.
+var MUSIC_PLAYLISTS=[
+  {
+    name:'...',
+    cover:'linear-gradient(135deg,#4b164f 0%,#e62857 25%,#ff972f 48%,#b52185 68%,#11164c 100%)',
+    url:'https://open.spotify.com/playlist/3MJORK5D5v7d5cSG1Cte6a',
+    current:{title:'Self Aware',artist:'Temper City'},
+    tracks:[
+      {title:'Self Aware',artist:'Temper City'},
+      {title:'505',artist:'Arctic Monkeys'},
+      {title:'Cigarette Daydreams',artist:'Cage The Elephant'},
+      {title:'We Are The People',artist:'Empire of the Sun'}
+    ]
+  },
+  {
+    name:'drift',
+    cover:'linear-gradient(180deg,#172d4a 0%,#405d70 43%,#d38d45 62%,#201a26 100%)',
+    url:'https://open.spotify.com/user/ivonnealdaz',
+    current:null,
+    tracks:[]
+  },
+  {
+    name:'another lifetime',
+    cover:'linear-gradient(135deg,#080d31 0%,#11152c 35%,#7c161b 67%,#f24c1d 82%,#f5b76d 100%)',
+    url:'https://open.spotify.com/user/ivonnealdaz',
+    current:null,
+    tracks:[]
+  },
+  {
+    name:'soft static',
+    cover:'radial-gradient(circle at 63% 63%,#f81b3f 0%,#e90055 17%,transparent 33%),radial-gradient(circle at 35% 45%,#12d8e4 0%,#056c9b 21%,transparent 36%),#050918',
+    url:'https://open.spotify.com/user/ivonnealdaz',
+    current:null,
+    tracks:[]
+  },
+  {
+    name:'permanent rotation',
+    cover:'linear-gradient(145deg,#021308 0%,#08150e 37%,#d1118d 58%,#ff396e 73%,#f4692f 100%)',
+    url:'https://open.spotify.com/user/ivonnealdaz',
+    current:null,
+    tracks:[]
+  }
+];
+
+var musicSelected=0;
+var musicReady=false;
+var musicVizMode=0;
+var musicVizStarted=false;
+var musicVizTick=0;
+
+function musicInit(){
+  if(!musicReady){
+    musicRenderAll();
+    musicReady=true;
+  }
+  setTimeout(function(){
+    musicStartVisualizers();
+  },40);
+}
+
+function musicRenderAll(){
+  musicRenderSidebar();
+  musicRenderLibrary();
+  musicRenderPlaylistList();
+  musicSelectPlaylist(musicSelected,false);
+}
+
+function musicRenderSidebar(){
+  var el=document.getElementById('music-playlist-sidebar');if(!el)return;
+  el.innerHTML=MUSIC_PLAYLISTS.map(function(p,i){
+    return '<div class="music-pl-row'+(i===musicSelected?' active':'')+'" data-music-name="'+labEsc(p.name.toLowerCase())+'" onclick="musicSelectPlaylist('+i+',true)">'+
+      '<span class="music-pl-dot" style="background:'+p.cover+'"></span>'+
+      '<span class="music-pl-name">'+labEsc(p.name)+'</span>'+
+    '</div>';
+  }).join('');
+}
+
+function musicRenderLibrary(){
+  var el=document.getElementById('music-library-grid');if(!el)return;
+  el.innerHTML=MUSIC_PLAYLISTS.map(function(p,i){
+    return '<div class="music-card" data-music-name="'+labEsc(p.name.toLowerCase())+'" onclick="musicSelectPlaylist('+i+',true);musicTab(\'now\')">'+
+      '<div class="music-card-cover" style="background:'+p.cover+'"></div>'+
+      '<div class="music-card-title">'+labEsc(p.name)+'</div>'+
+      '<div class="music-card-sub">public playlist · Ivonne Aldaz</div>'+
+    '</div>';
+  }).join('');
+}
+
+function musicRenderPlaylistList(){
+  var el=document.getElementById('music-playlists-list');if(!el)return;
+  el.innerHTML=MUSIC_PLAYLISTS.map(function(p,i){
+    return '<div class="music-list-row" data-music-name="'+labEsc(p.name.toLowerCase())+'" onclick="musicSelectPlaylist('+i+',true);musicTab(\'now\')">'+
+      '<div class="music-list-cover" style="background:'+p.cover+'"></div>'+
+      '<div><div class="music-list-name">'+labEsc(p.name)+'</div><div class="music-list-meta">public playlist · Ivonne Aldaz</div></div>'+
+      '<div class="music-list-action">open →</div>'+
+    '</div>';
+  }).join('');
+}
+
+function musicRenderTracks(){
+  var p=MUSIC_PLAYLISTS[musicSelected];
+  var el=document.getElementById('music-track-list');if(!el||!p)return;
+
+  if(!p.tracks||!p.tracks.length){
+    el.innerHTML='<div class="music-track-empty">'+
+      'playlist selected: <strong style="color:#fff;">'+labEsc(p.name)+'</strong><br>'+
+      'the full track list lives on Spotify for now.<br><br>'+
+      '<a href="'+labEsc(p.url)+'" target="_blank">open on Spotify ↗</a>'+
+    '</div>';
+    return;
+  }
+
+  el.innerHTML=p.tracks.map(function(t,i){
+    return '<div class="music-track-row'+(i===0?' active':'')+'" onclick="musicOpenSelected()">'+
+      '<div class="music-track-num">'+(i===0?'▮▮':(i+1))+'</div>'+
+      '<div>'+labEsc(t.title)+'</div>'+
+      '<div>'+labEsc(t.artist)+'</div>'+
+      '<div>'+labEsc(p.name)+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function musicSelectPlaylist(index,focusWindow){
+  index=(index+MUSIC_PLAYLISTS.length)%MUSIC_PLAYLISTS.length;
+  musicSelected=index;
+  var p=MUSIC_PLAYLISTS[index];
+  if(!p)return;
+
+  document.querySelectorAll('.music-pl-row').forEach(function(row,i){row.classList.toggle('active',i===index);});
+
+  var cover=document.getElementById('music-cover');
+  var title=document.getElementById('music-now-title');
+  var artist=document.getElementById('music-now-artist');
+  var album=document.getElementById('music-now-album');
+  var left=document.getElementById('music-progress-left');
+  var right=document.getElementById('music-progress-right');
+  var status=document.getElementById('music-status-copy');
+
+  if(cover)cover.style.background=p.cover;
+  if(p.current){
+    if(title)title.textContent=p.current.title;
+    if(artist)artist.textContent=p.current.artist;
+    if(album)album.textContent='playlist: '+p.name;
+    if(left)left.textContent='1:22';
+    if(right)right.textContent='-0:55';
+  }else{
+    if(title)title.textContent=p.name;
+    if(artist)artist.textContent='Ivonne Aldaz';
+    if(album)album.textContent='public playlist';
+    if(left)left.textContent='playlist';
+    if(right)right.textContent='Spotify ↗';
+  }
+  if(status)status.textContent='playlist: '+p.name;
+  musicRenderTracks();
+
+  if(focusWindow)focusWin('music-win');
+}
+
+function musicStep(delta){
+  musicSelectPlaylist(musicSelected+delta,true);
+}
+
+function musicRandomPlaylist(){
+  if(MUSIC_PLAYLISTS.length<2)return;
+  var next=musicSelected;
+  while(next===musicSelected)next=Math.floor(Math.random()*MUSIC_PLAYLISTS.length);
+  musicSelectPlaylist(next,true);
+}
+
+function musicOpenSelected(){
+  var p=MUSIC_PLAYLISTS[musicSelected];
+  if(!p)return;
+  window.open(p.url,'_blank');
+  if(typeof gtag!=='undefined')gtag('event','music_spotify_open',{playlist:p.name});
+}
+
+function musicTab(name,btn){
+  document.querySelectorAll('.music-tab').forEach(function(b){b.classList.toggle('active',b.dataset.musicTab===name);});
+  document.querySelectorAll('.music-view').forEach(function(v){v.classList.remove('active');});
+  var view=document.getElementById('music-view-'+name);if(view)view.classList.add('active');
+  if(name==='radio')setTimeout(musicStartVisualizers,30);
+}
+
+function musicFilter(value){
+  var q=(value||'').toLowerCase().trim();
+  document.querySelectorAll('[data-music-name]').forEach(function(el){
+    el.style.display=!q||el.dataset.musicName.indexOf(q)!==-1?'':'none';
+  });
+}
+
+function musicRadioShuffle(){
+  musicRandomPlaylist();
+  var p=MUSIC_PLAYLISTS[musicSelected];
+  var t=document.getElementById('music-radio-title');if(t)t.textContent=p.name;
+  musicVizMode=(musicVizMode+1)%3;
+}
+
+function musicCycleViz(){
+  musicVizMode=(musicVizMode+1)%3;
+}
+
+function musicStartVisualizers(){
+  if(musicVizStarted)return;
+  musicVizStarted=true;
+  requestAnimationFrame(musicDrawVisualizers);
+}
+
+function musicFitCanvas(canvas){
+  if(!canvas)return null;
+  var rect=canvas.getBoundingClientRect();
+  if(rect.width<2||rect.height<2)return null;
+  var dpr=Math.min(window.devicePixelRatio||1,2);
+  var w=Math.round(rect.width*dpr),h=Math.round(rect.height*dpr);
+  if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+  var ctx=canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:rect.width,h:rect.height};
+}
+
+function musicDrawOne(canvas,t,offset){
+  var fit=musicFitCanvas(canvas);if(!fit)return;
+  var ctx=fit.ctx,w=fit.w,h=fit.h;
+  ctx.clearRect(0,0,w,h);
+
+  var grad=ctx.createLinearGradient(0,0,w,h);
+  grad.addColorStop(0,'#070917');
+  grad.addColorStop(.42,'#20102a');
+  grad.addColorStop(1,'#09080f');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+
+  // faint CRT / grid
+  ctx.strokeStyle='rgba(110,160,255,.08)';ctx.lineWidth=1;
+  for(var gx=0;gx<w;gx+=18){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,h);ctx.stroke();}
+  for(var gy=0;gy<h;gy+=18){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(w,gy);ctx.stroke();}
+
+  if(musicVizMode===1){
+    for(var i=0;i<52;i++){
+      var x=(i*37+t*22+offset*41)%w;
+      var y=h/2+Math.sin(i*.73+t*1.1+offset)*h*.28;
+      var r=1.5+(i%5)*.55;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle=i%3===0?'rgba(255,54,135,.72)':(i%3===1?'rgba(93,198,255,.7)':'rgba(184,87,255,.65)');
+      ctx.fill();
+    }
+  }else if(musicVizMode===2){
+    var bars=Math.max(18,Math.floor(w/18));
+    for(var b=0;b<bars;b++){
+      var bh=(.2+.8*Math.abs(Math.sin(t*1.7+b*.52+offset)))*h*.72;
+      var bg=ctx.createLinearGradient(0,h-bh,0,h);
+      bg.addColorStop(0,'rgba(255,51,151,.75)');
+      bg.addColorStop(.55,'rgba(110,71,255,.72)');
+      bg.addColorStop(1,'rgba(52,184,255,.55)');
+      ctx.fillStyle=bg;
+      ctx.fillRect(b*(w/bars)+3,h-bh,Math.max(4,w/bars-6),bh);
+    }
+  }else{
+    var colors=['rgba(255,39,132,.78)','rgba(192,67,255,.65)','rgba(69,192,255,.68)'];
+    colors.forEach(function(color,line){
+      ctx.beginPath();
+      for(var x=0;x<=w;x+=4){
+        var y=h*.5+
+          Math.sin(x*.018+t*(1.2+line*.12)+line*1.7+offset)*h*(.11+line*.025)+
+          Math.sin(x*.051-t*.55+line)*h*.035;
+        if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle=color;ctx.lineWidth=2+line*.4;ctx.shadowBlur=12;ctx.shadowColor=color;ctx.stroke();ctx.shadowBlur=0;
+    });
+  }
+
+  // subtle scan lines
+  ctx.fillStyle='rgba(255,255,255,.018)';
+  for(var sy=0;sy<h;sy+=4)ctx.fillRect(0,sy,w,1);
+}
+
+function musicDrawVisualizers(ts){
+  musicVizTick=ts/1000;
+  var win=document.getElementById('music-win');
+  if(win&&win.style.display!=='none'){
+    musicDrawOne(document.getElementById('music-viz'),musicVizTick,0);
+    musicDrawOne(document.getElementById('music-radio-viz'),musicVizTick,.9);
+  }
+  requestAnimationFrame(musicDrawVisualizers);
 }
 
 // ── BROWSER ──
