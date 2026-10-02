@@ -338,6 +338,8 @@ a{color:inherit;text-decoration:none;}
 .music-radio-panel{background:#191616;border:1px solid #3b3636;padding:16px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;}
 .music-radio-label{font-family:var(--font);font-size:11px;color:#35d36b;letter-spacing:.08em;margin-bottom:8px;}
 .music-radio-title{font-family:var(--font);font-size:25px;color:#fff;margin-bottom:7px;}
+.music-radio-source{display:none;font-family:var(--font);font-size:10px;color:#6f9fd5;letter-spacing:.04em;margin:-1px 0 8px;}
+.music-radio-source.on{display:block;}
 .music-radio-copy{font-family:var(--font);font-size:12px;line-height:1.65;color:#9b9494;margin-bottom:16px;}
 .music-radio-btn{font-family:var(--font);font-size:12px;background:#d7d1c8;color:#222;border:2px solid;border-color:#fff #6e675e #6e675e #fff;padding:6px 12px;cursor:pointer;}
 .music-radio-btn:hover{background:#eee8df;}
@@ -1339,6 +1341,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
         <div class="music-radio-panel">
           <div class="music-radio-label">● LAB RADIO</div>
           <div id="music-radio-title" class="music-radio-title">shuffle the mood</div>
+          <div id="music-radio-source" class="music-radio-source"></div>
           <div class="music-radio-copy">pull a random song from ivonne's playlists and play it inside the Lab.</div>
           <button class="music-radio-btn" onclick="musicRadioShuffle()">shuffle →</button>
         </div>
@@ -2966,7 +2969,11 @@ function musicRadioShuffle(){
   var next=Math.floor(Math.random()*MUSIC_PLAYLISTS.length);
   musicSelectPlaylist(next,false);
   var p=MUSIC_PLAYLISTS[musicSelected];
-  var t=document.getElementById('music-radio-title');if(t)t.textContent=p.name;
+  var source=document.getElementById('music-radio-source');
+  if(source){
+    source.textContent='playlist · '+p.name;
+    source.classList.add('on');
+  }
   if(p.tracks.length)musicPlayTrack(Math.floor(Math.random()*p.tracks.length));
   else musicPlayPlaylistFromStart();
 }
