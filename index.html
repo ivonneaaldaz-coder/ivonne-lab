@@ -2875,6 +2875,8 @@ var musicVizMode=(function(){
 })();
 var musicVizStarted=false;
 var musicVizTick=0;
+var musicVizLastFrame=0;
+var musicVizEnergy=.18;
 var musicPlaybackPosition=0;
 var musicPlaybackDuration=0;
 var musicPlaybackUpdatedAt=Date.now();
@@ -3370,8 +3372,11 @@ function musicDrawOne(canvas,t,offset,energy,seed){
       var phase=(b+seed%17)*.43+offset;
       var slow=.5+.5*Math.sin(t*(.34+(b%4)*.025)+phase);
       var detail=.5+.5*Math.sin(t*(.72+(b%5)*.035)+phase*1.7);
-      var local=.28+slow*.42+detail*.20;
-      var bh=(.12+local*(.44+energy*.16))*h*.78;
+      var tertiary=.5+.5*Math.sin(t*(.17+(b%3)*.018)+phase*2.3);
+      var local=.22+slow*.34+detail*.18+tertiary*.12;
+      // Height comes from each bar's own slow oscillators. Shared track
+      // energy only adds a tiny lift, so the bars never "jump" together.
+      var bh=(.14+local*.48+energy*.025)*h*.76;
       var bg=ctx.createLinearGradient(0,h-bh,0,h);
       bg.addColorStop(0,'rgba(255,51,151,.75)');
       bg.addColorStop(.55,'rgba(110,71,255,.72)');
@@ -3388,10 +3393,13 @@ function musicDrawOne(canvas,t,offset,energy,seed){
       ctx.beginPath();
       var phase=(seed%23)*.07+line*2.15+offset;
       for(var x=0;x<=w;x+=4){
-        var amp=h*(lineAmp[line]+energy*.012);
+        // Fixed per-line amplitude keeps the wave from visibly pumping.
+        // Each color glides on its own clocks instead.
+        var amp=h*lineAmp[line];
         var y=h*.5+
           Math.sin(x*lineFreq[line]+t*lineSpeed[line]+phase)*amp+
-          Math.sin(x*(.039+line*.006)-t*(.10+line*.035)+phase*.55)*h*(.014+line*.004);
+          Math.sin(x*(.039+line*.006)-t*(.10+line*.035)+phase*.55)*h*(.014+line*.004)+
+          Math.sin(x*(.007+line*.0015)+t*(.055+line*.012)+phase*.3)*h*.010;
         if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
       }
       ctx.strokeStyle=color;
@@ -3411,17 +3419,24 @@ function musicDrawOne(canvas,t,offset,energy,seed){
 setTimeout(musicEnsureSpotifyEmbed,0);
 
 function musicDrawVisualizers(ts){
-  var elapsed=musicIsPaused?0:Math.max(0,Date.now()-musicPlaybackUpdatedAt);
-  var playbackMs=musicPlaybackPosition+elapsed;
-  if(musicPlaybackDuration)playbackMs=Math.min(playbackMs,musicPlaybackDuration);
-  musicVizTick=playbackMs/1000;
+  // The Spotify iframe reports playback in discrete updates, which can jump a
+  // few hundred milliseconds and makes animation look glitchy. Keep the
+  // visualizer on its own continuous render clock instead.
+  if(!musicVizLastFrame)musicVizLastFrame=ts||performance.now();
+  var now=ts||performance.now();
+  var dt=Math.max(0,Math.min(.05,(now-musicVizLastFrame)/1000));
+  musicVizLastFrame=now;
+  if(!musicIsPaused)musicVizTick+=dt;
 
   var seed=musicVizSeed(musicPlayingUri);
-  var energy=musicPlayingUri?musicVizEnvelope(musicVizTick,seed):.18;
+  var targetEnergy=musicPlayingUri?musicVizEnvelope(musicVizTick,seed):.18;
+  // Slow easing removes the shared "bounce" while preserving a little musical life.
+  musicVizEnergy+=(targetEnergy-musicVizEnergy)*Math.min(1,dt*1.4);
+
   var win=document.getElementById('music-win');
   if(win&&win.style.display!=='none'){
-    musicDrawOne(document.getElementById('music-viz'),musicVizTick,0,energy,seed);
-    musicDrawOne(document.getElementById('music-radio-viz'),musicVizTick,.9,energy,seed+97);
+    musicDrawOne(document.getElementById('music-viz'),musicVizTick,0,musicVizEnergy,seed);
+    musicDrawOne(document.getElementById('music-radio-viz'),musicVizTick,.9,musicVizEnergy,seed+97);
   }
   requestAnimationFrame(musicDrawVisualizers);
 }
