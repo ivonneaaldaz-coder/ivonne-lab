@@ -2132,7 +2132,23 @@ function initFirstVisit(){
   document.addEventListener('pointerdown',mark,{once:true,capture:true});
   document.addEventListener('keydown',mark,{once:true,capture:true});
 }
+function initLabDeepLink(){
+  var hash=(window.location.hash||'').toLowerCase();
+  if(hash==='#ask-eve'){
+    try{localStorage.setItem('ivonne_lab_first_visit_seen','1');}catch(e){}
+    firstVisitActive=false;
+    firstVisitTimers.forEach(function(t){clearTimeout(t);});
+    firstVisitTimers=[];
+    var toast=document.getElementById('first-visit-toast');
+    if(toast)toast.remove();
+    document.body.classList.remove('first-visit-toast-visible');
+    closeAll();
+    openWin('chat-win');
+  }
+}
 setTimeout(initFirstVisit,350);
+setTimeout(initLabDeepLink,500);
+window.addEventListener('hashchange',initLabDeepLink);
 
 // ── CLOCK ──
 function clk(){
