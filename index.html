@@ -2475,8 +2475,10 @@ async function sendMessage(){
 // their individual Spotify IDs are wired in.
 var MUSIC_PLAYLISTS=[
   {
-    name:'...',
-    cover:'linear-gradient(135deg,#4b164f 0%,#e62857 25%,#ff972f 48%,#b52185 68%,#11164c 100%)',
+    id:'3MJORK5D5v7d5cSG1Cte6a',
+    name:'⚡️',
+    coverUrl:'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da8476ad1797afc30f2d7501145e',
+    fallbackCover:'linear-gradient(135deg,#4b164f 0%,#e62857 25%,#ff972f 48%,#b52185 68%,#11164c 100%)',
     url:'https://open.spotify.com/playlist/3MJORK5D5v7d5cSG1Cte6a',
     current:{title:'Self Aware',artist:'Temper City'},
     tracks:[
@@ -2487,30 +2489,38 @@ var MUSIC_PLAYLISTS=[
     ]
   },
   {
+    id:'6srDkgcJIEo3QiOMvlRr1q',
     name:'drift',
-    cover:'linear-gradient(180deg,#172d4a 0%,#405d70 43%,#d38d45 62%,#201a26 100%)',
-    url:null,
+    coverUrl:'https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da840b4356f3ed6fcb840aaa455e',
+    fallbackCover:'linear-gradient(180deg,#172d4a 0%,#405d70 43%,#d38d45 62%,#201a26 100%)',
+    url:'https://open.spotify.com/playlist/6srDkgcJIEo3QiOMvlRr1q',
     current:null,
     tracks:[]
   },
   {
+    id:'3G8AYHiczaJoHhcVjzh9TR',
     name:'another lifetime',
-    cover:'linear-gradient(135deg,#080d31 0%,#11152c 35%,#7c161b 67%,#f24c1d 82%,#f5b76d 100%)',
-    url:null,
+    coverUrl:'https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da8447ea69c73c36625647794722',
+    fallbackCover:'linear-gradient(135deg,#080d31 0%,#11152c 35%,#7c161b 67%,#f24c1d 82%,#f5b76d 100%)',
+    url:'https://open.spotify.com/playlist/3G8AYHiczaJoHhcVjzh9TR',
     current:null,
     tracks:[]
   },
   {
+    id:'3J1lx2Ydr5NrGEB5Eq6NJe',
     name:'soft static',
-    cover:'radial-gradient(circle at 63% 63%,#f81b3f 0%,#e90055 17%,transparent 33%),radial-gradient(circle at 35% 45%,#12d8e4 0%,#056c9b 21%,transparent 36%),#050918',
-    url:null,
+    coverUrl:'https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84b42ec39691c499957d028c05',
+    fallbackCover:'radial-gradient(circle at 63% 63%,#f81b3f 0%,#e90055 17%,transparent 33%),radial-gradient(circle at 35% 45%,#12d8e4 0%,#056c9b 21%,transparent 36%),#050918',
+    url:'https://open.spotify.com/playlist/3J1lx2Ydr5NrGEB5Eq6NJe',
     current:null,
     tracks:[]
   },
   {
+    id:'3tnq9920I6cEP0fzLYTDU0',
     name:'permanent rotation',
-    cover:'linear-gradient(145deg,#021308 0%,#08150e 37%,#d1118d 58%,#ff396e 73%,#f4692f 100%)',
-    url:null,
+    coverUrl:'https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84a360dfebf9fdd762ea6e6436',
+    fallbackCover:'linear-gradient(145deg,#021308 0%,#08150e 37%,#d1118d 58%,#ff396e 73%,#f4692f 100%)',
+    url:'https://open.spotify.com/playlist/3tnq9920I6cEP0fzLYTDU0',
     current:null,
     tracks:[]
   }
@@ -2524,6 +2534,38 @@ var musicVizTick=0;
 var spotifyEmbedController=null;
 var spotifyEmbedLoading=false;
 var spotifyEmbedLoadedUrl='';
+var musicMetadataLoaded=false;
+
+function musicCoverCss(p){
+  if(p&&p.coverUrl){
+    return "background-image:url('"+String(p.coverUrl).replace(/'/g,"%27")+"');background-size:cover;background-position:center;background-repeat:no-repeat;background-color:#181818;";
+  }
+  return 'background:'+((p&&p.fallbackCover)||'#222')+';';
+}
+
+async function musicSyncSpotifyMetadata(){
+  if(musicMetadataLoaded)return;
+  musicMetadataLoaded=true;
+
+  try{
+    var response=await fetch('/api/spotify-playlists');
+    if(!response.ok)return;
+    var data=await response.json();
+    var rows=Array.isArray(data.playlists)?data.playlists:[];
+
+    rows.forEach(function(meta){
+      var p=MUSIC_PLAYLISTS.find(function(item){return item.id===meta.id;});
+      if(!p||!meta.ok)return;
+      if(meta.title)p.name=String(meta.title).trim();
+      if(meta.thumbnail_url)p.coverUrl=meta.thumbnail_url;
+      if(meta.url)p.url=meta.url;
+    });
+
+    musicRenderAll();
+  }catch(e){
+    // Keep the exact cached Spotify metadata bundled above as fallback.
+  }
+}
 
 function musicInit(){
   if(!musicReady){
@@ -2531,6 +2573,7 @@ function musicInit(){
     musicReady=true;
   }
   musicEnsureSpotifyEmbed();
+  musicSyncSpotifyMetadata();
   setTimeout(function(){
     musicStartVisualizers();
   },40);
@@ -2541,13 +2584,15 @@ function musicRenderAll(){
   musicRenderLibrary();
   musicRenderPlaylistList();
   musicSelectPlaylist(musicSelected,false);
+  var radioTitle=document.getElementById('music-radio-title');
+  if(radioTitle&&radioTitle.textContent!=='shuffle the mood')radioTitle.textContent=MUSIC_PLAYLISTS[musicSelected].name;
 }
 
 function musicRenderSidebar(){
   var el=document.getElementById('music-playlist-sidebar');if(!el)return;
   el.innerHTML=MUSIC_PLAYLISTS.map(function(p,i){
     return '<div class="music-pl-row'+(i===musicSelected?' active':'')+'" data-music-name="'+labEsc(p.name.toLowerCase())+'" onclick="musicSelectPlaylist('+i+',true)">'+
-      '<span class="music-pl-dot" style="background:'+p.cover+'"></span>'+
+      '<span class="music-pl-dot" style="'+musicCoverCss(p)+'"></span>'+
       '<span class="music-pl-name">'+labEsc(p.name)+'</span>'+
     '</div>';
   }).join('');
@@ -2557,7 +2602,7 @@ function musicRenderLibrary(){
   var el=document.getElementById('music-library-grid');if(!el)return;
   el.innerHTML=MUSIC_PLAYLISTS.map(function(p,i){
     return '<div class="music-card" data-music-name="'+labEsc(p.name.toLowerCase())+'" onclick="musicSelectPlaylist('+i+',true);musicTab(\'now\')">'+
-      '<div class="music-card-cover" style="background:'+p.cover+'"></div>'+
+      '<div class="music-card-cover" style="'+musicCoverCss(p)+'"></div>'+
       '<div class="music-card-title">'+labEsc(p.name)+'</div>'+
       '<div class="music-card-sub">public playlist · Ivonne Aldaz</div>'+
     '</div>';
@@ -2568,7 +2613,7 @@ function musicRenderPlaylistList(){
   var el=document.getElementById('music-playlists-list');if(!el)return;
   el.innerHTML=MUSIC_PLAYLISTS.map(function(p,i){
     return '<div class="music-list-row" data-music-name="'+labEsc(p.name.toLowerCase())+'" onclick="musicSelectPlaylist('+i+',true);musicTab(\'now\')">'+
-      '<div class="music-list-cover" style="background:'+p.cover+'"></div>'+
+      '<div class="music-list-cover" style="'+musicCoverCss(p)+'"></div>'+
       '<div><div class="music-list-name">'+labEsc(p.name)+'</div><div class="music-list-meta">public playlist · Ivonne Aldaz</div></div>'+
       '<div class="music-list-action">open →</div>'+
     '</div>';
@@ -2582,7 +2627,7 @@ function musicRenderTracks(){
   if(!p.tracks||!p.tracks.length){
     el.innerHTML='<div class="music-track-empty">'+
       'playlist selected: <strong style="color:#fff;">'+labEsc(p.name)+'</strong><br>'+
-      'staying inside the Lab. full playback for this playlist will load here once its Spotify playlist link is wired.'+
+      'playback is wired into the pinned Spotify player — use the controls above and stay in the Lab.'+
     '</div>';
     return;
   }
@@ -2613,7 +2658,9 @@ function musicSelectPlaylist(index,focusWindow){
   var right=document.getElementById('music-progress-right');
   var status=document.getElementById('music-status-copy');
 
-  if(cover)cover.style.background=p.cover;
+  if(cover){
+    cover.style.cssText=musicCoverCss(p);
+  }
   if(p.current){
     if(title)title.textContent=p.current.title;
     if(artist)artist.textContent=p.current.artist;
@@ -2625,7 +2672,7 @@ function musicSelectPlaylist(index,focusWindow){
     if(artist)artist.textContent='Ivonne Aldaz';
     if(album)album.textContent='public playlist';
     if(left)left.textContent='playlist';
-    if(right)right.textContent='Spotify ↗';
+    if(right)right.textContent='ready';
   }
   if(status)status.textContent='playlist: '+p.name;
   musicRenderTracks();
