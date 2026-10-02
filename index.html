@@ -2482,6 +2482,7 @@ function renderNotes(cat){
   notes.forEach(function(n,i){
     var item=document.createElement('div');
     item.className='note-item'+(i===0?' active':'');
+    item.dataset.noteIndex=String(i);
     var preview=n.c.split('\n')[0].substring(0,50)+(n.c.length>50?'...':'');
     item.innerHTML='<div class="note-title-row">'+n.t+'</div><div class="note-preview-row">'+preview+'</div><div class="note-date-row">'+(n.d||'')+'</div>';
     // Use touchend for mobile, click for desktop — not both (avoids double-fire)
@@ -2499,6 +2500,20 @@ function renderNotes(cat){
   }
   if(notes.length===0){
     viewer.innerHTML='<div style="color:var(--dim);padding-top:20px;text-align:center;">no notes here yet.</div>';
+  }
+}
+function openNoteFromSearch(cat,index){
+  openWin('notes-win');
+  renderNotes(cat);
+  var list=document.getElementById('notes-list');
+  if(!list)return;
+  var item=list.querySelector('[data-note-index="'+index+'"]');
+  if(!item)return;
+
+  if('ontouchstart' in window){
+    item.dispatchEvent(new Event('touchend',{bubbles:true,cancelable:true}));
+  }else{
+    item.click();
   }
 }
 function nmViewerBack(){notesMobileBack();}
