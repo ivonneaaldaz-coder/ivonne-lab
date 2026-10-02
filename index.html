@@ -1488,6 +1488,34 @@ check back later.</pre></div>
   <div class="resize-corner"></div>
 </div>
 
+<!-- LAB SEARCH -->
+<div class="win off" id="search-win" style="width:min(640px,94vw);height:min(510px,78vh);top:58px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('search-win')">
+  <div class="tbar" onmousedown="dragStart(event,'search-win')">
+    <div class="tbar-title">🔍 SEARCH THE LAB</div>
+    <div class="tbar-btns">
+      <button class="tbtn" onclick="minWin('search-win')">_</button>
+      <button class="tbtn" onclick="maxWin('search-win')">□</button>
+      <button class="tbtn" onclick="closeWin('search-win')">✕</button>
+    </div>
+  </div>
+  <div class="lab-search-shell">
+    <div class="lab-search-input-wrap">
+      <span class="lab-search-prompt">&gt;</span>
+      <input id="lab-search-input" type="text" autocomplete="off" spellcheck="false"
+        placeholder="search apps, projects, notes, or ask eve"
+        oninput="renderLabSearch()"
+        onkeydown="labSearchKey(event)">
+    </div>
+    <div class="lab-search-meta">
+      <span id="lab-search-status">search the lab</span>
+      <span id="lab-search-shortcut">ESC to close</span>
+    </div>
+    <div id="lab-search-results"></div>
+    <div class="lab-search-quick" id="lab-search-quick"></div>
+  </div>
+  <div class="resize-corner"></div>
+</div>
+
 <!-- BROWSER -->
 <div class="win off" id="browser-win" style="width:min(700px,95vw);height:min(520px,80vh);top:40px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('browser-win')">
   <div class="tbar" onmousedown="dragStart(event,'browser-win')"><div class="tbar-title">🌐 <span id="browser-title">browser</span></div><div class="tbar-btns"><button class="tbtn" onclick="minWin('browser-win')">_</button><button class="tbtn" onclick="maxWin('browser-win')">□</button><button class="tbtn" onclick="closeWin('browser-win')">✕</button></div></div>
@@ -1714,7 +1742,7 @@ function openWin(id){
     if(cf)cf.src='https://chat.ivonnealdaz.com?embedded=1&t='+Date.now();
   }
   if(typeof gtag==='function'){
-    var gaMap={'chat-win':'ask_eve','notes-win':'notes','arc-win':'archive','snake-win':'snake','photos-win':'photos','ventures-win':'ventures','note-form-win':'leave_a_note','about-win':'about','work-win':'work_with_me','chat-room-win':'chatroom','soc-win':'socials','music-win':'music'};
+    var gaMap={'chat-win':'ask_eve','notes-win':'notes','arc-win':'archive','snake-win':'snake','photos-win':'photos','ventures-win':'ventures','note-form-win':'leave_a_note','about-win':'about','work-win':'work_with_me','chat-room-win':'chatroom','soc-win':'socials','music-win':'music','search-win':'search'};
     if(gaMap[id])gtag('event','open_window',{window_id:id,window_name:gaMap[id]});
   }
 }
