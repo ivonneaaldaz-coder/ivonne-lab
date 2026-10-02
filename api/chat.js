@@ -37,7 +37,7 @@ The visitor arrived here by searching the Lab for: "${searchContext.query}"
 
 Treat this as an orientation request, not as an underspecified one-word chat message.
 Do not ask what part they mean unless the term truly has no meaningful connection to Ivonne's work.
-Give a concise overview of how the topic connects to Ivonne, then point to 2–4 concrete examples from the PUBLIC LAB MATCHES below when relevant.
+Give a concise overview of how the topic connects to Ivonne, then point to **2–3** concrete examples from the PUBLIC LAB MATCHES below when relevant. Keep the prose short because the interface will render the actual links underneath.
 
 The interface will render those matched items as clickable buttons beneath your response.
 Mention the exact item titles naturally so the visitor understands why each link is useful.
@@ -357,7 +357,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 300,
+        max_tokens: 220,
         system: buildSystem(safeSearchContext),
         messages: recentMessages
       })
