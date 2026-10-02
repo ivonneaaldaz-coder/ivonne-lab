@@ -620,7 +620,8 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 @media(max-width:520px){
   #icons{top:8px;left:8px;gap:3px;width:auto;grid-template-columns:68px 68px;max-height:calc(100vh - 90px);overflow-y:auto;padding-bottom:8px;}
   .ico{width:68px;}
-  #sp-pin{display:block !important;width:320px !important;right:0 !important;left:auto !important;bottom:44px !important;border-left:1px solid rgba(0,0,0,.1) !important;}
+  #sp-pin{display:block !important;width:320px !important;right:0 !important;left:auto !important;bottom:44px !important;border-left:1px solid rgba(0,0,0,.1) !important;transition:bottom .2s ease;}
+  body.first-visit-toast-visible #sp-pin{bottom:calc(58px + var(--first-visit-toast-h,58px)) !important;}
   #sp-pin iframe{height:80px !important;width:320px !important;} /* hidden on mobile */
   #sticky{display:none;}
   .first-visit-toast{left:8px;right:8px;bottom:52px;max-width:none;font-size:11px;}
@@ -2055,6 +2056,8 @@ function firstVisitMarkSeen(){
     setStickyMessage(STICKY_MSGS[stickyIdx]);
   }
   if(start)start.classList.remove('first-visit-pulse');
+  document.body.classList.remove('first-visit-toast-visible');
+  document.documentElement.style.removeProperty('--first-visit-toast-h');
   if(toast)toast.remove();
 }
 function firstVisitOpenStart(){
@@ -2081,6 +2084,15 @@ function firstVisitToast(){
   toast.innerHTML='<span>not sure where to start? ask eve “what should I see?”</span><button type="button">ask eve →</button>';
   toast.querySelector('button').onclick=firstVisitAskEve;
   document.body.appendChild(toast);
+  document.body.classList.add('first-visit-toast-visible');
+  var syncFirstVisitStack=function(){
+    document.documentElement.style.setProperty('--first-visit-toast-h',toast.offsetHeight+'px');
+  };
+  syncFirstVisitStack();
+  if(window.ResizeObserver){
+    var toastObserver=new ResizeObserver(syncFirstVisitStack);
+    toastObserver.observe(toast);
+  }
 }
 function initFirstVisit(){
   if(firstVisitSeen())return;
