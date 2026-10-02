@@ -1851,6 +1851,301 @@ function toggleMenu(el){var was=el.classList.contains('open');document.querySele
 function closeAll(){document.querySelectorAll('.mi.open').forEach(function(m){m.classList.remove('open');});document.getElementById('smenu').classList.remove('open');document.getElementById('overlay').classList.remove('on');}
 document.getElementById('taskbar').addEventListener('touchend',function(e){var app=e.target.closest('.tb-app');if(app){e.preventDefault();app.click();return;}var sb=e.target.closest('#start-btn');if(sb){e.preventDefault();toggleStart();}},{passive:false});
 
+// ── SEARCH THE LAB ──
+var labSearchResults=[];
+var labSearchActive=0;
+
+function labNorm(v){
+  return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+}
+function labEsc(v){
+  return String(v||'').replace(/[&<>"']/g,function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+  });
+}
+function labExpandedTerms(query){
+  var q=labNorm(query),terms=q.split(/\s+/).filter(Boolean),expanded=terms.slice();
+  if(typeof LAB_SEARCH_ALIASES!=='undefined'){
+    Object.keys(LAB_SEARCH_ALIASES).forEach(function(key){
+      var nk=labNorm(key);
+      if(q.indexOf(nk)!==-1){
+        LAB_SEARCH_ALIASES[key].forEach(function(alias){
+          var na=labNorm(alias);
+          if(na&&expanded.indexOf(na)===-1)expanded.push(na);
+        });
+      }
+    });
+  }
+  return expanded;
+}
+function buildLabSearchIndex(){
+  var items=(typeof LAB_SEARCH_ITEMS!=='undefined'?LAB_SEARCH_ITEMS:[]).map(function(x){return Object.assign({},x);});
+
+  if(typeof ARC_DATA!=='undefined'){
+    ARC_DATA.forEach(function(e,i){
+      var extra=(typeof LAB_ARCHIVE_KEYWORDS!=='undefined'&&LAB_ARCHIVE_KEYWORDS[e.title])||[];
+      items.push({
+        id:'archive-'+i,
+        title:e.title,
+        subtitle:e.desc||'',
+        source:'archive.exe',
+        type:'archive',
+        icon:e.icon||'📄',
+        keywords:[].concat(e.tags||[],[e.type||'',e.date||''],extra),
+        action:{kind:'archiveEntry',index:i}
+      });
+    });
+  }
+
+  if(typeof NOTES!=='undefined'){
+    Object.keys(NOTES).forEach(function(cat){
+      (NOTES[cat]||[]).forEach(function(n,i){
+        var catWords=(typeof LAB_NOTE_KEYWORDS!=='undefined'&&LAB_NOTE_KEYWORDS[cat])||[];
+        items.push({
+          id:'note-'+cat+'-'+i,
+          title:n.t,
+          subtitle:(n.c||'').split('\n')[0].slice(0,90),
+          source:'notes.app / '+cat,
+          type:'note',
+          icon:'📝',
+          keywords:[cat,n.d||'',n.c||''].concat(catWords),
+          action:{kind:'note',cat:cat,index:i}
+        });
+      });
+    });
+  }
+
+  return items;
+}
+function scoreLabSearchItem(item,query){
+  var q=labNorm(query);
+  if(!q)return 0;
+
+  var title=labNorm(item.title);
+  var subtitle=labNorm(item.subtitle);
+  var source=labNorm(item.source);
+  var keywords=labNorm((item.keywords||[]).join(' '));
+  var hay=[title,subtitle,source,keywords].join(' ');
+  var words=q.split(/\s+/).filter(Boolean);
+  var expanded=labExpandedTerms(query);
+  var score=0;
+
+  if(title===q)score+=220;
+  else if(title.indexOf(q)===0)score+=150;
+  else if(title.indexOf(q)!==-1)score+=110;
+
+  if(source===q)score+=90;
+  else if(source.indexOf(q)!==-1)score+=45;
+  if(keywords.indexOf(q)!==-1)score+=65;
+  if(subtitle.indexOf(q)!==-1)score+=40;
+
+  var allWords=true;
+  words.forEach(function(w){
+    if(title.split(' ').indexOf(w)!==-1)score+=35;
+    else if(title.indexOf(w)!==-1)score+=24;
+    else if(keywords.indexOf(w)!==-1)score+=16;
+    else if(subtitle.indexOf(w)!==-1)score+=10;
+    else if(source.indexOf(w)!==-1)score+=8;
+    else allWords=false;
+  });
+  if(allWords&&words.length>1)score+=35;
+
+  expanded.forEach(function(term){
+    if(term===q)return;
+    if(title.indexOf(term)!==-1)score+=7;
+    else if(keywords.indexOf(term)!==-1)score+=5;
+    else if(subtitle.indexOf(term)!==-1)score+=3;
+  });
+
+  return score;
+}
+function getLabSearchResults(query){
+  return buildLabSearchIndex()
+    .map(function(item){return {item:item,score:scoreLabSearchItem(item,query)};})
+    .filter(function(x){return x.score>0;})
+    .sort(function(a,b){return b.score-a.score || a.item.title.localeCompare(b.item.title);})
+    .slice(0,9)
+    .map(function(x){return x.item;});
+}
+function openLabSearch(prefill){
+  closeAll();
+  openWin('search-win');
+  var inp=document.getElementById('lab-search-input');
+  if(inp){
+    inp.value=prefill||'';
+    renderLabSearch();
+    setTimeout(function(){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);},30);
+  }
+  if(typeof gtag!=='undefined')gtag('event','lab_search_open');
+}
+function closeLabSearch(){
+  closeWin('search-win');
+}
+function renderLabSearch(){
+  var inp=document.getElementById('lab-search-input');
+  var out=document.getElementById('lab-search-results');
+  var status=document.getElementById('lab-search-status');
+  var quick=document.getElementById('lab-search-quick');
+  if(!inp||!out)return;
+
+  var q=inp.value.trim();
+  labSearchActive=0;
+
+  if(quick){
+    var terms=(typeof LAB_SEARCH_QUICK_TERMS!=='undefined'?LAB_SEARCH_QUICK_TERMS:['ai','art','research','travel']);
+    quick.innerHTML='<span class="lab-search-quick-label">try:</span>'+terms.map(function(t){
+      return '<button class="lab-search-chip" onclick="setLabSearchQuery(\''+t.replace(/'/g,"\\'")+'\')">'+labEsc(t)+'</button>';
+    }).join('');
+  }
+
+  if(!q){
+    var defaults=buildLabSearchIndex().filter(function(item){
+      return ['app-eve','app-archive','app-notes','photos-art','app-work','action-surprise'].indexOf(item.id)!==-1;
+    });
+    labSearchResults=defaults;
+    if(status)status.textContent='find anything in the lab';
+    out.innerHTML='<div class="lab-search-section">quick access</div>'+defaults.map(function(item,i){
+      return labSearchRowHtml(item,i);
+    }).join('');
+    return;
+  }
+
+  var results=getLabSearchResults(q);
+  var eveFallback={
+    id:'ask-eve-search',
+    title:'Ask Eve: “'+q+'”',
+    subtitle:'Get a conversational answer grounded in Ivonne\'s work.',
+    source:'ask_eve.exe',
+    type:'eve',
+    icon:'🌚',
+    keywords:[],
+    action:{kind:'askEve',query:q}
+  };
+
+  // Eve is a fallback, not a substitute for deterministic search results.
+  if(results.length<9)results.push(eveFallback);
+  else results[8]=eveFallback;
+
+  labSearchResults=results;
+  if(status)status.textContent=(results.length-1)+' match'+((results.length-1)!==1?'es':'')+' + ask eve';
+
+  if(results.length===1){
+    out.innerHTML='<div class="lab-search-empty">no direct matches yet.<br>eve can still help you find the thread.</div>'+labSearchRowHtml(eveFallback,0);
+    return;
+  }
+
+  out.innerHTML='<div class="lab-search-section">top matches</div>'+results.map(function(item,i){
+    return labSearchRowHtml(item,i);
+  }).join('');
+}
+function labSearchRowHtml(item,index){
+  return '<div class="lab-search-row'+(index===labSearchActive?' active':'')+'" data-lab-search-index="'+index+'" '+
+    'onmouseenter="setLabSearchActive('+index+')" onclick="runLabSearchAction('+index+')">'+
+    '<div class="lab-search-icon">'+labEsc(item.icon||'📄')+'</div>'+
+    '<div class="lab-search-main"><div class="lab-search-title">'+labEsc(item.title)+'</div>'+
+    '<div class="lab-search-sub">'+labEsc(item.subtitle||'')+'</div></div>'+
+    '<div class="lab-search-source">'+labEsc(item.source||'')+' →</div></div>';
+}
+function setLabSearchActive(index){
+  labSearchActive=Math.max(0,Math.min(index,labSearchResults.length-1));
+  document.querySelectorAll('.lab-search-row').forEach(function(row,i){
+    row.classList.toggle('active',i===labSearchActive);
+  });
+}
+function setLabSearchQuery(q){
+  var inp=document.getElementById('lab-search-input');
+  if(!inp)return;
+  inp.value=q;renderLabSearch();inp.focus();
+}
+function labSearchKey(e){
+  if(e.key==='ArrowDown'){
+    e.preventDefault();setLabSearchActive(labSearchActive+1);
+  }else if(e.key==='ArrowUp'){
+    e.preventDefault();setLabSearchActive(labSearchActive-1);
+  }else if(e.key==='Enter'){
+    e.preventDefault();runLabSearchAction(labSearchActive);
+  }else if(e.key==='Escape'){
+    e.preventDefault();closeLabSearch();
+  }
+}
+function runLabSearchAction(index){
+  var item=labSearchResults[index];
+  if(!item||!item.action)return;
+  var a=item.action;
+  closeLabSearch();
+
+  if(typeof gtag!=='undefined')gtag('event','lab_search_select',{result:item.title,result_type:item.type||''});
+
+  if(a.kind==='window'){openWin(a.target);}
+  else if(a.kind==='archiveFilter'){openWin('arc-win');renderArc(a.filter||'all');}
+  else if(a.kind==='archiveEntry'){
+    var entry=(typeof ARC_DATA!=='undefined')?ARC_DATA[a.index]:null;
+    if(!entry)return;
+    if(entry.url)arcClick(entry);
+    else{
+      openWin('arc-win');
+      renderArc((entry.tags&&entry.tags[0]&&entry.tags[0]!=='featured')?entry.tags[0]:'all');
+    }
+  }
+  else if(a.kind==='note'){openNoteFromSearch(a.cat,a.index);}
+  else if(a.kind==='photoFolder'){openWin('photos-win');phOpenFolder(a.folder);}
+  else if(a.kind==='email'){window.location.href='mailto:hello@ivonnealdaz.com';}
+  else if(a.kind==='external'){window.open(a.url,'_blank');}
+  else if(a.kind==='askEve'){
+    openWin('chat-win');
+    var eveInput=document.getElementById('user-input');
+    if(eveInput){
+      eveInput.value=a.query;
+      setTimeout(function(){eveInput.focus();},30);
+    }
+  }
+  else if(a.kind==='surprise'){surpriseMe();}
+}
+function surpriseMe(){
+  var pool=[];
+
+  if(typeof ARC_DATA!=='undefined'){
+    ARC_DATA.forEach(function(e,i){
+      if(e.url)pool.push({kind:'archive',index:i});
+    });
+  }
+  if(typeof NOTES!=='undefined'){
+    Object.keys(NOTES).forEach(function(cat){
+      (NOTES[cat]||[]).forEach(function(n,i){pool.push({kind:'note',cat:cat,index:i});});
+    });
+  }
+  pool.push({kind:'photo',folder:'art'},{kind:'photo',folder:'travel'},{kind:'window',target:'snake-win'});
+
+  if(!pool.length)return;
+  var pick=pool[Math.floor(Math.random()*pool.length)];
+  if(pick.kind==='archive')arcClick(ARC_DATA[pick.index]);
+  else if(pick.kind==='note')openNoteFromSearch(pick.cat,pick.index);
+  else if(pick.kind==='photo'){openWin('photos-win');phOpenFolder(pick.folder);}
+  else if(pick.kind==='window')openWin(pick.target);
+
+  if(typeof gtag!=='undefined')gtag('event','lab_surprise_me',{kind:pick.kind});
+}
+
+// Make the shortcut discoverable without assuming a Mac keyboard.
+(function(){
+  var isMac=/Mac|iPhone|iPad|iPod/.test(navigator.platform||navigator.userAgent);
+  var label=isMac?'⌘K':'Ctrl K';
+  ['tb-search-key','sm-search-key'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.textContent=label;
+  });
+})();
+
+document.addEventListener('keydown',function(e){
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){
+    e.preventDefault();openLabSearch();
+    return;
+  }
+  if(e.key==='Escape'){
+    var sw=document.getElementById('search-win');
+    if(sw&&sw.style.display!=='none')closeLabSearch();
+  }
+});
+
 // ── CHAT ──
 var msgs=[];
 function ask(text){document.getElementById('user-input').value=text;var p=document.getElementById('prompts');if(p)p.style.display='none';sendMessage();}
