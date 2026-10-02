@@ -58,6 +58,13 @@ a{color:inherit;text-decoration:none;}
 #sticky{position:absolute;top:12px;right:16px;width:160px;background:#fef08a;border:1px solid #d4c44a;padding:10px 12px;font-family:var(--font);font-size:15px;color:#4a3a10;line-height:1.5;z-index:15;box-shadow:2px 3px 8px rgba(0,0,0,.15);transform:rotate(1.2deg);cursor:default;user-select:none;}
 #sticky::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:rgba(0,0,0,.06);}
 #sticky .sticky-title{font-size:12px;color:#8a7a20;margin-bottom:4px;letter-spacing:.05em;}
+#sticky.first-visit{cursor:pointer;}
+#sticky.first-visit #sticky-msg{text-decoration:none;}
+@keyframes firstVisitPulse{0%,100%{box-shadow:0 0 0 rgba(255,255,255,0)}50%{box-shadow:0 0 0 3px rgba(255,255,255,.35)}}
+#start-btn.first-visit-pulse{animation:firstVisitPulse .9s ease-in-out 2;}
+.first-visit-toast{position:fixed;left:10px;bottom:42px;z-index:520;background:var(--win);border:2px solid;border-color:#fff var(--border-dark) var(--border-dark) #fff;box-shadow:3px 3px 0 rgba(0,0,0,.25);padding:8px 10px;display:flex;align-items:center;gap:10px;max-width:330px;font-family:var(--font);font-size:12px;color:var(--text);}
+.first-visit-toast button{font-family:var(--font);font-size:11px;background:var(--silver);border:1px solid;border-color:#fff var(--border-dark) var(--border-dark) #fff;padding:3px 8px;cursor:pointer;white-space:nowrap;color:var(--text);}
+.first-visit-toast button:hover{background:#d0c8c0;}
 
 /* ── ICONS ── */
 #icons{position:absolute;top:10px;left:10px;display:grid;grid-template-columns:74px 74px;gap:4px;z-index:20;width:156px;}
@@ -581,7 +588,8 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   border:1px solid var(--border);padding:2px 8px;cursor:pointer;
 }
 .lab-search-chip:hover{background:var(--tbar1);color:#fff;}
-.sm-start-title{padding:7px 10px 5px;font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;}
+.sm-start-title{padding:7px 10px 2px;font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;}
+.sm-start-sub{padding:0 10px 7px;font-size:11px;color:var(--dim);line-height:1.35;border-bottom:1px solid var(--border);margin-bottom:2px;}
 .sm-search-row{border-bottom:1px solid var(--border);margin-bottom:2px;background:#e8e4de;}
 .sm-search-key{margin-left:auto;color:var(--dim);font-size:11px;}
 .si:hover .sm-search-key{color:#fff;}
@@ -614,6 +622,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   #sp-pin{display:block !important;width:320px !important;right:0 !important;left:auto !important;bottom:44px !important;border-left:1px solid rgba(0,0,0,.1) !important;}
   #sp-pin iframe{height:80px !important;width:320px !important;} /* hidden on mobile */
   #sticky{display:none;}
+  .first-visit-toast{left:8px;right:8px;bottom:52px;max-width:none;font-size:11px;}
   .win{max-width:100vw!important;}
   .rh-se,.rh-sw{width:24px;height:24px;}
   .rh-ne,.rh-nw,.rh-n{display:none;}
@@ -1180,7 +1189,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 <div id="desktop">
 
 <!-- STICKY NOTE -->
-<div id="sticky">
+<div id="sticky" onclick="firstVisitOpenStart()">
   <div class="sticky-title">📌 NOTE</div>
   <div id="sticky-msg">welcome — click around and explore</div>
 </div>
@@ -1820,12 +1829,13 @@ check back later.</pre></div>
 <div id="smenu">
   <div class="sm-side"><span>ivonne lab</span></div>
   <div class="sm-items">
-    <div class="sm-start-title">IVONNE LAB</div>
+    <div class="sm-start-title">EXPLORE THE LAB</div>
+    <div class="sm-start-sub">work · experiments · art · writing · life</div>
+    <div class="si" onclick="openWin('chat-win');closeAll()">🌚 Ask Eve</div>
+    <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ Archive</div>
     <div class="si sm-search-row" onclick="openLabSearch();closeAll()">
       <span>🔍 Search the lab…</span><span class="sm-search-key" id="sm-search-key">⌘K</span>
     </div>
-    <div class="si" onclick="openWin('chat-win');closeAll()">🌚 Ask Eve</div>
-    <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ Archive</div>
     <div class="si" onclick="openWin('notes-win');closeAll()">📓 Notes</div>
     <div class="si" onclick="openWin('photos-win');closeAll()">📷 Photos</div>
     <div class="si" onclick="openWin('work-win');closeAll()">📋 Work With Me</div>
@@ -1936,7 +1946,7 @@ function drawSky(){
 setInterval(drawSky,50);drawSky();
 
 // ── STICKY NOTE ROTATION ──
-var STICKY_MSGS=['welcome. click around.','ask eve about the work →','open archive.exe to browse 10 years','leave a note if something lands','built with claude. no templates.','check back — always changing','snake.exe has a global leaderboard'];
+var STICKY_MSGS=['welcome. click around.','first time here? Start →','ask eve about the work →','open archive.exe to browse 10 years','leave a note if something lands','built with claude. no templates.','check back — always changing','snake.exe has a global leaderboard'];
 var stickyIdx=0;
 function rotateStickyNote(){
   stickyIdx=(stickyIdx+1)%STICKY_MSGS.length;
@@ -1945,6 +1955,80 @@ function rotateStickyNote(){
 }
 document.getElementById('sticky-msg').style.transition='opacity .3s';
 setInterval(rotateStickyNote,5000);
+
+// ── FIRST VISIT ──
+var firstVisitActive=false;
+var firstVisitTimers=[];
+function firstVisitSeen(){
+  try{return localStorage.getItem('ivonne_lab_first_visit_seen')==='1';}catch(e){return false;}
+}
+function firstVisitMarkSeen(){
+  if(!firstVisitActive)return;
+  firstVisitActive=false;
+  try{localStorage.setItem('ivonne_lab_first_visit_seen','1');}catch(e){}
+  firstVisitTimers.forEach(function(t){clearTimeout(t);});
+  firstVisitTimers=[];
+  var sticky=document.getElementById('sticky');
+  var start=document.getElementById('start-btn');
+  var toast=document.getElementById('first-visit-toast');
+  if(sticky)sticky.classList.remove('first-visit');
+  if(start)start.classList.remove('first-visit-pulse');
+  if(toast)toast.remove();
+}
+function firstVisitOpenStart(){
+  if(firstVisitActive){
+    toggleStart();
+    firstVisitMarkSeen();
+  }
+}
+function firstVisitAskEve(){
+  firstVisitMarkSeen();
+  closeAll();
+  openWin('chat-win');
+  var inp=document.getElementById('user-input');
+  if(inp){
+    inp.value='what should I see?';
+    inp.focus();
+  }
+}
+function firstVisitToast(){
+  if(!firstVisitActive||document.getElementById('first-visit-toast'))return;
+  var toast=document.createElement('div');
+  toast.id='first-visit-toast';
+  toast.className='first-visit-toast';
+  toast.innerHTML='<span>not sure where to start? ask eve “what should I see?”</span><button type="button">ask eve →</button>';
+  toast.querySelector('button').onclick=firstVisitAskEve;
+  document.body.appendChild(toast);
+}
+function initFirstVisit(){
+  if(firstVisitSeen())return;
+  firstVisitActive=true;
+  var sticky=document.getElementById('sticky');
+  var msg=document.getElementById('sticky-msg');
+  if(sticky)sticky.classList.add('first-visit');
+  if(msg)msg.innerHTML='welcome to the lab.<br>this is ivonne\'s personal OS.<br><strong>start anywhere →</strong>';
+
+  firstVisitTimers.push(setTimeout(function(){
+    if(!firstVisitActive)return;
+    var start=document.getElementById('start-btn');
+    if(start)start.classList.add('first-visit-pulse');
+    if(msg)msg.innerHTML='welcome to the lab.<br><strong>psst — try Start.</strong>';
+  },5500));
+
+  firstVisitTimers.push(setTimeout(firstVisitToast,18000));
+
+  var mark=function(e){
+    if(!firstVisitActive)return;
+    var stickyHit=e.target&&e.target.closest&&e.target.closest('#sticky');
+    var startHit=e.target&&e.target.closest&&e.target.closest('#start-btn');
+    var toastHit=e.target&&e.target.closest&&e.target.closest('#first-visit-toast');
+    if(stickyHit||startHit||toastHit)return;
+    firstVisitMarkSeen();
+  };
+  document.addEventListener('pointerdown',mark,{once:true,capture:true});
+  document.addEventListener('keydown',mark,{once:true,capture:true});
+}
+setTimeout(initFirstVisit,350);
 
 // ── CLOCK ──
 function clk(){
@@ -2169,7 +2253,7 @@ document.querySelectorAll('.ico').forEach(function(ico){
 });
 
 // ── START + MENUS ──
-function toggleStart(){var m=document.getElementById('smenu'),b=document.getElementById('start-btn'),o=m.classList.contains('open');closeAll();if(!o){m.classList.add('open');document.getElementById('overlay').classList.add('on');}}
+function toggleStart(){var m=document.getElementById('smenu'),b=document.getElementById('start-btn'),o=m.classList.contains('open');closeAll();if(!o){m.classList.add('open');document.getElementById('overlay').classList.add('on');}if(typeof firstVisitMarkSeen==='function'&&firstVisitActive)firstVisitMarkSeen();}
 function toggleMenu(el){var was=el.classList.contains('open');document.querySelectorAll('.mi.open').forEach(function(m){m.classList.remove('open');});if(!was){el.classList.add('open');document.getElementById('overlay').classList.add('on');}else document.getElementById('overlay').classList.remove('on');}
 function closeAll(){document.querySelectorAll('.mi.open').forEach(function(m){m.classList.remove('open');});document.getElementById('smenu').classList.remove('open');document.getElementById('overlay').classList.remove('on');}
 document.getElementById('taskbar').addEventListener('touchend',function(e){var app=e.target.closest('.tb-app');if(app){e.preventDefault();app.click();return;}var sb=e.target.closest('#start-btn');if(sb){e.preventDefault();toggleStart();}},{passive:false});
