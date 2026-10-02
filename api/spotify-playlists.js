@@ -11,6 +11,63 @@ function playlistId(url = '') {
   return match ? match[1] : ''
 }
 
+function findTrackList(value, seen = new Set()) {
+  if (!value || typeof value !== 'object') return null
+  if (seen.has(value)) return null
+  seen.add(value)
+
+  if (Array.isArray(value.trackList)) return value.trackList
+
+  for (const key of Object.keys(value)) {
+    const found = findTrackList(value[key], seen)
+    if (found) return found
+  }
+
+  return null
+}
+
+function normalizeTrack(track) {
+  if (!track || typeof track !== 'object') return null
+
+  const uri = typeof track.uri === 'string' ? track.uri : ''
+  const title = typeof track.title === 'string' ? track.title.trim() : ''
+  if (!uri.startsWith('spotify:track:') || !title) return null
+
+  return {
+    uri,
+    title,
+    artist: typeof track.subtitle === 'string' ? track.subtitle.trim() : '',
+    duration_ms: Number.isFinite(Number(track.duration)) ? Number(track.duration) : 0,
+    explicit: Boolean(track.isExplicit)
+  }
+}
+
+async function readPlaylistTracks(id) {
+  const response = await fetch('https://open.spotify.com/embed/playlist/' + id, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; Ivonne-Lab/1.0)'
+    }
+  })
+
+  if (!response.ok) return []
+
+  const html = await response.text()
+  const match = html.match(
+    /<script[^>]+id=["']__NEXT_DATA__["'][^>]*>([\s\S]*?)<\/script>/i
+  )
+
+  if (!match) return []
+
+  try {
+    const data = JSON.parse(match[1])
+    const trackList = findTrackList(data)
+    if (!Array.isArray(trackList)) return []
+    return trackList.map(normalizeTrack).filter(Boolean)
+  } catch {
+    return []
+  }
+}
+
 module.exports = async function handler(req, res) {
   try {
     const results = await Promise.all(
@@ -19,32 +76,37 @@ module.exports = async function handler(req, res) {
         const endpoint = 'https://open.spotify.com/oembed?url=' + encodeURIComponent(url)
 
         try {
-          const response = await fetch(endpoint, {
-            headers: {
-              'User-Agent': 'Ivonne-Lab/1.0'
-            }
-          })
+          const [metaResponse, tracks] = await Promise.all([
+            fetch(endpoint, {
+              headers: {
+                'User-Agent': 'Ivonne-Lab/1.0'
+              }
+            }),
+            readPlaylistTracks(id)
+          ])
 
-          if (!response.ok) {
-            return { id, url, ok: false }
+          if (!metaResponse.ok) {
+            return { id, url, ok: false, tracks }
           }
 
-          const data = await response.json()
+          const data = await metaResponse.json()
 
           return {
             id,
             url,
             ok: true,
-            title: typeof data.title === 'string' ? data.title : '',
-            thumbnail_url: typeof data.thumbnail_url === 'string' ? data.thumbnail_url : ''
+            title: typeof data.title === 'string' ? data.title.trim() : '',
+            thumbnail_url: typeof data.thumbnail_url === 'string' ? data.thumbnail_url : '',
+            tracks,
+            track_count: tracks.length
           }
         } catch {
-          return { id, url, ok: false }
+          return { id, url, ok: false, tracks: [] }
         }
       })
     )
 
-    res.setHeader('Cache-Control', 's-maxage=21600, stale-while-revalidate=86400')
+    res.setHeader('Cache-Control', 's-maxage=1800, stale-while-revalidate=21600')
     return res.status(200).json({ playlists: results })
   } catch (error) {
     console.error('Spotify playlist metadata error:', error)
