@@ -983,24 +983,37 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
 
 /* ── WORK_WITH_ME.exe ── */
-.wm-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--win);cursor:default;}
-.wm-row:hover{background:rgba(26,58,107,.05);}
-.wm-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center;}
-.wm-label{font-family:var(--font);font-size:16px;color:var(--text);font-weight:700;}
-.wm-desc{font-family:var(--font);font-size:13px;color:var(--dim);margin-top:2px;}
+.wm-shell{flex:1;overflow-y:auto;background:var(--win);}
+.wm-hero{background:linear-gradient(135deg,var(--tbar1),var(--tbar2));padding:18px 24px 16px;}
+.wm-hero-title{font-family:var(--font);font-size:22px;color:#fff;letter-spacing:.02em;}
+.wm-hero-sub{font-family:var(--font);font-size:12px;color:rgba(255,255,255,.7);margin-top:3px;}
+.wm-body{padding:22px 24px 24px;max-width:760px;margin:0 auto;}
+.wm-intro{font-family:var(--font);font-size:16px;line-height:1.65;color:var(--text);margin:0 0 22px;}
+.wm-intro strong{font-weight:700;}
+.wm-section-title{font-family:var(--font);font-size:11px;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;margin-bottom:10px;}
+.wm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:20px;}
+.wm-row{display:flex;align-items:flex-start;gap:11px;padding:13px 14px;background:#f5f1eb;border:1px solid #c8c1b7;box-shadow:inset 1px 1px 0 #fff;cursor:default;min-height:72px;}
+.wm-row:hover{background:#f9f6f1;border-color:#aaa297;}
+.wm-row:last-child:nth-child(odd){grid-column:1/-1;max-width:calc(50% - 5px);}
+.wm-icon{font-size:20px;flex:0 0 28px;width:28px;text-align:center;line-height:1.2;padding-top:1px;}
+.wm-label{font-family:var(--font);font-size:15px;color:var(--text);font-weight:700;line-height:1.25;}
+.wm-desc{font-family:var(--font);font-size:12px;color:var(--dim);margin-top:4px;line-height:1.35;}
+.wm-cta{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 16px;background:#e9e4dd;border:1px solid #beb6aa;box-shadow:inset 1px 1px 0 #fff;}
+.wm-cta-copy{min-width:0;}
+.wm-cta-title{font-family:var(--font);font-size:15px;color:var(--text);font-weight:700;margin-bottom:3px;}
+.wm-cta-sub{font-family:var(--font);font-size:12px;color:var(--dim);line-height:1.45;}
 .wm-btn{
   font-family:var(--font);
-  font-size:16px;
+  font-size:14px;
   background:#d4cfc8;
   border-top:2px solid #ffffff;
   border-left:2px solid #ffffff;
   border-right:2px solid #7a6f62;
   border-bottom:2px solid #7a6f62;
-  padding:8px 22px;
+  padding:7px 16px;
   cursor:pointer;
   color:var(--text);
   white-space:nowrap;
-  min-width:120px;
   text-align:center;
 }
 .wm-btn:hover{background:#c8c0b8;}
@@ -1025,6 +1038,28 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   border-left:2px solid #08164a;
   border-right:2px solid #6090d0;
   border-bottom:2px solid #6090d0;
+}
+.wm-footer{margin-top:12px;font-family:var(--font);font-size:11px;color:var(--dim);text-align:center;}
+
+@media(max-width:520px){
+  #work-win{width:94vw !important;height:78svh !important;left:3vw !important;top:18px !important;transform:none !important;}
+  .wm-hero{padding:14px 16px 13px;}
+  .wm-hero-title{font-size:19px;}
+  .wm-hero-sub{font-size:10px;}
+  .wm-body{padding:16px 14px 18px;}
+  .wm-intro{font-size:14px;line-height:1.55;margin-bottom:16px;}
+  .wm-section-title{font-size:10px;margin-bottom:8px;}
+  .wm-grid{grid-template-columns:1fr;gap:7px;margin-bottom:14px;}
+  .wm-row{min-height:0;padding:10px 11px;gap:9px;}
+  .wm-row:last-child:nth-child(odd){grid-column:auto;max-width:none;}
+  .wm-icon{font-size:18px;flex-basis:24px;width:24px;}
+  .wm-label{font-size:13px;}
+  .wm-desc{font-size:11px;margin-top:2px;}
+  .wm-cta{display:block;padding:13px 12px;}
+  .wm-cta-title{font-size:13px;}
+  .wm-cta-sub{font-size:11px;margin-bottom:10px;}
+  .wm-btn{width:100%;font-size:13px;padding:7px 12px;}
+  .wm-footer{font-size:10px;margin-top:10px;}
 }
 
 /* ── CHATROOM.exe ── */
@@ -1566,7 +1601,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 </div>
 
 <!-- WORK WITH ME -->
-<div class="win off" id="work-win" style="width:min(480px,94vw);height:min(520px,82vh);top:55px;left:calc(50% - 240px);display:none;" onmousedown="focusWin('work-win')">
+<div class="win off" id="work-win" style="width:min(680px,94vw);height:min(560px,84vh);top:42px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('work-win')">
   <div class="tbar" onmousedown="dragStart(event,'work-win')">
     <div class="tbar-title">📋 Work With Me</div>
     <div class="tbar-btns">
@@ -1575,25 +1610,23 @@ textarea.nf-input{resize:vertical;min-height:70px;}
       <button class="tbtn" onclick="closeWin('work-win')">✕</button>
     </div>
   </div>
-  <div style="flex:1;overflow-y:auto;background:var(--win);padding:0;">
-    <!-- Header band -->
-    <div style="background:linear-gradient(135deg,var(--tbar1),var(--tbar2));padding:20px 24px 18px;">
-      <div style="font-family:var(--font);font-size:22px;color:#fff;letter-spacing:.02em;">WORK_WITH_ME.exe</div>
-      <div style="font-family:var(--font);font-size:13px;color:rgba(255,255,255,.65);margin-top:3px;">ivonne aldaz · brand strategy + creative direction</div>
+  <div class="wm-shell">
+    <div class="wm-hero">
+      <div class="wm-hero-title">WORK_WITH_ME.exe</div>
+      <div class="wm-hero-sub">ivonne aldaz · strategy + creative direction + building</div>
     </div>
-    <!-- Body -->
-    <div style="padding:20px 24px;">
-      <p style="font-family:var(--font);font-size:16px;line-height:1.75;color:var(--text);margin-bottom:18px;">Hi, I'm Ivonne.<br>I help brands, founders, and creative teams turn messy ideas into clear strategy, research-backed positioning, content systems, and useful digital experiences.</p>
-      <div style="font-family:var(--font);font-size:12px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:12px;">What can I help with?</div>
-      <!-- Service list -->
-      <div style="display:grid;gap:0;margin-bottom:20px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="wm-body">
+      <p class="wm-intro"><strong>Hi, I'm Ivonne.</strong><br>I help brands, founders, and creative teams turn messy ideas into clear strategy, useful systems, and things that actually get built.</p>
+
+      <div class="wm-section-title">What can I help with?</div>
+      <div class="wm-grid">
         <div class="wm-row">
           <span class="wm-icon">🎯</span>
-          <div><div class="wm-label">Strategy &amp; Research</div><div class="wm-desc">positioning, narrative, go-to-market</div></div>
+          <div><div class="wm-label">Strategy &amp; Research</div><div class="wm-desc">positioning · narrative · go-to-market</div></div>
         </div>
         <div class="wm-row">
           <span class="wm-icon">🤖</span>
-          <div><div class="wm-label">AI &amp; Automation</div><div class="wm-desc">agents, workflows, AI-powered tools</div></div>
+          <div><div class="wm-label">AI &amp; Automation</div><div class="wm-desc">agents · workflows · AI-powered tools</div></div>
         </div>
         <div class="wm-row">
           <span class="wm-icon">📊</span>
@@ -1601,18 +1634,22 @@ textarea.nf-input{resize:vertical;min-height:70px;}
         </div>
         <div class="wm-row">
           <span class="wm-icon">✍️</span>
-          <div><div class="wm-label">Brand &amp; Content Systems</div><div class="wm-desc">voice, messaging, content architecture</div></div>
+          <div><div class="wm-label">Brand &amp; Content Systems</div><div class="wm-desc">voice · messaging · content architecture</div></div>
         </div>
         <div class="wm-row">
           <span class="wm-icon">🎤</span>
-          <div><div class="wm-label">Speaking &amp; Workshops</div><div class="wm-desc">brand strategy, AI, marketing</div></div>
+          <div><div class="wm-label">Speaking &amp; Workshops</div><div class="wm-desc">brand strategy · AI · marketing</div></div>
         </div>
       </div>
-      <!-- Action buttons -->
-      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
-        <button class="wm-btn wm-primary" onclick="window.open('mailto:hello@ivonnealdaz.com')">✉️ Email Me</button>
+
+      <div class="wm-cta">
+        <div class="wm-cta-copy">
+          <div class="wm-cta-title">Have something messy?</div>
+          <div class="wm-cta-sub">Tell me what you're working on.</div>
+        </div>
+        <button class="wm-btn wm-primary" onclick="window.open('mailto:hello@ivonnealdaz.com')">✉ Email Ivonne</button>
       </div>
-      <div style="margin-top:16px;font-family:var(--font);font-size:13px;color:var(--dim);">hello@ivonnealdaz.com · bywhitespace.com</div>
+      <div class="wm-footer">hello@ivonnealdaz.com · bywhitespace.com</div>
     </div>
   </div>
   <div class="resize-corner"></div>
