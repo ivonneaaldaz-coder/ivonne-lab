@@ -3338,24 +3338,34 @@ function musicDrawOne(canvas,t,offset,energy,seed){
   for(var gx=0;gx<w;gx+=18){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,h);ctx.stroke();}
   for(var gy=0;gy<h;gy+=18){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(w,gy);ctx.stroke();}
 
-  var drive=.22+energy*.78;
+  // Keep the shared "music energy" subtle. Each visual element gets its
+  // own phase/speed so the whole canvas doesn't bounce in lockstep.
+  var drive=.36+energy*.22;
   var songDrift=(seed%29)*.013;
 
   if(musicVizMode===1){
+    var dotColors=['rgba(255,54,135,.72)','rgba(93,198,255,.7)','rgba(184,87,255,.65)'];
     for(var i=0;i<52;i++){
-      var x=(i*37+t*(10+18*drive)+offset*41)%w;
-      var y=h/2+Math.sin(i*.73+t*(.55+drive*1.15)+offset+songDrift)*h*(.12+.18*drive);
-      var r=(1.2+(i%5)*.42)*(1+energy*.32);
+      var lane=i%3;
+      var driftSpeed=7.5+lane*2.6+((i*13+seed)%9)*.28;
+      var phase=i*.73+lane*1.9+songDrift*7;
+      var x=(i*37+t*driftSpeed+offset*41)%w;
+      var y=h/2+
+        Math.sin(phase+t*(.34+lane*.07))*h*(.09+lane*.018)+
+        Math.sin(i*.21-t*(.11+lane*.025))*h*.025;
+      var r=(1.15+(i%5)*.38)*(1+energy*.12);
       ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
-      ctx.fillStyle=i%3===0?'rgba(255,54,135,.72)':(i%3===1?'rgba(93,198,255,.7)':'rgba(184,87,255,.65)');
+      ctx.fillStyle=dotColors[lane];
       ctx.fill();
     }
   }else if(musicVizMode===2){
     var bars=Math.max(18,Math.floor(w/18));
     for(var b=0;b<bars;b++){
-      var local=.35+.65*Math.abs(Math.sin(t*(1.05+drive*.95)+b*(.37+songDrift)+offset));
-      var accent=.55+.45*Math.abs(Math.sin((b+seed%11)*.61+t*.33));
-      var bh=(.10+local*accent*(.36+.64*energy))*h*.78;
+      var phase=(b+seed%17)*.43+offset;
+      var slow=.5+.5*Math.sin(t*(.34+(b%4)*.025)+phase);
+      var detail=.5+.5*Math.sin(t*(.72+(b%5)*.035)+phase*1.7);
+      var local=.28+slow*.42+detail*.20;
+      var bh=(.12+local*(.44+energy*.16))*h*.78;
       var bg=ctx.createLinearGradient(0,h-bh,0,h);
       bg.addColorStop(0,'rgba(255,51,151,.75)');
       bg.addColorStop(.55,'rgba(110,71,255,.72)');
@@ -3365,16 +3375,25 @@ function musicDrawOne(canvas,t,offset,energy,seed){
     }
   }else{
     var colors=['rgba(255,39,132,.78)','rgba(192,67,255,.65)','rgba(69,192,255,.68)'];
+    var lineSpeed=[.34,.47,.59];
+    var lineFreq=[.016,.0205,.0135];
+    var lineAmp=[.070,.058,.082];
     colors.forEach(function(color,line){
       ctx.beginPath();
+      var phase=(seed%23)*.07+line*2.15+offset;
       for(var x=0;x<=w;x+=4){
-        var amp=h*(.045+drive*(.055+line*.015));
+        var amp=h*(lineAmp[line]+energy*.012);
         var y=h*.5+
-          Math.sin(x*.018+t*(.72+drive*.9+line*.08)+line*1.7+offset+songDrift)*amp+
-          Math.sin(x*.051-t*(.24+.44*drive)+line)*h*(.018+.028*energy);
+          Math.sin(x*lineFreq[line]+t*lineSpeed[line]+phase)*amp+
+          Math.sin(x*(.039+line*.006)-t*(.10+line*.035)+phase*.55)*h*(.014+line*.004);
         if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
       }
-      ctx.strokeStyle=color;ctx.lineWidth=1.6+line*.35+energy*.7;ctx.shadowBlur=8+energy*8;ctx.shadowColor=color;ctx.stroke();ctx.shadowBlur=0;
+      ctx.strokeStyle=color;
+      ctx.lineWidth=1.55+line*.30+energy*.18;
+      ctx.shadowBlur=7+line*1.5;
+      ctx.shadowColor=color;
+      ctx.stroke();
+      ctx.shadowBlur=0;
     });
   }
 
