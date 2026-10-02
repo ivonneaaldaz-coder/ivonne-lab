@@ -263,8 +263,6 @@ a{color:inherit;text-decoration:none;}
 .music-tab{font-family:var(--font);font-size:13px;color:#1f1f1f;background:transparent;border:0;border-right:1px solid #9b9489;padding:0 16px;cursor:pointer;display:flex;align-items:center;gap:6px;}
 .music-tab:hover{background:#e7edf7;}
 .music-tab.active{background:linear-gradient(to bottom,#eaf4ff,#bdd7f2);box-shadow:inset 0 -2px 0 #4d83bd;color:#102846;}
-.music-search-wrap{margin-left:auto;display:flex;align-items:center;padding:5px 8px;}
-.music-search{width:190px;background:#fff;border:2px solid;border-color:#7a746c #fff #fff #7a746c;padding:3px 7px;font-family:var(--font);font-size:12px;outline:none;color:#222;}
 .music-view{display:none;flex:1;min-height:0;overflow:hidden;padding:10px;background:radial-gradient(circle at 50% 0%,#252121 0,#171414 55%,#111 100%);}
 .music-view.active{display:flex;flex-direction:column;}
 .music-now-top{display:grid;grid-template-columns:180px minmax(210px,.9fr) minmax(300px,1.6fr);gap:12px;min-height:178px;}
@@ -280,7 +278,10 @@ a{color:inherit;text-decoration:none;}
 .music-progress>span{display:block;width:48%;height:100%;background:linear-gradient(to right,#2a72bb,#38a8ef);}
 .music-viz-wrap{position:relative;background:#0f0c12;border:1px solid #423a42;overflow:hidden;min-height:178px;}
 #music-viz{width:100%;height:100%;display:block;}
-.music-viz-label{position:absolute;top:8px;right:10px;font-family:var(--font);font-size:10px;color:#a99fab;letter-spacing:.04em;z-index:2;}
+.music-viz-label{font-family:var(--font);font-size:10px;color:#a99fab;letter-spacing:.04em;}
+.music-viz-toggle{position:absolute;top:7px;right:9px;z-index:3;display:flex;align-items:center;gap:4px;background:rgba(12,9,15,.32);border:1px solid transparent;padding:2px 5px;font-family:var(--font);font-size:10px;color:#d9d0dd;letter-spacing:.04em;cursor:pointer;}
+.music-viz-toggle:hover{color:#fff;border-color:rgba(255,255,255,.18);background:rgba(25,18,29,.72);}
+.music-viz-toggle .music-viz-mode{color:#fff;}
 .music-controls{height:67px;margin-top:10px;background:linear-gradient(to bottom,#2b2929,#1c1a1a);border:1px solid #393535;display:flex;align-items:center;justify-content:center;gap:16px;flex-shrink:0;position:relative;}
 .music-ctl{width:38px;height:38px;border-radius:50%;border:1px solid #4c4848;background:linear-gradient(to bottom,#3c3939,#1d1b1b);color:#eee;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .music-ctl:hover{background:linear-gradient(to bottom,#514c4c,#282525);}
@@ -345,7 +346,6 @@ a{color:inherit;text-decoration:none;}
   #music-win{width:96vw!important;height:78vh!important;left:2vw!important;top:4vh!important;transform:none!important;}
   .music-toolbar{height:36px;}
   .music-tab{font-size:11px;padding:0 9px;}
-  .music-search-wrap{display:none;}
   .music-view{padding:7px;}
   .music-now-top{grid-template-columns:92px minmax(0,1fr);min-height:105px;}
   .music-cover-card{padding:5px;}
@@ -362,16 +362,58 @@ a{color:inherit;text-decoration:none;}
   .music-radio-panel{min-height:150px;}
 }
 @media(max-width:520px){
-  .music-main-grid{grid-template-columns:1fr;}
-  .music-playlist-pane{max-height:130px;}
-  .music-now-top{grid-template-columns:78px minmax(0,1fr);}
-  .music-viz-wrap{height:96px;min-height:96px;}
-  .music-controls{margin-top:7px;}
-  .music-ctl{width:34px;height:34px;}
-  .music-ctl.main{width:45px;height:45px;}
-  .music-track-head,.music-track-row{grid-template-columns:26px minmax(130px,1fr);}
-  .music-track-head>div:nth-child(3),.music-track-row>div:nth-child(3){display:none;}
+  #music-win{height:82dvh!important;top:2vh!important;}
+  .music-toolbar{height:34px;}
+  .music-tab{padding:0 10px;font-size:10px;}
+  .music-view{padding:6px;}
+
+  /* Compress the decorative player chrome so the actual music gets the screen. */
+  .music-now-top{grid-template-columns:64px minmax(0,1fr);gap:8px;min-height:72px;}
+  .music-cover-card{padding:3px;align-self:start;}
+  .music-now-info{padding:3px 2px;}
+  .music-kicker{font-size:9px;margin-bottom:3px;}
+  .music-title{font-size:16px;}
+  .music-artist{font-size:12px;margin-top:2px;}
+  .music-album{font-size:10px;margin-top:1px;}
+  .music-progress-meta{margin-top:6px;font-size:9px;}
+  .music-progress{height:6px;margin-top:2px;}
+  .music-viz-wrap{height:58px;min-height:58px;margin-top:1px;}
+  .music-viz-label{font-size:8px;}
+  .music-viz-toggle{top:4px;right:5px;font-size:8px;padding:2px 4px;}
+
+  .music-controls{height:48px;margin-top:5px;gap:8px;}
+  .music-ctl{width:30px;height:30px;font-size:13px;}
+  .music-ctl.small{width:27px;height:27px;font-size:11px;}
+  .music-ctl.main{width:39px;height:39px;font-size:18px;}
+
+  /* Playlists become a horizontal picker instead of consuming a whole pane. */
+  .music-main-grid{display:flex;flex-direction:column;gap:5px;min-height:0;margin-top:5px;}
+  .music-playlist-pane{flex:0 0 46px;max-height:46px;display:block;overflow-x:auto;overflow-y:hidden;white-space:nowrap;}
+  .music-pane-head,.music-profile-link{display:none!important;}
+  #music-playlist-sidebar{display:flex;height:100%;}
+  .music-pl-row{display:flex;grid-template-columns:none;gap:5px;align-items:center;min-width:max-content;height:100%;padding:5px 9px;border-bottom:0;border-right:1px solid rgba(255,255,255,.06);}
+  .music-pl-dot{width:18px;height:18px;flex:0 0 18px;}
+  .music-pl-name{max-width:130px;font-size:11px;}
+
+  /* The track list owns the remaining vertical space. */
+  .music-tracks{flex:1;min-height:150px;overflow-y:auto;}
+  .music-track-head,.music-track-row{grid-template-columns:26px minmax(0,1fr);}
+  .music-track-head>div:nth-child(3),.music-track-row>div:nth-child(3),
+  .music-track-head>div:nth-child(4),.music-track-row>div:nth-child(4){display:none;}
+  .music-track-head>div,.music-track-row>div{padding:7px 7px;}
+  .music-track-row{font-size:11px;}
+
+  .music-status{height:24px;font-size:9px;padding:0 6px;overflow:hidden;}
+  .music-status #music-status-copy{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .music-status .spotify-state{font-size:9px;}
+  .music-status .spotify-state>span:not(.music-status-dot){display:none;}
+  .music-status .spotify-state .music-follow{display:inline;}
+
   .music-library-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+  .music-library-head{height:22px;padding-bottom:4px;font-size:9px;}
+  .music-card{padding:7px;}
+  .music-card-title{font-size:12px;}
+  .music-card-sub{font-size:9px;}
 }
 
 /* ── CALENDAR ── */
@@ -1239,7 +1281,6 @@ textarea.nf-input{resize:vertical;min-height:70px;}
       <button class="music-tab active" data-music-tab="now" onclick="musicTab('now',this)">▶ Now Playing</button>
       <button class="music-tab" data-music-tab="library" onclick="musicTab('library',this)">📁 Library</button>
       <button class="music-tab" data-music-tab="radio" onclick="musicTab('radio',this)">◉ Radio</button>
-      <div class="music-search-wrap"><input id="music-search" class="music-search" placeholder="Search music..." oninput="musicFilter(this.value)"></div>
     </div>
 
     <div id="music-view-now" class="music-view active">
@@ -1255,7 +1296,9 @@ textarea.nf-input{resize:vertical;min-height:70px;}
         </div>
         <div class="music-viz-wrap">
           <canvas id="music-viz"></canvas>
-          <div class="music-viz-label">VISUALIZER · WAVE</div>
+          <button class="music-viz-toggle" type="button" onclick="musicCycleViz()" title="switch visualizer">
+            <span class="music-viz-label">VISUALIZER ·</span><span class="music-viz-mode" data-viz-mode-label>WAVE</span>
+          </button>
         </div>
       </div>
 
@@ -1288,12 +1331,16 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
     <div id="music-view-radio" class="music-view">
       <div class="music-radio">
-        <div class="music-radio-viz"><canvas id="music-radio-viz"></canvas><div class="music-viz-label">LAB RADIO · RANDOM SIGNAL</div></div>
+        <div class="music-radio-viz"><canvas id="music-radio-viz"></canvas>
+          <button class="music-viz-toggle" type="button" onclick="musicCycleViz()" title="switch visualizer">
+            <span class="music-viz-label">VISUALIZER ·</span><span class="music-viz-mode" data-viz-mode-label>WAVE</span>
+          </button>
+        </div>
         <div class="music-radio-panel">
           <div class="music-radio-label">● LAB RADIO</div>
           <div id="music-radio-title" class="music-radio-title">shuffle the mood</div>
-          <div class="music-radio-copy">pull a random playlist from ivonne's public collection and start a random track inside the Lab.</div>
-          <button class="music-radio-btn" onclick="musicRadioShuffle()">tune in →</button>
+          <div class="music-radio-copy">pull a random song from ivonne's playlists and play it inside the Lab.</div>
+          <button class="music-radio-btn" onclick="musicRadioShuffle()">shuffle →</button>
         </div>
       </div>
     </div>
@@ -2529,7 +2576,13 @@ var musicPlayingTrack=-1;
 var musicIsPaused=true;
 var musicPendingPlay=null;
 var musicReady=false;
-var musicVizMode=0;
+var MUSIC_VIZ_MODES=['WAVE','RANDOM SIGNAL','BARS'];
+var musicVizMode=(function(){
+  try{
+    var saved=Number(localStorage.getItem('lab_music_visualizer'));
+    return Number.isFinite(saved)&&saved>=0&&saved<MUSIC_VIZ_MODES.length?saved:0;
+  }catch(e){return 0;}
+})();
 var musicVizStarted=false;
 var musicVizTick=0;
 var spotifyEmbedController=null;
@@ -2551,6 +2604,7 @@ function musicInit(){
   }
   musicEnsureSpotifyEmbed();
   musicSyncSpotifyMetadata();
+  musicUpdateVizLabels();
   setTimeout(function(){musicStartVisualizers();},40);
 }
 
@@ -2831,6 +2885,20 @@ function musicEnsureSpotifyEmbed(){
   if(spotifyEmbedController||spotifyEmbedLoading)return;
   spotifyEmbedLoading=true;
 
+  var embedHost=document.getElementById('spotify-embed-controller');
+  if(embedHost&&!embedHost._spotifyPermissionObserver){
+    var applySpotifyPermissions=function(){
+      var iframe=embedHost.querySelector('iframe');
+      if(!iframe)return;
+      iframe.setAttribute('allow','autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
+      iframe.setAttribute('allowfullscreen','');
+    };
+    var observer=new MutationObserver(applySpotifyPermissions);
+    observer.observe(embedHost,{childList:true,subtree:true});
+    embedHost._spotifyPermissionObserver=observer;
+    applySpotifyPermissions();
+  }
+
   window.onSpotifyIframeApiReady=function(IFrameAPI){
     var element=document.getElementById('spotify-embed-controller');
     if(!element){spotifyEmbedLoading=false;return;}
@@ -2894,25 +2962,26 @@ function musicTab(name,btn){
   if(name==='radio')setTimeout(musicStartVisualizers,30);
 }
 
-function musicFilter(value){
-  var q=(value||'').toLowerCase().trim();
-  document.querySelectorAll('[data-music-name]').forEach(function(el){
-    el.style.display=!q||el.dataset.musicName.indexOf(q)!==-1?'':'none';
-  });
-}
-
 function musicRadioShuffle(){
   var next=Math.floor(Math.random()*MUSIC_PLAYLISTS.length);
   musicSelectPlaylist(next,false);
   var p=MUSIC_PLAYLISTS[musicSelected];
   var t=document.getElementById('music-radio-title');if(t)t.textContent=p.name;
-  musicVizMode=(musicVizMode+1)%3;
   if(p.tracks.length)musicPlayTrack(Math.floor(Math.random()*p.tracks.length));
   else musicPlayPlaylistFromStart();
 }
 
+function musicUpdateVizLabels(){
+  var label=MUSIC_VIZ_MODES[musicVizMode]||'WAVE';
+  document.querySelectorAll('[data-viz-mode-label]').forEach(function(el){
+    el.textContent=label;
+  });
+}
+
 function musicCycleViz(){
-  musicVizMode=(musicVizMode+1)%3;
+  musicVizMode=(musicVizMode+1)%MUSIC_VIZ_MODES.length;
+  try{localStorage.setItem('lab_music_visualizer',String(musicVizMode));}catch(e){}
+  musicUpdateVizLabels();
 }
 
 function musicStartVisualizers(){
