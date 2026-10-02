@@ -203,33 +203,48 @@ a{color:inherit;text-decoration:none;}
 }
 
 @media(max-width:520px){
-  /* Mobile notes: navigation stack — one panel at a time */
-  #notes-nav-bar{display:flex !important;}
+  /* Mobile notes: category → note, no redundant intermediate screen. */
+  #notes-nav-bar{display:flex !important;padding:4px 8px !important;}
+  #notes-back-btn{font-size:12px !important;padding:3px 10px !important;}
   .ns-hdr{display:none !important;}
   .notes-shell{overflow:hidden;position:relative;}
 
-  /* Default state (no data-view): show categories only */
+  /* Category browser */
   .notes-sidebar{width:100% !important;position:static !important;transform:none !important;border-right:none !important;flex-shrink:0 !important;}
   .notes-main{display:none !important;}
   .ns-cat{font-size:15px !important;padding:12px 14px !important;border-bottom:1px solid var(--border) !important;}
   .ns-toggle{display:none !important;}
 
-  /* State: notes list */
-  .notes-shell[data-view="notes"] .notes-sidebar{display:none !important;}
-  .notes-shell[data-view="notes"] .notes-main{display:flex !important;flex-direction:column !important;width:100% !important;height:100% !important;}
-  .notes-shell[data-view="notes"] .notes-list{display:block !important;width:100% !important;overflow-y:auto !important;flex:1 !important;}
-  .notes-shell[data-view="notes"] .note-viewer{display:none !important;}
-  .note-item{padding:12px 14px !important;border-bottom:1px solid var(--border) !important;}
-  .note-title-row{font-size:15px !important;}
-  .note-preview-row{font-size:12px !important;color:var(--dim) !important;}
-  .note-date-row{display:none !important;}
-
-  /* State: content view */
+  /* Reading view: compact note switcher + full content. */
   .notes-shell[data-view="content"] .notes-sidebar{display:none !important;}
   .notes-shell[data-view="content"] .notes-main{display:flex !important;flex-direction:column !important;width:100% !important;height:100% !important;}
-  .notes-shell[data-view="content"] .notes-list{display:none !important;}
-  .notes-shell[data-view="content"] .note-viewer{display:block !important;flex:1 !important;min-width:0 !important;padding:12px 14px !important;font-size:15px !important;overflow-y:auto !important;}
-  .notes-shell[data-view="content"] .note-viewer h2{font-size:16px !important;}
+  .notes-shell[data-view="content"] .notes-list{
+    display:flex !important;width:100% !important;flex:0 0 auto !important;
+    overflow-x:auto !important;overflow-y:hidden !important;white-space:nowrap !important;
+    background:#f5f0e8 !important;border-right:0 !important;border-bottom:1px solid var(--border) !important;
+    scrollbar-width:none;
+  }
+  .notes-shell[data-view="content"] .notes-list::-webkit-scrollbar{display:none;}
+  .notes-shell[data-view="content"] .note-item{
+    flex:0 0 auto !important;padding:9px 12px !important;border-bottom:0 !important;
+    border-right:1px solid var(--border) !important;min-width:max-content !important;
+  }
+  .notes-shell[data-view="content"] .note-item.active{
+    border-left:0 !important;background:#fffef9 !important;color:var(--navy) !important;
+    box-shadow:inset 0 -3px 0 var(--navy);
+  }
+  .notes-shell[data-view="content"] .note-title-row{font-size:13px !important;}
+  .notes-shell[data-view="content"] .note-preview-row,
+  .notes-shell[data-view="content"] .note-date-row{display:none !important;}
+  .notes-shell[data-view="content"] .note-viewer{
+    display:block !important;flex:1 !important;min-width:0 !important;
+    padding:14px 16px !important;font-size:15px !important;overflow-y:auto !important;
+  }
+  .notes-shell[data-view="content"] .note-viewer h2{font-size:17px !important;margin-bottom:6px !important;}
+
+  /* Legacy list state falls back to the same reading layout. */
+  .notes-shell[data-view="notes"] .notes-sidebar{display:none !important;}
+  .notes-shell[data-view="notes"] .notes-main{display:flex !important;flex-direction:column !important;width:100% !important;height:100% !important;}
 }
   .ns-cat{font-size:12px !important;padding:5px 6px !important;}
   .ns-hdr{font-size:10px !important;padding:4px 6px !important;}
@@ -1231,7 +1246,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   </div>
   <!-- Mobile nav bar: sits under titlebar, hidden on desktop -->
   <div id="notes-nav-bar" style="display:none;background:#e8e4de;border-bottom:1px solid var(--border);padding:5px 10px;flex-shrink:0;align-items:center;gap:8px;">
-    <button class="fbtn" id="notes-back-btn" onclick="notesMobileBack()" style="display:none;">← back</button>
+    <button class="fbtn" id="notes-back-btn" onclick="notesMobileBack()" style="display:none;">← categories</button>
   </div>
   <div class="notes-shell" id="notes-shell">
     <div class="notes-sidebar" id="notes-sidebar">
@@ -1972,7 +1987,7 @@ function openWin(id){
   }
   focusWin(id);
   if(id==='arc-win')renderArc('all');
-  if(id==='notes-win'){renderNotes('movies');showNotesMobileBar();}
+  if(id==='notes-win'){renderNotes('movies',false);showNotesMobileBar();}
   if(id==='photos-win')loadPhotos();
   if(id==='music-win')musicInit();
   if(id==='chat-room-win'){
@@ -3338,11 +3353,7 @@ function notesMobileBack(){
   var shell=document.getElementById('notes-shell');
   if(!shell)return;
   var view=shell.getAttribute('data-view');
-  if(view==='content'){
-    notesSetView('notes');
-  } else {
-    notesSetView('categories');
-  }
+  notesSetView('categories');
 }
 function showNotesMobileBar(){
   var bar=document.getElementById('notes-mobile-bar');
@@ -3356,10 +3367,9 @@ function toggleSidebar(){
 function showCat(el,cat){
   document.querySelectorAll('.ns-cat').forEach(function(c){c.classList.remove('active');});
   el.classList.add('active');
-  renderNotes(cat);
-  if(window.innerWidth<=520){notesSetView('notes');}
+  renderNotes(cat,window.innerWidth<=520);
 }
-function renderNotes(cat){
+function renderNotes(cat,autoOpenMobile){
   notesCat=cat||notesCat;
   var list=document.getElementById('notes-list');
   var viewer=document.getElementById('note-viewer');
@@ -3396,10 +3406,15 @@ function renderNotes(cat){
     }
     list.appendChild(item);
   });
-  // Desktop: auto-select first note
-  if(window.innerWidth>520&&notes.length>0){
+  // Desktop keeps the split-pane behavior. On mobile, a category tap opens
+  // its first note immediately so there is no redundant list-only screen.
+  if(notes.length>0){
     var fi=list.querySelector('.note-item');
-    if(fi)fi.click();
+    if(window.innerWidth>520&&fi){
+      fi.click();
+    }else if(window.innerWidth<=520&&autoOpenMobile&&fi){
+      selectNote(notes[0],fi);
+    }
   }
   if(notes.length===0){
     viewer.innerHTML='<div style="color:var(--dim);padding-top:20px;text-align:center;">no notes here yet.</div>';
@@ -3407,7 +3422,7 @@ function renderNotes(cat){
 }
 function openNoteFromSearch(cat,index){
   openWin('notes-win');
-  renderNotes(cat);
+  renderNotes(cat,false);
   var list=document.getElementById('notes-list');
   if(!list)return;
   var item=list.querySelector('[data-note-index="'+index+'"]');
