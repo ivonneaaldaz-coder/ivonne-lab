@@ -1317,7 +1317,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
         <div class="music-playlist-pane">
           <div class="music-pane-head"><span>PLAYLISTS</span><span>public</span></div>
           <div id="music-playlist-sidebar"></div>
-          <div class="music-profile-link" style="cursor:default;">5 public playlists · playback stays here</div>
+          <div class="music-profile-link" style="cursor:default;">5 public playlists</div>
         </div>
         <div class="music-tracks">
           <div class="music-track-head"><div>#</div><div>Title</div><div>Artist</div><div>Playlist</div></div>
@@ -2712,7 +2712,7 @@ function musicSelectPlaylist(index,focusWindow){
   var status=document.getElementById('music-status-copy');
   if(status){
     status.textContent=musicPlayingUri
-      ? 'browsing: '+MUSIC_PLAYLISTS[index].name+' · playback unchanged'
+      ? 'browsing: '+MUSIC_PLAYLISTS[index].name
       : 'browsing: '+MUSIC_PLAYLISTS[index].name+' · choose a track';
   }
 
