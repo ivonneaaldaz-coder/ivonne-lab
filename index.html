@@ -590,7 +590,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 .lab-search-chip:hover{background:var(--tbar1);color:#fff;}
 .sm-start-title{padding:7px 10px 2px;font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;}
 .sm-start-sub{padding:0 10px 7px;font-size:11px;color:var(--dim);line-height:1.35;border-bottom:1px solid var(--border);margin-bottom:2px;}
-.sm-search-row{border-bottom:1px solid var(--border);margin-bottom:2px;background:#e8e4de;}
+.sm-search-row{display:flex;align-items:center;}
 .sm-search-key{margin-left:auto;color:var(--dim);font-size:11px;}
 .si:hover .sm-search-key{color:#fff;}
 
@@ -1833,9 +1833,6 @@ check back later.</pre></div>
     <div class="sm-start-sub">work · experiments · art · writing · life</div>
     <div class="si" onclick="openWin('chat-win');closeAll()">🌚 Ask Eve</div>
     <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ Archive</div>
-    <div class="si sm-search-row" onclick="openLabSearch();closeAll()">
-      <span>🔍 Search the lab…</span><span class="sm-search-key" id="sm-search-key">⌘K</span>
-    </div>
     <div class="si" onclick="openWin('notes-win');closeAll()">📓 Notes</div>
     <div class="si" onclick="openWin('photos-win');closeAll()">📷 Photos</div>
     <div class="si" onclick="openWin('work-win');closeAll()">📋 Work With Me</div>
@@ -1843,6 +1840,9 @@ check back later.</pre></div>
     <div class="si" onclick="surpriseMe();closeAll()">✦ Surprise me</div>
     <div class="si" onclick="openWin('note-form-win');closeAll()">✉️ Leave a note</div>
     <div class="si" onclick="openWin('about-win');closeAll()">📄 About the Lab</div>
+    <div class="si sm-search-row" onclick="openLabSearch();closeAll()">
+      <span>🔍 Search the lab…</span><span class="sm-search-key" id="sm-search-key">⌘K</span>
+    </div>
   </div>
 </div>
 
