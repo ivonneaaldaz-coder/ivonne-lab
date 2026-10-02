@@ -542,7 +542,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
 /* ── SP PIN ── */
 #sp-pin{position:fixed;bottom:32px;right:0;width:320px;height:80px;z-index:300;border-top:1px solid rgba(0,0,0,.1);border-left:1px solid rgba(0,0,0,.1);}
-#sp-pin iframe{display:block;width:100%;height:100%;border:none;}
+#sp-pin iframe,#spotify-embed-controller{display:block;width:100%!important;height:100%!important;border:none;}
 
 /* ── MOBILE ── */
 @media(max-width:520px){
@@ -1128,7 +1128,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 <!-- SPOTIFY PIN -->
 <div id="desktop-contact" style="position:fixed;bottom:38px;left:50%;transform:translateX(-50%);font-family:var(--font);font-size:12px;color:rgba(255,255,255,0.25);z-index:10;pointer-events:none;text-align:center;white-space:nowrap;text-shadow:1px 1px 2px rgba(0,0,0,0.5);">hello@ivonnealdaz.com · bywhitespace.com</div>
 <div id="sp-pin">
-  <iframe src="https://open.spotify.com/embed/playlist/3MJORK5D5v7d5cSG1Cte6a?utm_source=generator&theme=0" width="320" height="80" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  <div id="spotify-embed-controller"></div>
 </div>
 
 <!-- ASK EVE -->
@@ -1248,7 +1248,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
           <div id="music-now-artist" class="music-artist">Temper City</div>
           <div id="music-now-album" class="music-album">playlist: ...</div>
           <div class="music-progress-meta"><span id="music-progress-left">1:22</span><span id="music-progress-right">-0:55</span></div>
-          <div class="music-progress"><span></span></div>
+          <div class="music-progress"><span id="music-progress-fill"></span></div>
         </div>
         <div class="music-viz-wrap">
           <canvas id="music-viz"></canvas>
@@ -1259,7 +1259,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
       <div class="music-controls">
         <button class="music-ctl small" title="shuffle playlists" onclick="musicRandomPlaylist()">⤨</button>
         <button class="music-ctl" title="previous playlist" onclick="musicStep(-1)">◀|</button>
-        <button class="music-ctl main" title="open selected playlist in Spotify" onclick="musicOpenSelected()">▶</button>
+        <button class="music-ctl main" id="music-play-toggle" title="play / pause in the Lab" onclick="musicTogglePlayback()">▶</button>
         <button class="music-ctl" title="next playlist" onclick="musicStep(1)">|▶</button>
         <button class="music-ctl small" title="cycle visualizer" onclick="musicCycleViz()">↻</button>
         <div class="music-volume"><span>🔈</span><div class="music-volume-line"><span></span></div></div>
@@ -1269,7 +1269,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
         <div class="music-playlist-pane">
           <div class="music-pane-head"><span>PLAYLISTS</span><span>public</span></div>
           <div id="music-playlist-sidebar"></div>
-          <a class="music-profile-link" href="https://open.spotify.com/user/ivonnealdaz" target="_blank">view all on Spotify ↗</a>
+          <div class="music-profile-link" style="cursor:default;">5 public playlists · playback stays here</div>
         </div>
         <div class="music-tracks">
           <div class="music-track-head"><div>#</div><div>Title</div><div>Artist</div><div>Playlist</div></div>
@@ -1300,7 +1300,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 
     <div class="music-status">
       <span id="music-status-copy">playlist: ...</span>
-      <span class="spotify-state"><span class="music-status-dot"></span><a href="https://open.spotify.com/user/ivonnealdaz" target="_blank" style="color:#222;text-decoration:none;">Spotify ↗</a></span>
+      <span class="spotify-state"><span class="music-status-dot"></span><span>Spotify embed · in-lab playback</span></span>
     </div>
   </div>
   <div class="resize-corner"></div>
@@ -2489,28 +2489,28 @@ var MUSIC_PLAYLISTS=[
   {
     name:'drift',
     cover:'linear-gradient(180deg,#172d4a 0%,#405d70 43%,#d38d45 62%,#201a26 100%)',
-    url:'https://open.spotify.com/user/ivonnealdaz',
+    url:null,
     current:null,
     tracks:[]
   },
   {
     name:'another lifetime',
     cover:'linear-gradient(135deg,#080d31 0%,#11152c 35%,#7c161b 67%,#f24c1d 82%,#f5b76d 100%)',
-    url:'https://open.spotify.com/user/ivonnealdaz',
+    url:null,
     current:null,
     tracks:[]
   },
   {
     name:'soft static',
     cover:'radial-gradient(circle at 63% 63%,#f81b3f 0%,#e90055 17%,transparent 33%),radial-gradient(circle at 35% 45%,#12d8e4 0%,#056c9b 21%,transparent 36%),#050918',
-    url:'https://open.spotify.com/user/ivonnealdaz',
+    url:null,
     current:null,
     tracks:[]
   },
   {
     name:'permanent rotation',
     cover:'linear-gradient(145deg,#021308 0%,#08150e 37%,#d1118d 58%,#ff396e 73%,#f4692f 100%)',
-    url:'https://open.spotify.com/user/ivonnealdaz',
+    url:null,
     current:null,
     tracks:[]
   }
@@ -2521,12 +2521,16 @@ var musicReady=false;
 var musicVizMode=0;
 var musicVizStarted=false;
 var musicVizTick=0;
+var spotifyEmbedController=null;
+var spotifyEmbedLoading=false;
+var spotifyEmbedLoadedUrl='';
 
 function musicInit(){
   if(!musicReady){
     musicRenderAll();
     musicReady=true;
   }
+  musicEnsureSpotifyEmbed();
   setTimeout(function(){
     musicStartVisualizers();
   },40);
@@ -2578,14 +2582,13 @@ function musicRenderTracks(){
   if(!p.tracks||!p.tracks.length){
     el.innerHTML='<div class="music-track-empty">'+
       'playlist selected: <strong style="color:#fff;">'+labEsc(p.name)+'</strong><br>'+
-      'the full track list lives on Spotify for now.<br><br>'+
-      '<a href="'+labEsc(p.url)+'" target="_blank">open on Spotify ↗</a>'+
+      'staying inside the Lab. full playback for this playlist will load here once its Spotify playlist link is wired.'+
     '</div>';
     return;
   }
 
   el.innerHTML=p.tracks.map(function(t,i){
-    return '<div class="music-track-row'+(i===0?' active':'')+'" onclick="musicOpenSelected()">'+
+    return '<div class="music-track-row'+(i===0?' active':'')+'" onclick="musicTogglePlayback()">'+
       '<div class="music-track-num">'+(i===0?'▮▮':(i+1))+'</div>'+
       '<div>'+labEsc(t.title)+'</div>'+
       '<div>'+labEsc(t.artist)+'</div>'+
@@ -2627,6 +2630,7 @@ function musicSelectPlaylist(index,focusWindow){
   if(status)status.textContent='playlist: '+p.name;
   musicRenderTracks();
 
+  if(p.url)musicLoadSelectedIntoEmbed(false);
   if(focusWindow)focusWin('music-win');
 }
 
@@ -2641,11 +2645,113 @@ function musicRandomPlaylist(){
   musicSelectPlaylist(next,true);
 }
 
-function musicOpenSelected(){
+function musicEnsureSpotifyEmbed(){
+  if(spotifyEmbedController||spotifyEmbedLoading)return;
+  spotifyEmbedLoading=true;
+
+  window.onSpotifyIframeApiReady=function(IFrameAPI){
+    var element=document.getElementById('spotify-embed-controller');
+    if(!element){spotifyEmbedLoading=false;return;}
+
+    IFrameAPI.createController(element,{
+      width:320,
+      height:80,
+      url:'https://open.spotify.com/playlist/3MJORK5D5v7d5cSG1Cte6a?utm_source=generator&theme=0'
+    },function(controller){
+      spotifyEmbedController=controller;
+      spotifyEmbedLoadedUrl='https://open.spotify.com/playlist/3MJORK5D5v7d5cSG1Cte6a';
+      spotifyEmbedLoading=false;
+
+      controller.addListener('playback_update',function(e){
+        var data=e&&e.data?e.data:{};
+        var duration=Number(data.duration)||0;
+        var position=Number(data.position)||0;
+        var pct=duration?Math.max(0,Math.min(100,(position/duration)*100)):0;
+        var fill=document.getElementById('music-progress-fill');
+        var left=document.getElementById('music-progress-left');
+        var right=document.getElementById('music-progress-right');
+        var toggle=document.getElementById('music-play-toggle');
+
+        if(fill)fill.style.width=pct+'%';
+        if(left)left.textContent=musicFormatTime(position);
+        if(right)right.textContent=duration?'-'+musicFormatTime(Math.max(0,duration-position)):'--:--';
+        if(toggle)toggle.textContent=data.isPaused?'▶':'Ⅱ';
+      });
+    });
+  };
+
+  var script=document.createElement('script');
+  script.src='https://open.spotify.com/embed/iframe-api/v1';
+  script.async=true;
+  script.onerror=function(){spotifyEmbedLoading=false;};
+  document.body.appendChild(script);
+}
+
+function musicFormatTime(ms){
+  var sec=Math.max(0,Math.floor((Number(ms)||0)/1000));
+  var min=Math.floor(sec/60);
+  return min+':'+String(sec%60).padStart(2,'0');
+}
+
+function musicLoadSelectedIntoEmbed(autoplay){
   var p=MUSIC_PLAYLISTS[musicSelected];
+  var status=document.getElementById('music-status-copy');
   if(!p)return;
-  window.open(p.url,'_blank');
-  if(typeof gtag!=='undefined')gtag('event','music_spotify_open',{playlist:p.name});
+
+  if(!p.url){
+    if(status)status.textContent='playlist: '+p.name+' · selected in the Lab';
+    return;
+  }
+
+  musicEnsureSpotifyEmbed();
+
+  var load=function(){
+    if(!spotifyEmbedController)return false;
+    if(spotifyEmbedLoadedUrl!==p.url){
+      spotifyEmbedController.loadEntity(p.url);
+      spotifyEmbedLoadedUrl=p.url;
+    }
+    if(autoplay){
+      setTimeout(function(){
+        try{spotifyEmbedController.play();}catch(e){}
+      },120);
+    }
+    if(status)status.textContent='playlist: '+p.name+' · playing inside the Lab';
+    return true;
+  };
+
+  if(!load()){
+    setTimeout(load,350);
+  }
+}
+
+function musicTogglePlayback(){
+  var p=MUSIC_PLAYLISTS[musicSelected];
+  var status=document.getElementById('music-status-copy');
+  if(!p)return;
+
+  if(!p.url){
+    if(status)status.textContent='playlist: '+p.name+' · selected here, playback link not wired yet';
+    return;
+  }
+
+  musicEnsureSpotifyEmbed();
+
+  var toggle=function(){
+    if(!spotifyEmbedController)return false;
+    if(spotifyEmbedLoadedUrl!==p.url){
+      spotifyEmbedController.loadEntity(p.url);
+      spotifyEmbedLoadedUrl=p.url;
+      setTimeout(function(){try{spotifyEmbedController.play();}catch(e){}},120);
+    }else{
+      try{spotifyEmbedController.togglePlay();}catch(e){}
+    }
+    if(status)status.textContent='playlist: '+p.name+' · playback stays in the Lab';
+    if(typeof gtag!=='undefined')gtag('event','music_in_lab_playback',{playlist:p.name});
+    return true;
+  };
+
+  if(!toggle())setTimeout(toggle,350);
 }
 
 function musicTab(name,btn){
@@ -2745,6 +2851,8 @@ function musicDrawOne(canvas,t,offset){
   ctx.fillStyle='rgba(255,255,255,.018)';
   for(var sy=0;sy<h;sy+=4)ctx.fillRect(0,sy,w,1);
 }
+
+setTimeout(musicEnsureSpotifyEmbed,0);
 
 function musicDrawVisualizers(ts){
   musicVizTick=ts/1000;
