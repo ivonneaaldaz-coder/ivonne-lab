@@ -312,8 +312,12 @@ a{color:inherit;text-decoration:none;}
 .music-track-empty{padding:22px;font-family:var(--font);font-size:12px;color:#918b8b;line-height:1.7;}
 .music-track-empty a{color:#7ba8de;}
 .music-status{height:28px;background:linear-gradient(to bottom,#e6e1d8,#cfc7bd);border-top:1px solid #79736b;color:#282828;display:flex;align-items:center;gap:8px;padding:0 10px;font-family:var(--font);font-size:11px;flex-shrink:0;}
-.music-status .spotify-state{margin-left:auto;display:flex;align-items:center;gap:5px;}
+.music-status .spotify-state{margin-left:auto;display:flex;align-items:center;gap:5px;white-space:nowrap;}
 .music-status-dot{width:7px;height:7px;border-radius:50%;background:#35b85d;box-shadow:0 0 5px rgba(53,184,93,.55);}
+.music-follow{color:#174d9d;text-decoration:none;border-bottom:1px solid transparent;}
+.music-follow:hover{color:#000080;border-bottom-color:#000080;}
+.music-library-head{height:28px;display:flex;align-items:center;justify-content:space-between;padding:0 5px 7px;font-family:var(--font);font-size:11px;color:#aaa;letter-spacing:.06em;flex-shrink:0;}
+.music-library-head span:first-child{color:#ddd;}
 .music-library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px;overflow-y:auto;padding:4px;align-content:start;}
 .music-card{background:#1c1919;border:1px solid #3a3535;padding:10px;cursor:pointer;transition:transform .12s,background .12s;}
 .music-card:hover{background:#292424;transform:translateY(-1px);}
@@ -1234,7 +1238,6 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     <div class="music-toolbar">
       <button class="music-tab active" data-music-tab="now" onclick="musicTab('now',this)">▶ Now Playing</button>
       <button class="music-tab" data-music-tab="library" onclick="musicTab('library',this)">📁 Library</button>
-      <button class="music-tab" data-music-tab="playlists" onclick="musicTab('playlists',this)">☷ Playlists</button>
       <button class="music-tab" data-music-tab="radio" onclick="musicTab('radio',this)">◉ Radio</button>
       <div class="music-search-wrap"><input id="music-search" class="music-search" placeholder="Search music..." oninput="musicFilter(this.value)"></div>
     </div>
@@ -1243,11 +1246,11 @@ textarea.nf-input{resize:vertical;min-height:70px;}
       <div class="music-now-top">
         <div class="music-cover-card"><div id="music-cover" class="music-cover"></div></div>
         <div class="music-now-info">
-          <div class="music-kicker">▶ NOW PLAYING</div>
-          <div id="music-now-title" class="music-title">Self Aware</div>
-          <div id="music-now-artist" class="music-artist">Temper City</div>
-          <div id="music-now-album" class="music-album">playlist: ...</div>
-          <div class="music-progress-meta"><span id="music-progress-left">1:22</span><span id="music-progress-right">-0:55</span></div>
+          <div class="music-kicker" id="music-kicker">▶ READY</div>
+          <div id="music-now-title" class="music-title">⚡️</div>
+          <div id="music-now-artist" class="music-artist">Ivonne Aldaz</div>
+          <div id="music-now-album" class="music-album">select a track below</div>
+          <div class="music-progress-meta"><span id="music-progress-left">0:00</span><span id="music-progress-right">--:--</span></div>
           <div class="music-progress"><span id="music-progress-fill"></span></div>
         </div>
         <div class="music-viz-wrap">
@@ -1257,10 +1260,10 @@ textarea.nf-input{resize:vertical;min-height:70px;}
       </div>
 
       <div class="music-controls">
-        <button class="music-ctl small" title="shuffle playlists" onclick="musicRandomPlaylist()">⤨</button>
-        <button class="music-ctl" title="previous playlist" onclick="musicStep(-1)">◀|</button>
+        <button class="music-ctl small" title="shuffle this playlist" onclick="musicShuffleTrack()">⤨</button>
+        <button class="music-ctl" title="previous track" onclick="musicStepTrack(-1)">◀|</button>
         <button class="music-ctl main" id="music-play-toggle" title="play / pause in the Lab" onclick="musicTogglePlayback()">▶</button>
-        <button class="music-ctl" title="next playlist" onclick="musicStep(1)">|▶</button>
+        <button class="music-ctl" title="next track" onclick="musicStepTrack(1)">|▶</button>
         <button class="music-ctl small" title="cycle visualizer" onclick="musicCycleViz()">↻</button>
         <div class="music-volume"><span>🔈</span><div class="music-volume-line"><span></span></div></div>
       </div>
@@ -1279,11 +1282,8 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     </div>
 
     <div id="music-view-library" class="music-view">
+      <div class="music-library-head"><span>PLAYLISTS</span><span id="music-library-count">5 public</span></div>
       <div id="music-library-grid" class="music-library-grid"></div>
-    </div>
-
-    <div id="music-view-playlists" class="music-view">
-      <div id="music-playlists-list" class="music-list-view"></div>
     </div>
 
     <div id="music-view-radio" class="music-view">
@@ -1292,15 +1292,15 @@ textarea.nf-input{resize:vertical;min-height:70px;}
         <div class="music-radio-panel">
           <div class="music-radio-label">● LAB RADIO</div>
           <div id="music-radio-title" class="music-radio-title">shuffle the mood</div>
-          <div class="music-radio-copy">pull a random playlist from ivonne's public collection and open it in the player shell.</div>
+          <div class="music-radio-copy">pull a random playlist from ivonne's public collection and start a random track inside the Lab.</div>
           <button class="music-radio-btn" onclick="musicRadioShuffle()">tune in →</button>
         </div>
       </div>
     </div>
 
     <div class="music-status">
-      <span id="music-status-copy">playlist: ...</span>
-      <span class="spotify-state"><span class="music-status-dot"></span><span>Spotify embed · in-lab playback</span></span>
+      <span id="music-status-copy">browsing: ⚡️ · choose a track</span>
+      <span class="spotify-state"><span class="music-status-dot"></span><span>Spotify embed</span><span>·</span><a class="music-follow" href="https://open.spotify.com/user/ivonnealdaz" target="_blank" rel="noopener noreferrer">follow on Spotify ↗</a></span>
     </div>
   </div>
   <div class="resize-corner"></div>
@@ -2480,13 +2480,8 @@ var MUSIC_PLAYLISTS=[
     coverUrl:'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da8476ad1797afc30f2d7501145e',
     fallbackCover:'linear-gradient(135deg,#4b164f 0%,#e62857 25%,#ff972f 48%,#b52185 68%,#11164c 100%)',
     url:'https://open.spotify.com/playlist/3MJORK5D5v7d5cSG1Cte6a',
-    current:{title:'Self Aware',artist:'Temper City'},
-    tracks:[
-      {title:'Self Aware',artist:'Temper City'},
-      {title:'505',artist:'Arctic Monkeys'},
-      {title:'Cigarette Daydreams',artist:'Cage The Elephant'},
-      {title:'We Are The People',artist:'Empire of the Sun'}
-    ]
+    tracks:[],
+    loading:true
   },
   {
     id:'6srDkgcJIEo3QiOMvlRr1q',
@@ -2494,8 +2489,8 @@ var MUSIC_PLAYLISTS=[
     coverUrl:'https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da840b4356f3ed6fcb840aaa455e',
     fallbackCover:'linear-gradient(180deg,#172d4a 0%,#405d70 43%,#d38d45 62%,#201a26 100%)',
     url:'https://open.spotify.com/playlist/6srDkgcJIEo3QiOMvlRr1q',
-    current:null,
-    tracks:[]
+    tracks:[],
+    loading:true
   },
   {
     id:'3G8AYHiczaJoHhcVjzh9TR',
@@ -2503,8 +2498,8 @@ var MUSIC_PLAYLISTS=[
     coverUrl:'https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da8447ea69c73c36625647794722',
     fallbackCover:'linear-gradient(135deg,#080d31 0%,#11152c 35%,#7c161b 67%,#f24c1d 82%,#f5b76d 100%)',
     url:'https://open.spotify.com/playlist/3G8AYHiczaJoHhcVjzh9TR',
-    current:null,
-    tracks:[]
+    tracks:[],
+    loading:true
   },
   {
     id:'3J1lx2Ydr5NrGEB5Eq6NJe',
@@ -2512,8 +2507,8 @@ var MUSIC_PLAYLISTS=[
     coverUrl:'https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84b42ec39691c499957d028c05',
     fallbackCover:'radial-gradient(circle at 63% 63%,#f81b3f 0%,#e90055 17%,transparent 33%),radial-gradient(circle at 35% 45%,#12d8e4 0%,#056c9b 21%,transparent 36%),#050918',
     url:'https://open.spotify.com/playlist/3J1lx2Ydr5NrGEB5Eq6NJe',
-    current:null,
-    tracks:[]
+    tracks:[],
+    loading:true
   },
   {
     id:'3tnq9920I6cEP0fzLYTDU0',
@@ -2521,12 +2516,18 @@ var MUSIC_PLAYLISTS=[
     coverUrl:'https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84a360dfebf9fdd762ea6e6436',
     fallbackCover:'linear-gradient(145deg,#021308 0%,#08150e 37%,#d1118d 58%,#ff396e 73%,#f4692f 100%)',
     url:'https://open.spotify.com/playlist/3tnq9920I6cEP0fzLYTDU0',
-    current:null,
-    tracks:[]
+    tracks:[],
+    loading:true
   }
 ];
 
 var musicSelected=0;
+var musicSelectedTrack=0;
+var musicPlayingUri='';
+var musicPlayingPlaylist=-1;
+var musicPlayingTrack=-1;
+var musicIsPaused=true;
+var musicPendingPlay=null;
 var musicReady=false;
 var musicVizMode=0;
 var musicVizStarted=false;
@@ -2543,30 +2544,6 @@ function musicCoverCss(p){
   return 'background:'+((p&&p.fallbackCover)||'#222')+';';
 }
 
-async function musicSyncSpotifyMetadata(){
-  if(musicMetadataLoaded)return;
-  musicMetadataLoaded=true;
-
-  try{
-    var response=await fetch('/api/spotify-playlists');
-    if(!response.ok)return;
-    var data=await response.json();
-    var rows=Array.isArray(data.playlists)?data.playlists:[];
-
-    rows.forEach(function(meta){
-      var p=MUSIC_PLAYLISTS.find(function(item){return item.id===meta.id;});
-      if(!p||!meta.ok)return;
-      if(meta.title)p.name=String(meta.title).trim();
-      if(meta.thumbnail_url)p.coverUrl=meta.thumbnail_url;
-      if(meta.url)p.url=meta.url;
-    });
-
-    musicRenderAll();
-  }catch(e){
-    // Keep the exact cached Spotify metadata bundled above as fallback.
-  }
-}
-
 function musicInit(){
   if(!musicReady){
     musicRenderAll();
@@ -2574,18 +2551,44 @@ function musicInit(){
   }
   musicEnsureSpotifyEmbed();
   musicSyncSpotifyMetadata();
-  setTimeout(function(){
-    musicStartVisualizers();
-  },40);
+  setTimeout(function(){musicStartVisualizers();},40);
+}
+
+async function musicSyncSpotifyMetadata(){
+  if(musicMetadataLoaded)return;
+  musicMetadataLoaded=true;
+
+  try{
+    var response=await fetch('/api/spotify-playlists');
+    if(!response.ok)throw new Error('metadata request failed');
+    var data=await response.json();
+    var rows=Array.isArray(data.playlists)?data.playlists:[];
+
+    rows.forEach(function(meta){
+      var p=MUSIC_PLAYLISTS.find(function(item){return item.id===meta.id;});
+      if(!p)return;
+      if(meta.title)p.name=String(meta.title).trim();
+      if(meta.thumbnail_url)p.coverUrl=meta.thumbnail_url;
+      if(meta.url)p.url=meta.url;
+      p.tracks=Array.isArray(meta.tracks)?meta.tracks:[];
+      p.loading=false;
+    });
+
+    MUSIC_PLAYLISTS.forEach(function(p){if(p.loading)p.loading=false;});
+    musicRenderAll();
+    musicSyncPlayingUri(musicPlayingUri);
+  }catch(e){
+    MUSIC_PLAYLISTS.forEach(function(p){p.loading=false;});
+    musicRenderAll();
+  }
 }
 
 function musicRenderAll(){
   musicRenderSidebar();
   musicRenderLibrary();
-  musicRenderPlaylistList();
-  musicSelectPlaylist(musicSelected,false);
-  var radioTitle=document.getElementById('music-radio-title');
-  if(radioTitle&&radioTitle.textContent!=='shuffle the mood')radioTitle.textContent=MUSIC_PLAYLISTS[musicSelected].name;
+  musicRenderTracks();
+  if(musicPlayingUri)musicRenderNowPlaying();
+  else musicRenderBrowsePreview();
 }
 
 function musicRenderSidebar(){
@@ -2600,22 +2603,13 @@ function musicRenderSidebar(){
 
 function musicRenderLibrary(){
   var el=document.getElementById('music-library-grid');if(!el)return;
+  var count=document.getElementById('music-library-count');
+  if(count)count.textContent=MUSIC_PLAYLISTS.length+' public';
   el.innerHTML=MUSIC_PLAYLISTS.map(function(p,i){
     return '<div class="music-card" data-music-name="'+labEsc(p.name.toLowerCase())+'" onclick="musicSelectPlaylist('+i+',true);musicTab(\'now\')">'+
       '<div class="music-card-cover" style="'+musicCoverCss(p)+'"></div>'+
       '<div class="music-card-title">'+labEsc(p.name)+'</div>'+
-      '<div class="music-card-sub">public playlist · Ivonne Aldaz</div>'+
-    '</div>';
-  }).join('');
-}
-
-function musicRenderPlaylistList(){
-  var el=document.getElementById('music-playlists-list');if(!el)return;
-  el.innerHTML=MUSIC_PLAYLISTS.map(function(p,i){
-    return '<div class="music-list-row" data-music-name="'+labEsc(p.name.toLowerCase())+'" onclick="musicSelectPlaylist('+i+',true);musicTab(\'now\')">'+
-      '<div class="music-list-cover" style="'+musicCoverCss(p)+'"></div>'+
-      '<div><div class="music-list-name">'+labEsc(p.name)+'</div><div class="music-list-meta">public playlist · Ivonne Aldaz</div></div>'+
-      '<div class="music-list-action">open →</div>'+
+      '<div class="music-card-sub">'+(p.loading?'loading tracks…':(p.tracks.length+' tracks'))+' · Ivonne Aldaz</div>'+
     '</div>';
   }).join('');
 }
@@ -2624,19 +2618,23 @@ function musicRenderTracks(){
   var p=MUSIC_PLAYLISTS[musicSelected];
   var el=document.getElementById('music-track-list');if(!el||!p)return;
 
-  if(!p.tracks||!p.tracks.length){
-    el.innerHTML='<div class="music-track-empty">'+
-      'playlist selected: <strong style="color:#fff;">'+labEsc(p.name)+'</strong><br>'+
-      'playback is wired into the pinned Spotify player — use the controls above and stay in the Lab.'+
-    '</div>';
+  if(p.loading){
+    el.innerHTML='<div class="music-track-empty">loading the real Spotify track list…</div>';
+    return;
+  }
+
+  if(!p.tracks.length){
+    el.innerHTML='<div class="music-track-empty">track list unavailable right now.<br>the playlist can still play through the pinned Spotify player.</div>';
     return;
   }
 
   el.innerHTML=p.tracks.map(function(t,i){
-    return '<div class="music-track-row'+(i===0?' active':'')+'" onclick="musicTogglePlayback()">'+
-      '<div class="music-track-num">'+(i===0?'▮▮':(i+1))+'</div>'+
+    var isPlaying=t.uri===musicPlayingUri;
+    var glyph=isPlaying?(musicIsPaused?'▶':'▮▮'):(i+1);
+    return '<div class="music-track-row'+(isPlaying?' active':'')+'" onclick="musicPlayTrack('+i+')">'+
+      '<div class="music-track-num">'+glyph+'</div>'+
       '<div>'+labEsc(t.title)+'</div>'+
-      '<div>'+labEsc(t.artist)+'</div>'+
+      '<div>'+labEsc(t.artist||'')+'</div>'+
       '<div>'+labEsc(p.name)+'</div>'+
     '</div>';
   }).join('');
@@ -2645,51 +2643,188 @@ function musicRenderTracks(){
 function musicSelectPlaylist(index,focusWindow){
   index=(index+MUSIC_PLAYLISTS.length)%MUSIC_PLAYLISTS.length;
   musicSelected=index;
-  var p=MUSIC_PLAYLISTS[index];
-  if(!p)return;
+  musicSelectedTrack=0;
 
-  document.querySelectorAll('.music-pl-row').forEach(function(row,i){row.classList.toggle('active',i===index);});
+  musicRenderSidebar();
+  musicRenderTracks();
 
+  // Browsing a playlist should not silently replace whatever is loaded in
+  // the pinned Spotify player. Playback only changes after an explicit play.
+  if(!musicPlayingUri)musicRenderBrowsePreview();
+
+  var status=document.getElementById('music-status-copy');
+  if(status){
+    status.textContent=musicPlayingUri
+      ? 'browsing: '+MUSIC_PLAYLISTS[index].name+' · playback unchanged'
+      : 'browsing: '+MUSIC_PLAYLISTS[index].name+' · choose a track';
+  }
+
+  if(focusWindow)focusWin('music-win');
+}
+
+function musicRenderBrowsePreview(){
+  var p=MUSIC_PLAYLISTS[musicSelected];if(!p)return;
   var cover=document.getElementById('music-cover');
+  var kicker=document.getElementById('music-kicker');
   var title=document.getElementById('music-now-title');
   var artist=document.getElementById('music-now-artist');
   var album=document.getElementById('music-now-album');
   var left=document.getElementById('music-progress-left');
   var right=document.getElementById('music-progress-right');
-  var status=document.getElementById('music-status-copy');
+  var fill=document.getElementById('music-progress-fill');
 
-  if(cover){
-    cover.style.cssText=musicCoverCss(p);
+  if(cover)cover.style.cssText=musicCoverCss(p);
+  if(kicker)kicker.textContent='▶ READY';
+  if(title)title.textContent=p.name;
+  if(artist)artist.textContent='Ivonne Aldaz';
+  if(album)album.textContent=p.loading?'loading track list…':'select a track below';
+  if(left)left.textContent='0:00';
+  if(right)right.textContent='--:--';
+  if(fill)fill.style.width='0%';
+}
+
+function musicFindTrack(uri){
+  if(!uri)return null;
+  for(var p=0;p<MUSIC_PLAYLISTS.length;p++){
+    var idx=MUSIC_PLAYLISTS[p].tracks.findIndex(function(t){return t.uri===uri;});
+    if(idx!==-1)return {playlistIndex:p,trackIndex:idx,track:MUSIC_PLAYLISTS[p].tracks[idx]};
   }
-  if(p.current){
-    if(title)title.textContent=p.current.title;
-    if(artist)artist.textContent=p.current.artist;
-    if(album)album.textContent='playlist: '+p.name;
-    if(left)left.textContent='1:22';
-    if(right)right.textContent='-0:55';
-  }else{
-    if(title)title.textContent=p.name;
-    if(artist)artist.textContent='Ivonne Aldaz';
-    if(album)album.textContent='public playlist';
-    if(left)left.textContent='playlist';
-    if(right)right.textContent='ready';
+  return null;
+}
+
+function musicSyncPlayingUri(uri){
+  if(!uri)return;
+  musicPlayingUri=uri;
+  var found=musicFindTrack(uri);
+  if(found){
+    musicPlayingPlaylist=found.playlistIndex;
+    musicPlayingTrack=found.trackIndex;
   }
-  if(status)status.textContent='playlist: '+p.name;
+  musicRenderNowPlaying();
+  musicRenderTracks();
+}
+
+function musicRenderNowPlaying(){
+  var found=musicFindTrack(musicPlayingUri);
+  var p=found?MUSIC_PLAYLISTS[found.playlistIndex]:(musicPlayingPlaylist>=0?MUSIC_PLAYLISTS[musicPlayingPlaylist]:MUSIC_PLAYLISTS[musicSelected]);
+  var t=found?found.track:null;
+
+  var cover=document.getElementById('music-cover');
+  var kicker=document.getElementById('music-kicker');
+  var title=document.getElementById('music-now-title');
+  var artist=document.getElementById('music-now-artist');
+  var album=document.getElementById('music-now-album');
+  var toggle=document.getElementById('music-play-toggle');
+
+  if(cover&&p)cover.style.cssText=musicCoverCss(p);
+  if(kicker)kicker.textContent=musicIsPaused?'Ⅱ PAUSED':'▶ NOW PLAYING';
+  if(title)title.textContent=t?t.title:'Spotify playback';
+  if(artist)artist.textContent=t?(t.artist||''):'';
+  if(album)album.textContent=p?'playlist: '+p.name:'';
+  if(toggle)toggle.textContent=musicIsPaused?'▶':'Ⅱ';
+}
+
+function musicPlayTrack(index){
+  var p=MUSIC_PLAYLISTS[musicSelected];if(!p)return;
+  if(!p.tracks.length){
+    musicPlayPlaylistFromStart();
+    return;
+  }
+
+  index=(index+p.tracks.length)%p.tracks.length;
+  musicSelectedTrack=index;
+  var t=p.tracks[index];
+  if(!t||!t.uri)return;
+
+  musicPendingPlay={playlistIndex:musicSelected,trackIndex:index,uri:t.uri};
+  var status=document.getElementById('music-status-copy');
+  if(status)status.textContent='starting: '+t.title+' · '+p.name;
+
+  musicEnsureSpotifyEmbed();
+  if(!musicExecutePendingPlay())setTimeout(musicExecutePendingPlay,250);
+}
+
+function musicExecutePendingPlay(){
+  if(!spotifyEmbedController||!musicPendingPlay)return false;
+  var pending=musicPendingPlay;
+  var p=MUSIC_PLAYLISTS[pending.playlistIndex];
+  var t=p&&p.tracks[pending.trackIndex];
+  if(!p||!t)return false;
+
+  spotifyEmbedLoadedUrl=t.uri;
+  try{
+    spotifyEmbedController.loadEntity(t.uri);
+    spotifyEmbedController.play();
+  }catch(e){
+    return false;
+  }
+
+  // Optimistically sync the custom UI immediately; Spotify's playback_started
+  // event will confirm the actual playing URI and correct us if needed.
+  musicPlayingUri=t.uri;
+  musicPlayingPlaylist=pending.playlistIndex;
+  musicPlayingTrack=pending.trackIndex;
+  musicIsPaused=false;
+  musicPendingPlay=null;
+  musicRenderNowPlaying();
   musicRenderTracks();
 
-  if(p.url)musicLoadSelectedIntoEmbed(false);
-  if(focusWindow)focusWin('music-win');
+  var status=document.getElementById('music-status-copy');
+  if(status)status.textContent='playing: '+t.title+' · '+p.name;
+  if(typeof gtag!=='undefined')gtag('event','music_track_play',{playlist:p.name,track:t.title});
+  return true;
 }
 
-function musicStep(delta){
-  musicSelectPlaylist(musicSelected+delta,true);
+function musicPlayPlaylistFromStart(){
+  var p=MUSIC_PLAYLISTS[musicSelected];if(!p)return;
+
+  if(p.tracks.length){
+    musicPlayTrack(0);
+    return;
+  }
+
+  musicEnsureSpotifyEmbed();
+  var go=function(){
+    if(!spotifyEmbedController)return false;
+    try{
+      spotifyEmbedLoadedUrl=p.url;
+      spotifyEmbedController.loadEntity(p.url);
+      spotifyEmbedController.play();
+      var status=document.getElementById('music-status-copy');
+      if(status)status.textContent='playing playlist: '+p.name;
+      return true;
+    }catch(e){return false;}
+  };
+  if(!go())setTimeout(go,250);
 }
 
-function musicRandomPlaylist(){
-  if(MUSIC_PLAYLISTS.length<2)return;
-  var next=musicSelected;
-  while(next===musicSelected)next=Math.floor(Math.random()*MUSIC_PLAYLISTS.length);
-  musicSelectPlaylist(next,true);
+function musicTogglePlayback(){
+  var found=musicFindTrack(musicPlayingUri);
+
+  // If the visitor is browsing the playlist that is already playing,
+  // the main button behaves like a normal play/pause control.
+  if(spotifyEmbedController&&found&&found.playlistIndex===musicSelected){
+    try{
+      spotifyEmbedController.togglePlay();
+      return;
+    }catch(e){}
+  }
+
+  musicPlayTrack(musicSelectedTrack||0);
+}
+
+function musicStepTrack(delta){
+  var p=MUSIC_PLAYLISTS[musicSelected];if(!p||!p.tracks.length)return;
+  var found=musicFindTrack(musicPlayingUri);
+  var base=(found&&found.playlistIndex===musicSelected)?found.trackIndex:musicSelectedTrack;
+  musicPlayTrack(base+delta);
+}
+
+function musicShuffleTrack(){
+  var p=MUSIC_PLAYLISTS[musicSelected];if(!p||!p.tracks.length)return;
+  var next=Math.floor(Math.random()*p.tracks.length);
+  if(p.tracks.length>1&&next===musicSelectedTrack)next=(next+1)%p.tracks.length;
+  musicPlayTrack(next);
 }
 
 function musicEnsureSpotifyEmbed(){
@@ -2709,6 +2844,13 @@ function musicEnsureSpotifyEmbed(){
       spotifyEmbedLoadedUrl='https://open.spotify.com/playlist/3MJORK5D5v7d5cSG1Cte6a';
       spotifyEmbedLoading=false;
 
+      controller.addListener('playback_started',function(e){
+        var uri=e&&e.data?e.data.playingURI:'';
+        musicIsPaused=false;
+        if(uri)musicSyncPlayingUri(uri);
+        if(musicPendingPlay)musicPendingPlay=null;
+      });
+
       controller.addListener('playback_update',function(e){
         var data=e&&e.data?e.data:{};
         var duration=Number(data.duration)||0;
@@ -2717,13 +2859,18 @@ function musicEnsureSpotifyEmbed(){
         var fill=document.getElementById('music-progress-fill');
         var left=document.getElementById('music-progress-left');
         var right=document.getElementById('music-progress-right');
-        var toggle=document.getElementById('music-play-toggle');
+
+        musicIsPaused=Boolean(data.isPaused);
+        if(data.playingURI&&data.playingURI!==musicPlayingUri)musicSyncPlayingUri(data.playingURI);
+        else if(musicPlayingUri)musicRenderNowPlaying();
 
         if(fill)fill.style.width=pct+'%';
         if(left)left.textContent=musicFormatTime(position);
         if(right)right.textContent=duration?'-'+musicFormatTime(Math.max(0,duration-position)):'--:--';
-        if(toggle)toggle.textContent=data.isPaused?'▶':'Ⅱ';
+        musicRenderTracks();
       });
+
+      if(musicPendingPlay)musicExecutePendingPlay();
     });
   };
 
@@ -2738,67 +2885,6 @@ function musicFormatTime(ms){
   var sec=Math.max(0,Math.floor((Number(ms)||0)/1000));
   var min=Math.floor(sec/60);
   return min+':'+String(sec%60).padStart(2,'0');
-}
-
-function musicLoadSelectedIntoEmbed(autoplay){
-  var p=MUSIC_PLAYLISTS[musicSelected];
-  var status=document.getElementById('music-status-copy');
-  if(!p)return;
-
-  if(!p.url){
-    if(status)status.textContent='playlist: '+p.name+' · selected in the Lab';
-    return;
-  }
-
-  musicEnsureSpotifyEmbed();
-
-  var load=function(){
-    if(!spotifyEmbedController)return false;
-    if(spotifyEmbedLoadedUrl!==p.url){
-      spotifyEmbedController.loadEntity(p.url);
-      spotifyEmbedLoadedUrl=p.url;
-    }
-    if(autoplay){
-      setTimeout(function(){
-        try{spotifyEmbedController.play();}catch(e){}
-      },120);
-    }
-    if(status)status.textContent='playlist: '+p.name+' · playing inside the Lab';
-    return true;
-  };
-
-  if(!load()){
-    setTimeout(load,350);
-  }
-}
-
-function musicTogglePlayback(){
-  var p=MUSIC_PLAYLISTS[musicSelected];
-  var status=document.getElementById('music-status-copy');
-  if(!p)return;
-
-  if(!p.url){
-    if(status)status.textContent='playlist: '+p.name+' · selected here, playback link not wired yet';
-    return;
-  }
-
-  musicEnsureSpotifyEmbed();
-
-  var toggle=function(){
-    if(!spotifyEmbedController)return false;
-    if(spotifyEmbedLoadedUrl!==p.url){
-      spotifyEmbedController.loadEntity(p.url);
-      spotifyEmbedLoadedUrl=p.url;
-      setTimeout(function(){try{spotifyEmbedController.play();}catch(e){}},120);
-    }else{
-      try{spotifyEmbedController.togglePlay();}catch(e){}
-    }
-    if(status)status.textContent='playlist: '+p.name+' · playback stays in the Lab';
-    if(typeof gtag!=='undefined')gtag('event','music_in_lab_playback',{playlist:p.name});
-    return true;
-  };
-
-  if(!toggle())setTimeout(toggle,350);
 }
 
 function musicTab(name,btn){
@@ -2816,10 +2902,13 @@ function musicFilter(value){
 }
 
 function musicRadioShuffle(){
-  musicRandomPlaylist();
+  var next=Math.floor(Math.random()*MUSIC_PLAYLISTS.length);
+  musicSelectPlaylist(next,false);
   var p=MUSIC_PLAYLISTS[musicSelected];
   var t=document.getElementById('music-radio-title');if(t)t.textContent=p.name;
   musicVizMode=(musicVizMode+1)%3;
+  if(p.tracks.length)musicPlayTrack(Math.floor(Math.random()*p.tracks.length));
+  else musicPlayPlaylistFromStart();
 }
 
 function musicCycleViz(){
