@@ -7,7 +7,50 @@ const RESUME = fs.readFileSync(require.resolve('../resume.md'), 'utf8')
 const EVE_CONTEXT = fs.readFileSync(require.resolve('../eve-context.md'), 'utf8')
 const VOICE = fs.readFileSync(require.resolve('../voice.md'), 'utf8')
 
-function buildSystem() {
+function sanitizeSearchContext(raw) {
+  if (!raw || typeof raw !== 'object') return null
+
+  const query = typeof raw.query === 'string' ? raw.query.trim().slice(0, 120) : ''
+  if (!query) return null
+
+  const items = Array.isArray(raw.items)
+    ? raw.items.slice(0, 4).map(item => ({
+        title: typeof item?.title === 'string' ? item.title.slice(0, 100) : '',
+        subtitle: typeof item?.subtitle === 'string' ? item.subtitle.slice(0, 220) : '',
+        source: typeof item?.source === 'string' ? item.source.slice(0, 80) : '',
+        type: typeof item?.type === 'string' ? item.type.slice(0, 40) : ''
+      })).filter(item => item.title)
+    : []
+
+  return { query, items }
+}
+
+function buildSystem(searchContext = null) {
+  const searchMode = searchContext
+    ? `
+
+---
+
+# LAB SEARCH MODE
+
+The visitor arrived here by searching the Lab for: "${searchContext.query}"
+
+Treat this as an orientation request, not as an underspecified one-word chat message.
+Do not ask what part they mean unless the term truly has no meaningful connection to Ivonne's work.
+Give a concise overview of how the topic connects to Ivonne, then point to 2–4 concrete examples from the PUBLIC LAB MATCHES below when relevant.
+
+The interface will render those matched items as clickable buttons beneath your response.
+Mention the exact item titles naturally so the visitor understands why each link is useful.
+Do not tell the visitor to "search for" those items.
+Do not invent Lab entries or claim that something is linked unless it appears in PUBLIC LAB MATCHES.
+
+PUBLIC LAB MATCHES:
+${searchContext.items.length
+  ? searchContext.items.map(item => `- ${item.title} [${item.source || item.type || 'Lab'}]: ${item.subtitle || 'Public Lab item'}`).join('\n')
+  : '- No direct public Lab matches were supplied. Give a concise orientation from the approved sources.'}
+`
+    : ''
+
   return `You are Eve, an AI portfolio assistant built by Ivonne Aldaz.
 
 Your purpose is to help visitors understand Ivonne's work, experience, projects, interests, and professional background.
@@ -22,10 +65,13 @@ Never invent experience.
 Never infer that Ivonne lacks a skill because information about it is missing.
 Missing information means you cannot verify something — not that Ivonne hasn't done it.
 
+Broad but relevant prompts such as "marketing", "AI", "art", "research", "teaching", or "travel" are requests for orientation. Give the visitor a useful overview and concrete evidence instead of immediately asking a clarifying question.
+
 Never make hiring decisions on behalf of visitors.
 When asked whether Ivonne should be interviewed, hired, or considered for a role, do not lead with a refusal. Briefly leave the decision to the visitor, then immediately surface the most relevant evidence from Ivonne's background. If only a title is provided, do not invent exact requirements; summarize relevant documented experience and invite the visitor to share the job description for a requirement-by-requirement mapping.
 
 Never say "Great question!", "I'd love to help", or similar generic AI filler.
+${searchMode}
 
 ---
 
@@ -199,7 +245,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
   try {
-    const { messages } = req.body || {}
+    const { messages, searchContext } = req.body || {}
+    const safeSearchContext = sanitizeSearchContext(searchContext)
 
     if (!Array.isArray(messages) || !messages.length) {
       return res.status(400).json({ error: 'Messages are required' })
@@ -311,7 +358,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 300,
-        system: buildSystem(),
+        system: buildSystem(safeSearchContext),
         messages: recentMessages
       })
     })
