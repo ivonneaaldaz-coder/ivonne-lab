@@ -1522,9 +1522,9 @@ textarea.nf-input{resize:vertical;min-height:70px;}
     <img id="ph-lb-img" src="" style="max-width:90vw;max-height:80vh;object-fit:contain;display:block;box-shadow:0 4px 32px rgba(0,0,0,.5);"/>
     <div id="ph-lb-name" style="color:#ccc;font-family:var(--font);font-size:14px;text-align:center;margin-top:8px;"></div>
   </div>
-  <button onclick="closeLightbox()" style="position:fixed;top:16px;right:20px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:18px;cursor:pointer;padding:4px 12px;font-family:var(--font);">✕ close</button>
-  <button onclick="lbPrev()" style="position:fixed;left:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:22px;cursor:pointer;padding:8px 14px;font-family:var(--font);">◀</button>
-  <button onclick="lbNext()" style="position:fixed;right:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:22px;cursor:pointer;padding:8px 14px;font-family:var(--font);">▶</button>
+  <button onclick="event.stopPropagation();closeLightbox()" style="position:fixed;top:16px;right:20px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:18px;cursor:pointer;padding:4px 12px;font-family:var(--font);">✕ close</button>
+  <button onclick="event.stopPropagation();lbPrev()" style="position:fixed;left:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:22px;cursor:pointer;padding:8px 14px;font-family:var(--font);">◀</button>
+  <button onclick="event.stopPropagation();lbNext()" style="position:fixed;right:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:22px;cursor:pointer;padding:8px 14px;font-family:var(--font);">▶</button>
 </div>
 
 <!-- SNAKE -->
