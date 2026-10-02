@@ -359,16 +359,57 @@ a{color:inherit;text-decoration:none;}
   .music-radio-panel{min-height:150px;}
 }
 @media(max-width:520px){
-  .music-main-grid{grid-template-columns:1fr;}
-  .music-playlist-pane{max-height:130px;}
-  .music-now-top{grid-template-columns:78px minmax(0,1fr);}
-  .music-viz-wrap{height:96px;min-height:96px;}
-  .music-controls{margin-top:7px;}
-  .music-ctl{width:34px;height:34px;}
-  .music-ctl.main{width:45px;height:45px;}
-  .music-track-head,.music-track-row{grid-template-columns:26px minmax(130px,1fr);}
-  .music-track-head>div:nth-child(3),.music-track-row>div:nth-child(3){display:none;}
+  #music-win{height:82dvh!important;top:2vh!important;}
+  .music-toolbar{height:34px;}
+  .music-tab{padding:0 10px;font-size:10px;}
+  .music-view{padding:6px;}
+
+  /* Compress the decorative player chrome so the actual music gets the screen. */
+  .music-now-top{grid-template-columns:64px minmax(0,1fr);gap:8px;min-height:72px;}
+  .music-cover-card{padding:3px;align-self:start;}
+  .music-now-info{padding:3px 2px;}
+  .music-kicker{font-size:9px;margin-bottom:3px;}
+  .music-title{font-size:16px;}
+  .music-artist{font-size:12px;margin-top:2px;}
+  .music-album{font-size:10px;margin-top:1px;}
+  .music-progress-meta{margin-top:6px;font-size:9px;}
+  .music-progress{height:6px;margin-top:2px;}
+  .music-viz-wrap{height:58px;min-height:58px;margin-top:1px;}
+  .music-viz-label{font-size:8px;top:5px;right:6px;}
+
+  .music-controls{height:48px;margin-top:5px;gap:8px;}
+  .music-ctl{width:30px;height:30px;font-size:13px;}
+  .music-ctl.small{width:27px;height:27px;font-size:11px;}
+  .music-ctl.main{width:39px;height:39px;font-size:18px;}
+
+  /* Playlists become a horizontal picker instead of consuming a whole pane. */
+  .music-main-grid{display:flex;flex-direction:column;gap:5px;min-height:0;margin-top:5px;}
+  .music-playlist-pane{flex:0 0 46px;max-height:46px;display:block;overflow-x:auto;overflow-y:hidden;white-space:nowrap;}
+  .music-pane-head,.music-profile-link{display:none!important;}
+  #music-playlist-sidebar{display:flex;height:100%;}
+  .music-pl-row{display:flex;grid-template-columns:none;gap:5px;align-items:center;min-width:max-content;height:100%;padding:5px 9px;border-bottom:0;border-right:1px solid rgba(255,255,255,.06);}
+  .music-pl-dot{width:18px;height:18px;flex:0 0 18px;}
+  .music-pl-name{max-width:130px;font-size:11px;}
+
+  /* The track list owns the remaining vertical space. */
+  .music-tracks{flex:1;min-height:150px;overflow-y:auto;}
+  .music-track-head,.music-track-row{grid-template-columns:26px minmax(0,1fr);}
+  .music-track-head>div:nth-child(3),.music-track-row>div:nth-child(3),
+  .music-track-head>div:nth-child(4),.music-track-row>div:nth-child(4){display:none;}
+  .music-track-head>div,.music-track-row>div{padding:7px 7px;}
+  .music-track-row{font-size:11px;}
+
+  .music-status{height:24px;font-size:9px;padding:0 6px;overflow:hidden;}
+  .music-status #music-status-copy{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .music-status .spotify-state{font-size:9px;}
+  .music-status .spotify-state>span:not(.music-status-dot){display:none;}
+  .music-status .spotify-state .music-follow{display:inline;}
+
   .music-library-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+  .music-library-head{height:22px;padding-bottom:4px;font-size:9px;}
+  .music-card{padding:7px;}
+  .music-card-title{font-size:12px;}
+  .music-card-sub{font-size:9px;}
 }
 
 /* ── CALENDAR ── */
@@ -2826,6 +2867,20 @@ function musicShuffleTrack(){
 function musicEnsureSpotifyEmbed(){
   if(spotifyEmbedController||spotifyEmbedLoading)return;
   spotifyEmbedLoading=true;
+
+  var embedHost=document.getElementById('spotify-embed-controller');
+  if(embedHost&&!embedHost._spotifyPermissionObserver){
+    var applySpotifyPermissions=function(){
+      var iframe=embedHost.querySelector('iframe');
+      if(!iframe)return;
+      iframe.setAttribute('allow','autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
+      iframe.setAttribute('allowfullscreen','');
+    };
+    var observer=new MutationObserver(applySpotifyPermissions);
+    observer.observe(embedHost,{childList:true,subtree:true});
+    embedHost._spotifyPermissionObserver=observer;
+    applySpotifyPermissions();
+  }
 
   window.onSpotifyIframeApiReady=function(IFrameAPI){
     var element=document.getElementById('spotify-embed-controller');
