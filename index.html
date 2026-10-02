@@ -58,8 +58,10 @@ a{color:inherit;text-decoration:none;}
 #sticky{position:absolute;top:12px;right:16px;width:160px;background:#fef08a;border:1px solid #d4c44a;padding:10px 12px;font-family:var(--font);font-size:15px;color:#4a3a10;line-height:1.5;z-index:15;box-shadow:2px 3px 8px rgba(0,0,0,.15);transform:rotate(1.2deg);cursor:default;user-select:none;}
 #sticky::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:rgba(0,0,0,.06);}
 #sticky .sticky-title{font-size:12px;color:#8a7a20;margin-bottom:4px;letter-spacing:.05em;}
-#sticky.first-visit{cursor:pointer;}
+#sticky.first-visit,#sticky.is-actionable{cursor:pointer;}
 #sticky.first-visit #sticky-msg{text-decoration:none;}
+#sticky .sticky-cta{white-space:nowrap;}
+#sticky.is-actionable:hover{transform:rotate(1.2deg) translateY(-1px);box-shadow:2px 5px 10px rgba(0,0,0,.18);}
 @keyframes firstVisitPulse{0%,100%{box-shadow:0 0 0 rgba(255,255,255,0)}50%{box-shadow:0 0 0 3px rgba(255,255,255,.35)}}
 #start-btn.first-visit-pulse{animation:firstVisitPulse .9s ease-in-out 2;}
 .first-visit-toast{position:fixed;left:10px;bottom:42px;z-index:520;background:var(--win);border:2px solid;border-color:#fff var(--border-dark) var(--border-dark) #fff;box-shadow:3px 3px 0 rgba(0,0,0,.25);padding:8px 10px;display:flex;align-items:center;gap:10px;max-width:330px;font-family:var(--font);font-size:12px;color:var(--text);}
@@ -1222,7 +1224,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 <div id="desktop">
 
 <!-- STICKY NOTE -->
-<div id="sticky" onclick="firstVisitOpenStart()">
+<div id="sticky" onclick="handleStickyClick()">
   <div class="sticky-title">📌 NOTE</div>
   <div id="sticky-msg">welcome — click around and explore</div>
 </div>
@@ -1981,13 +1983,55 @@ function drawSky(){
 setInterval(drawSky,50);drawSky();
 
 // ── STICKY NOTE ROTATION ──
-var STICKY_MSGS=['welcome. click around.','first time here? Start →','ask eve about the work →','open archive.exe to browse 10 years','leave a note if something lands','built with claude. no templates.','check back — always changing','snake.exe has a global leaderboard'];
+var STICKY_MSGS=[
+  {html:'welcome. click around.',action:null},
+  {html:'first time here? <span class="sticky-cta">Start →</span>',action:'start'},
+  {html:'ask eve about the <span class="sticky-cta">work →</span>',action:'eve'},
+  {html:'open archive.exe to browse <span class="sticky-cta">10 years →</span>',action:'archive'},
+  {html:'leave a note if <span class="sticky-cta">something lands →</span>',action:'note'},
+  {html:'built with claude. no templates.',action:null},
+  {html:'check back — always changing',action:null},
+  {html:'snake.exe has a <span class="sticky-cta">global leaderboard →</span>',action:'snake'}
+];
 var stickyIdx=0;
+var stickyAction=null;
+
+function setStickyMessage(item){
+  var el=document.getElementById('sticky-msg');
+  var sticky=document.getElementById('sticky');
+  if(!el||!sticky)return;
+  stickyAction=item.action||null;
+  el.innerHTML=item.html;
+  sticky.classList.toggle('is-actionable',!!stickyAction);
+}
+
 function rotateStickyNote(){
+  if(firstVisitActive)return;
   stickyIdx=(stickyIdx+1)%STICKY_MSGS.length;
   var el=document.getElementById('sticky-msg');
-  if(el){el.style.opacity=0;setTimeout(function(){el.textContent=STICKY_MSGS[stickyIdx];el.style.opacity=1;},300);}
+  if(el){
+    el.style.opacity=0;
+    setTimeout(function(){
+      setStickyMessage(STICKY_MSGS[stickyIdx]);
+      el.style.opacity=1;
+    },300);
+  }
 }
+
+function handleStickyClick(){
+  if(firstVisitActive){
+    toggleStart();
+    firstVisitMarkSeen();
+    return;
+  }
+  if(!stickyAction)return;
+  if(stickyAction==='start'){toggleStart();return;}
+  if(stickyAction==='eve'){closeAll();openWin('chat-win');return;}
+  if(stickyAction==='archive'){closeAll();openWin('arc-win');return;}
+  if(stickyAction==='note'){closeAll();openWin('note-form-win');return;}
+  if(stickyAction==='snake'){closeAll();openWin('snake-win');return;}
+}
+
 document.getElementById('sticky-msg').style.transition='opacity .3s';
 setInterval(rotateStickyNote,5000);
 
@@ -2006,7 +2050,10 @@ function firstVisitMarkSeen(){
   var sticky=document.getElementById('sticky');
   var start=document.getElementById('start-btn');
   var toast=document.getElementById('first-visit-toast');
-  if(sticky)sticky.classList.remove('first-visit');
+  if(sticky){
+    sticky.classList.remove('first-visit');
+    setStickyMessage(STICKY_MSGS[stickyIdx]);
+  }
   if(start)start.classList.remove('first-visit-pulse');
   if(toast)toast.remove();
 }
@@ -2040,14 +2087,18 @@ function initFirstVisit(){
   firstVisitActive=true;
   var sticky=document.getElementById('sticky');
   var msg=document.getElementById('sticky-msg');
-  if(sticky)sticky.classList.add('first-visit');
-  if(msg)msg.innerHTML='welcome to the lab.<br>this is ivonne\'s personal OS.<br><strong>start anywhere →</strong>';
+  if(sticky){
+    sticky.classList.add('first-visit');
+    sticky.classList.add('is-actionable');
+  }
+  stickyAction='start';
+  if(msg)msg.innerHTML='welcome to the lab.<br>this is ivonne\'s personal OS.<br><strong class="sticky-cta">start anywhere →</strong>';
 
   firstVisitTimers.push(setTimeout(function(){
     if(!firstVisitActive)return;
     var start=document.getElementById('start-btn');
     if(start)start.classList.add('first-visit-pulse');
-    if(msg)msg.innerHTML='welcome to the lab.<br><strong>psst — try Start.</strong>';
+    if(msg)msg.innerHTML='welcome to the lab.<br><strong class="sticky-cta">psst — try Start →</strong>';
   },5500));
 
   firstVisitTimers.push(setTimeout(firstVisitToast,18000));
