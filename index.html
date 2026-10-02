@@ -1247,7 +1247,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
           <div id="music-now-title" class="music-title">Self Aware</div>
           <div id="music-now-artist" class="music-artist">Temper City</div>
           <div id="music-now-album" class="music-album">playlist: ...</div>
-          <div class="music-progress-meta"><span>1:22</span><span>-0:55</span></div>
+          <div class="music-progress-meta"><span id="music-progress-left">1:22</span><span id="music-progress-right">-0:55</span></div>
           <div class="music-progress"><span></span></div>
         </div>
         <div class="music-viz-wrap">
@@ -2466,6 +2466,294 @@ async function sendMessage(){
     btn.disabled=false;
     inp.focus();
   }
+}
+
+// ── MUSIC.EXE ──
+// Playlist names are intentionally kept exactly as they appear on Ivonne's
+// public Spotify profile. The first playlist is the existing embedded playlist;
+// the others remain discoverable here and link back to the public profile until
+// their individual Spotify IDs are wired in.
+var MUSIC_PLAYLISTS=[
+  {
+    name:'...',
+    cover:'linear-gradient(135deg,#4b164f 0%,#e62857 25%,#ff972f 48%,#b52185 68%,#11164c 100%)',
+    url:'https://open.spotify.com/playlist/3MJORK5D5v7d5cSG1Cte6a',
+    current:{title:'Self Aware',artist:'Temper City'},
+    tracks:[
+      {title:'Self Aware',artist:'Temper City'},
+      {title:'505',artist:'Arctic Monkeys'},
+      {title:'Cigarette Daydreams',artist:'Cage The Elephant'},
+      {title:'We Are The People',artist:'Empire of the Sun'}
+    ]
+  },
+  {
+    name:'drift',
+    cover:'linear-gradient(180deg,#172d4a 0%,#405d70 43%,#d38d45 62%,#201a26 100%)',
+    url:'https://open.spotify.com/user/ivonnealdaz',
+    current:null,
+    tracks:[]
+  },
+  {
+    name:'another lifetime',
+    cover:'linear-gradient(135deg,#080d31 0%,#11152c 35%,#7c161b 67%,#f24c1d 82%,#f5b76d 100%)',
+    url:'https://open.spotify.com/user/ivonnealdaz',
+    current:null,
+    tracks:[]
+  },
+  {
+    name:'soft static',
+    cover:'radial-gradient(circle at 63% 63%,#f81b3f 0%,#e90055 17%,transparent 33%),radial-gradient(circle at 35% 45%,#12d8e4 0%,#056c9b 21%,transparent 36%),#050918',
+    url:'https://open.spotify.com/user/ivonnealdaz',
+    current:null,
+    tracks:[]
+  },
+  {
+    name:'permanent rotation',
+    cover:'linear-gradient(145deg,#021308 0%,#08150e 37%,#d1118d 58%,#ff396e 73%,#f4692f 100%)',
+    url:'https://open.spotify.com/user/ivonnealdaz',
+    current:null,
+    tracks:[]
+  }
+];
+
+var musicSelected=0;
+var musicReady=false;
+var musicVizMode=0;
+var musicVizStarted=false;
+var musicVizTick=0;
+
+function musicInit(){
+  if(!musicReady){
+    musicRenderAll();
+    musicReady=true;
+  }
+  setTimeout(function(){
+    musicStartVisualizers();
+  },40);
+}
+
+function musicRenderAll(){
+  musicRenderSidebar();
+  musicRenderLibrary();
+  musicRenderPlaylistList();
+  musicSelectPlaylist(musicSelected,false);
+}
+
+function musicRenderSidebar(){
+  var el=document.getElementById('music-playlist-sidebar');if(!el)return;
+  el.innerHTML=MUSIC_PLAYLISTS.map(function(p,i){
+    return '<div class="music-pl-row'+(i===musicSelected?' active':'')+'" data-music-name="'+labEsc(p.name.toLowerCase())+'" onclick="musicSelectPlaylist('+i+',true)">'+
+      '<span class="music-pl-dot" style="background:'+p.cover+'"></span>'+
+      '<span class="music-pl-name">'+labEsc(p.name)+'</span>'+
+    '</div>';
+  }).join('');
+}
+
+function musicRenderLibrary(){
+  var el=document.getElementById('music-library-grid');if(!el)return;
+  el.innerHTML=MUSIC_PLAYLISTS.map(function(p,i){
+    return '<div class="music-card" data-music-name="'+labEsc(p.name.toLowerCase())+'" onclick="musicSelectPlaylist('+i+',true);musicTab(\'now\')">'+
+      '<div class="music-card-cover" style="background:'+p.cover+'"></div>'+
+      '<div class="music-card-title">'+labEsc(p.name)+'</div>'+
+      '<div class="music-card-sub">public playlist · Ivonne Aldaz</div>'+
+    '</div>';
+  }).join('');
+}
+
+function musicRenderPlaylistList(){
+  var el=document.getElementById('music-playlists-list');if(!el)return;
+  el.innerHTML=MUSIC_PLAYLISTS.map(function(p,i){
+    return '<div class="music-list-row" data-music-name="'+labEsc(p.name.toLowerCase())+'" onclick="musicSelectPlaylist('+i+',true);musicTab(\'now\')">'+
+      '<div class="music-list-cover" style="background:'+p.cover+'"></div>'+
+      '<div><div class="music-list-name">'+labEsc(p.name)+'</div><div class="music-list-meta">public playlist · Ivonne Aldaz</div></div>'+
+      '<div class="music-list-action">open →</div>'+
+    '</div>';
+  }).join('');
+}
+
+function musicRenderTracks(){
+  var p=MUSIC_PLAYLISTS[musicSelected];
+  var el=document.getElementById('music-track-list');if(!el||!p)return;
+
+  if(!p.tracks||!p.tracks.length){
+    el.innerHTML='<div class="music-track-empty">'+
+      'playlist selected: <strong style="color:#fff;">'+labEsc(p.name)+'</strong><br>'+
+      'the full track list lives on Spotify for now.<br><br>'+
+      '<a href="'+labEsc(p.url)+'" target="_blank">open on Spotify ↗</a>'+
+    '</div>';
+    return;
+  }
+
+  el.innerHTML=p.tracks.map(function(t,i){
+    return '<div class="music-track-row'+(i===0?' active':'')+'" onclick="musicOpenSelected()">'+
+      '<div class="music-track-num">'+(i===0?'▮▮':(i+1))+'</div>'+
+      '<div>'+labEsc(t.title)+'</div>'+
+      '<div>'+labEsc(t.artist)+'</div>'+
+      '<div>'+labEsc(p.name)+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function musicSelectPlaylist(index,focusWindow){
+  index=(index+MUSIC_PLAYLISTS.length)%MUSIC_PLAYLISTS.length;
+  musicSelected=index;
+  var p=MUSIC_PLAYLISTS[index];
+  if(!p)return;
+
+  document.querySelectorAll('.music-pl-row').forEach(function(row,i){row.classList.toggle('active',i===index);});
+
+  var cover=document.getElementById('music-cover');
+  var title=document.getElementById('music-now-title');
+  var artist=document.getElementById('music-now-artist');
+  var album=document.getElementById('music-now-album');
+  var left=document.getElementById('music-progress-left');
+  var right=document.getElementById('music-progress-right');
+  var status=document.getElementById('music-status-copy');
+
+  if(cover)cover.style.background=p.cover;
+  if(p.current){
+    if(title)title.textContent=p.current.title;
+    if(artist)artist.textContent=p.current.artist;
+    if(album)album.textContent='playlist: '+p.name;
+    if(left)left.textContent='1:22';
+    if(right)right.textContent='-0:55';
+  }else{
+    if(title)title.textContent=p.name;
+    if(artist)artist.textContent='Ivonne Aldaz';
+    if(album)album.textContent='public playlist';
+    if(left)left.textContent='playlist';
+    if(right)right.textContent='Spotify ↗';
+  }
+  if(status)status.textContent='playlist: '+p.name;
+  musicRenderTracks();
+
+  if(focusWindow)focusWin('music-win');
+}
+
+function musicStep(delta){
+  musicSelectPlaylist(musicSelected+delta,true);
+}
+
+function musicRandomPlaylist(){
+  if(MUSIC_PLAYLISTS.length<2)return;
+  var next=musicSelected;
+  while(next===musicSelected)next=Math.floor(Math.random()*MUSIC_PLAYLISTS.length);
+  musicSelectPlaylist(next,true);
+}
+
+function musicOpenSelected(){
+  var p=MUSIC_PLAYLISTS[musicSelected];
+  if(!p)return;
+  window.open(p.url,'_blank');
+  if(typeof gtag!=='undefined')gtag('event','music_spotify_open',{playlist:p.name});
+}
+
+function musicTab(name,btn){
+  document.querySelectorAll('.music-tab').forEach(function(b){b.classList.toggle('active',b.dataset.musicTab===name);});
+  document.querySelectorAll('.music-view').forEach(function(v){v.classList.remove('active');});
+  var view=document.getElementById('music-view-'+name);if(view)view.classList.add('active');
+  if(name==='radio')setTimeout(musicStartVisualizers,30);
+}
+
+function musicFilter(value){
+  var q=(value||'').toLowerCase().trim();
+  document.querySelectorAll('[data-music-name]').forEach(function(el){
+    el.style.display=!q||el.dataset.musicName.indexOf(q)!==-1?'':'none';
+  });
+}
+
+function musicRadioShuffle(){
+  musicRandomPlaylist();
+  var p=MUSIC_PLAYLISTS[musicSelected];
+  var t=document.getElementById('music-radio-title');if(t)t.textContent=p.name;
+  musicVizMode=(musicVizMode+1)%3;
+}
+
+function musicCycleViz(){
+  musicVizMode=(musicVizMode+1)%3;
+}
+
+function musicStartVisualizers(){
+  if(musicVizStarted)return;
+  musicVizStarted=true;
+  requestAnimationFrame(musicDrawVisualizers);
+}
+
+function musicFitCanvas(canvas){
+  if(!canvas)return null;
+  var rect=canvas.getBoundingClientRect();
+  if(rect.width<2||rect.height<2)return null;
+  var dpr=Math.min(window.devicePixelRatio||1,2);
+  var w=Math.round(rect.width*dpr),h=Math.round(rect.height*dpr);
+  if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+  var ctx=canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:rect.width,h:rect.height};
+}
+
+function musicDrawOne(canvas,t,offset){
+  var fit=musicFitCanvas(canvas);if(!fit)return;
+  var ctx=fit.ctx,w=fit.w,h=fit.h;
+  ctx.clearRect(0,0,w,h);
+
+  var grad=ctx.createLinearGradient(0,0,w,h);
+  grad.addColorStop(0,'#070917');
+  grad.addColorStop(.42,'#20102a');
+  grad.addColorStop(1,'#09080f');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+
+  // faint CRT / grid
+  ctx.strokeStyle='rgba(110,160,255,.08)';ctx.lineWidth=1;
+  for(var gx=0;gx<w;gx+=18){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,h);ctx.stroke();}
+  for(var gy=0;gy<h;gy+=18){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(w,gy);ctx.stroke();}
+
+  if(musicVizMode===1){
+    for(var i=0;i<52;i++){
+      var x=(i*37+t*22+offset*41)%w;
+      var y=h/2+Math.sin(i*.73+t*1.1+offset)*h*.28;
+      var r=1.5+(i%5)*.55;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle=i%3===0?'rgba(255,54,135,.72)':(i%3===1?'rgba(93,198,255,.7)':'rgba(184,87,255,.65)');
+      ctx.fill();
+    }
+  }else if(musicVizMode===2){
+    var bars=Math.max(18,Math.floor(w/18));
+    for(var b=0;b<bars;b++){
+      var bh=(.2+.8*Math.abs(Math.sin(t*1.7+b*.52+offset)))*h*.72;
+      var bg=ctx.createLinearGradient(0,h-bh,0,h);
+      bg.addColorStop(0,'rgba(255,51,151,.75)');
+      bg.addColorStop(.55,'rgba(110,71,255,.72)');
+      bg.addColorStop(1,'rgba(52,184,255,.55)');
+      ctx.fillStyle=bg;
+      ctx.fillRect(b*(w/bars)+3,h-bh,Math.max(4,w/bars-6),bh);
+    }
+  }else{
+    var colors=['rgba(255,39,132,.78)','rgba(192,67,255,.65)','rgba(69,192,255,.68)'];
+    colors.forEach(function(color,line){
+      ctx.beginPath();
+      for(var x=0;x<=w;x+=4){
+        var y=h*.5+
+          Math.sin(x*.018+t*(1.2+line*.12)+line*1.7+offset)*h*(.11+line*.025)+
+          Math.sin(x*.051-t*.55+line)*h*.035;
+        if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle=color;ctx.lineWidth=2+line*.4;ctx.shadowBlur=12;ctx.shadowColor=color;ctx.stroke();ctx.shadowBlur=0;
+    });
+  }
+
+  // subtle scan lines
+  ctx.fillStyle='rgba(255,255,255,.018)';
+  for(var sy=0;sy<h;sy+=4)ctx.fillRect(0,sy,w,1);
+}
+
+function musicDrawVisualizers(ts){
+  musicVizTick=ts/1000;
+  var win=document.getElementById('music-win');
+  if(win&&win.style.display!=='none'){
+    musicDrawOne(document.getElementById('music-viz'),musicVizTick,0);
+    musicDrawOne(document.getElementById('music-radio-viz'),musicVizTick,.9);
+  }
+  requestAnimationFrame(musicDrawVisualizers);
 }
 
 // ── BROWSER ──
