@@ -356,6 +356,67 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 .si{font-size:15px;padding:4px 16px 4px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);white-space:nowrap;}
 .si:hover{background:var(--tbar1);color:#fff;}
 
+/* ── LAB SEARCH ── */
+#tb-search-btn{
+  width:218px;height:26px;display:flex;align-items:center;gap:7px;
+  background:#f5f2ed;border:2px solid;
+  border-color:var(--border-dark) #fff #fff var(--border-dark);
+  padding:1px 7px;font-family:var(--font);font-size:13px;color:var(--dim);
+  cursor:text;flex-shrink:0;text-align:left;
+}
+#tb-search-btn:hover{background:#fff;color:var(--text);}
+#tb-search-btn .tb-search-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#tb-search-btn .tb-search-key{margin-left:auto;color:var(--dimmer);font-size:11px;white-space:nowrap;}
+
+.lab-search-shell{display:flex;flex-direction:column;height:100%;background:var(--win);}
+.lab-search-input-wrap{
+  margin:12px 14px 7px;display:flex;align-items:center;gap:8px;
+  background:#fff;border:2px solid;border-color:var(--border-dark) #fff #fff var(--border-dark);
+  padding:7px 9px;
+}
+.lab-search-prompt{font-size:20px;color:var(--navy);line-height:1;}
+#lab-search-input{
+  flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--text);
+  font-family:var(--font);font-size:20px;caret-color:var(--navy);
+}
+#lab-search-input::placeholder{color:var(--dimmer);}
+.lab-search-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 15px 7px;font-size:11px;color:var(--dim);min-height:20px;
+}
+#lab-search-results{flex:1;min-height:0;overflow-y:auto;padding:0 8px 8px;}
+.lab-search-section{
+  padding:5px 7px 4px;font-size:11px;color:var(--dim);
+  text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border);
+}
+.lab-search-row{
+  display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center;
+  padding:7px 8px;border-bottom:1px solid rgba(176,168,152,.45);cursor:pointer;
+  font-family:var(--font);
+}
+.lab-search-row:hover,.lab-search-row.active{background:var(--tbar1);color:#fff;}
+.lab-search-row.active .lab-search-sub,
+.lab-search-row:hover .lab-search-sub,
+.lab-search-row.active .lab-search-source,
+.lab-search-row:hover .lab-search-source{color:rgba(255,255,255,.72);}
+.lab-search-icon{font-size:18px;text-align:center;}
+.lab-search-main{min-width:0;}
+.lab-search-title{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lab-search-sub{font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.lab-search-source{font-size:10px;color:var(--dim);white-space:nowrap;padding-left:8px;}
+.lab-search-empty{padding:18px 14px;color:var(--dim);font-size:13px;line-height:1.5;}
+.lab-search-quick{display:flex;gap:5px;flex-wrap:wrap;padding:8px 14px 11px;border-top:1px solid var(--border);background:var(--win-dark);}
+.lab-search-quick-label{font-size:11px;color:var(--dim);align-self:center;margin-right:2px;text-transform:uppercase;}
+.lab-search-chip{
+  font-family:var(--font);font-size:11px;color:var(--text);background:var(--silver);
+  border:1px solid var(--border);padding:2px 8px;cursor:pointer;
+}
+.lab-search-chip:hover{background:var(--tbar1);color:#fff;}
+.sm-start-title{padding:7px 10px 5px;font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;}
+.sm-search-row{border-bottom:1px solid var(--border);margin-bottom:2px;background:#e8e4de;}
+.sm-search-key{margin-left:auto;color:var(--dim);font-size:11px;}
+.si:hover .sm-search-key{color:#fff;}
+
 /* ── TASKBAR ── */
 #taskbar{height:32px;background:linear-gradient(to bottom,#d4cfc8,#b8b0a8);border-top:2px solid #fff;display:flex;align-items:center;padding:0 2px;gap:2px;position:fixed;bottom:0;left:0;right:0;z-index:500;}
 #start-btn{background:linear-gradient(to bottom,var(--silver),#a8a098);border:2px solid;border-color:#fff var(--border-dark) var(--border-dark) #fff;padding:1px 10px;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:4px;flex-shrink:0;}
@@ -389,6 +450,12 @@ textarea.nf-input{resize:vertical;min-height:70px;}
   /* mobile taskbar: taller, 2-zone */
   #taskbar{height:44px;padding:0 4px;gap:3px;}
   #start-btn{font-size:13px;padding:2px 8px;}
+  #tb-search-btn{width:32px;height:30px;padding:0;justify-content:center;cursor:pointer;}
+  #tb-search-btn .tb-search-label,#tb-search-btn .tb-search-key{display:none;}
+  #search-win{width:96vw!important;height:72vh!important;left:2vw!important;top:6vh!important;transform:none!important;}
+  .lab-search-row{grid-template-columns:26px minmax(0,1fr);padding:8px 7px;}
+  .lab-search-source{grid-column:2;font-size:10px;padding-left:0;margin-top:-5px;}
+  #lab-search-input{font-size:18px;}
   /* show first 4 app icons only */
   #tb-apps .tb-app:nth-child(n+5){display:none;}
   #tb-apps .tb-app{width:30px;height:30px;font-size:17px;}
@@ -1421,6 +1488,34 @@ check back later.</pre></div>
   <div class="resize-corner"></div>
 </div>
 
+<!-- LAB SEARCH -->
+<div class="win off" id="search-win" style="width:min(640px,94vw);height:min(510px,78vh);top:58px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('search-win')">
+  <div class="tbar" onmousedown="dragStart(event,'search-win')">
+    <div class="tbar-title">🔍 search.exe — ivonne lab</div>
+    <div class="tbar-btns">
+      <button class="tbtn" onclick="minWin('search-win')">_</button>
+      <button class="tbtn" onclick="maxWin('search-win')">□</button>
+      <button class="tbtn" onclick="closeWin('search-win')">✕</button>
+    </div>
+  </div>
+  <div class="lab-search-shell">
+    <div class="lab-search-input-wrap">
+      <span class="lab-search-prompt">&gt;</span>
+      <input id="lab-search-input" type="text" autocomplete="off" spellcheck="false"
+        placeholder="search apps, projects, notes, or ask eve"
+        oninput="renderLabSearch()"
+        onkeydown="labSearchKey(event)">
+    </div>
+    <div class="lab-search-meta">
+      <span id="lab-search-status">search the lab</span>
+      <span id="lab-search-shortcut">ESC to close</span>
+    </div>
+    <div id="lab-search-results"></div>
+    <div class="lab-search-quick" id="lab-search-quick"></div>
+  </div>
+  <div class="resize-corner"></div>
+</div>
+
 <!-- BROWSER -->
 <div class="win off" id="browser-win" style="width:min(700px,95vw);height:min(520px,80vh);top:40px;left:50%;transform:translateX(-50%);display:none;" onmousedown="focusWin('browser-win')">
   <div class="tbar" onmousedown="dragStart(event,'browser-win')"><div class="tbar-title">🌐 <span id="browser-title">browser</span></div><div class="tbar-btns"><button class="tbtn" onclick="minWin('browser-win')">_</button><button class="tbtn" onclick="maxWin('browser-win')">□</button><button class="tbtn" onclick="closeWin('browser-win')">✕</button></div></div>
@@ -1467,50 +1562,30 @@ check back later.</pre></div>
   </div>
 </div>
 <div id="smenu">
-  <div class="sm-side"><span>ivonne aldaz</span></div>
+  <div class="sm-side"><span>ivonne lab</span></div>
   <div class="sm-items">
-    <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
-      <span>📁 Programs</span><span class="sm-arrow">▶</span>
-      <div class="sm-sub" style="bottom:auto;top:0;">
-        <div class="si" onclick="openWin('chat-win');closeAll()">🌚 ask_eve.exe</div>
-        <div class="si" onclick="openWin('chat-room-win');closeAll()">💬 chatroom.exe</div>
-        <div class="si" onclick="openWin('snake-win');closeAll()">🐍 snake.exe</div>
-      </div>
+    <div class="sm-start-title">IVONNE LAB</div>
+    <div class="si sm-search-row" onclick="openLabSearch();closeAll()">
+      <span>🔍 Search the lab…</span><span class="sm-search-key" id="sm-search-key">⌘K</span>
     </div>
-    <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
-      <span>🗺️ Explore</span><span class="sm-arrow">▶</span>
-      <div class="sm-sub" style="bottom:auto;top:0;">
-        <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ archive.exe</div>
-        <div class="si" onclick="openWin('ventures-win');closeAll()">📁 ventures</div>
-        <div class="si" onclick="openWin('notes-win');closeAll()">📓 notes.app</div>
-        <div class="si" onclick="openWin('photos-win');closeAll()">📷 photos.exe</div>
-        <a class="si" href="https://ivonnealdaz.com/gallery" target="_blank" onclick="closeAll()">🎨 gallery.exe</a>
-      </div>
-    </div>
-    <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
-      <span>🔗 Connect</span><span class="sm-arrow">▶</span>
-      <div class="sm-sub" style="bottom:auto;top:0;">
-        <div class="si" onclick="openWin('soc-win');closeAll()">🌐 socials</div>
-        <a class="si" href="mailto:hello@ivonnealdaz.com" onclick="closeAll()">📧 contact</a>
-        <div class="si" onclick="openWin('note-form-win');closeAll()">✉️ leave a note</div>
-        <div class="si" onclick="openWin('work-win');closeAll()">📋 work with me</div>
-      </div>
-    </div>
-    <div class="sm-cat" onmouseenter="openSmCat(this)" onclick="toggleSmCat(this)">
-      <span>ℹ️ About</span><span class="sm-arrow">▶</span>
-      <div class="sm-sub" style="bottom:auto;top:0;">
-        <div class="si" onclick="openWin('about-win');closeAll()">📄 about.txt</div>
-        <a class="si" href="https://ivonnealdaz.com" target="_blank" onclick="closeAll()">👤 ivonnealdaz.com</a>
-      </div>
-    </div>
+    <div class="si" onclick="openWin('chat-win');closeAll()">🌚 Ask Eve</div>
+    <div class="si" onclick="openWin('arc-win');closeAll()">🗂️ Archive</div>
+    <div class="si" onclick="openWin('notes-win');closeAll()">📓 Notes</div>
+    <div class="si" onclick="openWin('photos-win');closeAll()">📷 Photos</div>
+    <div class="si" onclick="openWin('work-win');closeAll()">📋 Work With Me</div>
     <div class="sm-div"></div>
-    <a class="si" href="/" style="padding-left:12px;" onclick="closeAll()">🏠 exit to lab</a>
+    <div class="si" onclick="surpriseMe();closeAll()">✦ Surprise me</div>
+    <div class="si" onclick="openWin('note-form-win');closeAll()">✉️ Leave a note</div>
+    <div class="si" onclick="openWin('about-win');closeAll()">📄 About the Lab</div>
   </div>
 </div>
 
 <!-- TASKBAR -->
 <div id="taskbar">
   <button id="start-btn" onclick="toggleStart()">🪟 Start</button>
+  <button id="tb-search-btn" onclick="openLabSearch()" title="Search the Lab">
+    <span>🔍</span><span class="tb-search-label">Search the lab…</span><span class="tb-search-key" id="tb-search-key">⌘K</span>
+  </button>
   <div class="tb-sep"></div>
   <div id="tb-apps">
     <div class="tb-app" onclick="toggleWin('chat-win')" title="Ask Eve">🌚</div>
@@ -1535,6 +1610,7 @@ check back later.</pre></div>
 </div>
 
 <script src="archive-content.js?v=20261001c"></script>
+<script src="search-index.js?v=20261001"></script>
 <script>
 var SB='https://ploijdxywrajyycemmua.supabase.co';
 var SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsb2lqZHh5d3Jhanl5Y2VtbXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjQwMzgsImV4cCI6MjA5NDcwMDAzOH0.m9ggHCLfINex_Wj8GL381PFjU-Eu7aovaNF001PqaQs';
@@ -1666,7 +1742,7 @@ function openWin(id){
     if(cf)cf.src='https://chat.ivonnealdaz.com?embedded=1&t='+Date.now();
   }
   if(typeof gtag==='function'){
-    var gaMap={'chat-win':'ask_eve','notes-win':'notes','arc-win':'archive','snake-win':'snake','photos-win':'photos','ventures-win':'ventures','note-form-win':'leave_a_note','about-win':'about','work-win':'work_with_me','chat-room-win':'chatroom','soc-win':'socials','music-win':'music'};
+    var gaMap={'chat-win':'ask_eve','notes-win':'notes','arc-win':'archive','snake-win':'snake','photos-win':'photos','ventures-win':'ventures','note-form-win':'leave_a_note','about-win':'about','work-win':'work_with_me','chat-room-win':'chatroom','soc-win':'socials','music-win':'music','search-win':'search'};
     if(gaMap[id])gtag('event','open_window',{window_id:id,window_name:gaMap[id]});
   }
 }
@@ -1774,6 +1850,301 @@ function toggleStart(){var m=document.getElementById('smenu'),b=document.getElem
 function toggleMenu(el){var was=el.classList.contains('open');document.querySelectorAll('.mi.open').forEach(function(m){m.classList.remove('open');});if(!was){el.classList.add('open');document.getElementById('overlay').classList.add('on');}else document.getElementById('overlay').classList.remove('on');}
 function closeAll(){document.querySelectorAll('.mi.open').forEach(function(m){m.classList.remove('open');});document.getElementById('smenu').classList.remove('open');document.getElementById('overlay').classList.remove('on');}
 document.getElementById('taskbar').addEventListener('touchend',function(e){var app=e.target.closest('.tb-app');if(app){e.preventDefault();app.click();return;}var sb=e.target.closest('#start-btn');if(sb){e.preventDefault();toggleStart();}},{passive:false});
+
+// ── SEARCH THE LAB ──
+var labSearchResults=[];
+var labSearchActive=0;
+
+function labNorm(v){
+  return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+}
+function labEsc(v){
+  return String(v||'').replace(/[&<>"']/g,function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+  });
+}
+function labExpandedTerms(query){
+  var q=labNorm(query),terms=q.split(/\s+/).filter(Boolean),expanded=terms.slice();
+  if(typeof LAB_SEARCH_ALIASES!=='undefined'){
+    Object.keys(LAB_SEARCH_ALIASES).forEach(function(key){
+      var nk=labNorm(key);
+      if(q.indexOf(nk)!==-1){
+        LAB_SEARCH_ALIASES[key].forEach(function(alias){
+          var na=labNorm(alias);
+          if(na&&expanded.indexOf(na)===-1)expanded.push(na);
+        });
+      }
+    });
+  }
+  return expanded;
+}
+function buildLabSearchIndex(){
+  var items=(typeof LAB_SEARCH_ITEMS!=='undefined'?LAB_SEARCH_ITEMS:[]).map(function(x){return Object.assign({},x);});
+
+  if(typeof ARC_DATA!=='undefined'){
+    ARC_DATA.forEach(function(e,i){
+      var extra=(typeof LAB_ARCHIVE_KEYWORDS!=='undefined'&&LAB_ARCHIVE_KEYWORDS[e.title])||[];
+      items.push({
+        id:'archive-'+i,
+        title:e.title,
+        subtitle:e.desc||'',
+        source:'archive.exe',
+        type:'archive',
+        icon:e.icon||'📄',
+        keywords:[].concat(e.tags||[],[e.type||'',e.date||''],extra),
+        action:{kind:'archiveEntry',index:i}
+      });
+    });
+  }
+
+  if(typeof NOTES!=='undefined'){
+    Object.keys(NOTES).forEach(function(cat){
+      (NOTES[cat]||[]).forEach(function(n,i){
+        var catWords=(typeof LAB_NOTE_KEYWORDS!=='undefined'&&LAB_NOTE_KEYWORDS[cat])||[];
+        items.push({
+          id:'note-'+cat+'-'+i,
+          title:n.t,
+          subtitle:(n.c||'').split('\n')[0].slice(0,90),
+          source:'notes.app / '+cat,
+          type:'note',
+          icon:'📝',
+          keywords:[cat,n.d||'',n.c||''].concat(catWords),
+          action:{kind:'note',cat:cat,index:i}
+        });
+      });
+    });
+  }
+
+  return items;
+}
+function scoreLabSearchItem(item,query){
+  var q=labNorm(query);
+  if(!q)return 0;
+
+  var title=labNorm(item.title);
+  var subtitle=labNorm(item.subtitle);
+  var source=labNorm(item.source);
+  var keywords=labNorm((item.keywords||[]).join(' '));
+  var hay=[title,subtitle,source,keywords].join(' ');
+  var words=q.split(/\s+/).filter(Boolean);
+  var expanded=labExpandedTerms(query);
+  var score=0;
+
+  if(title===q)score+=220;
+  else if(title.indexOf(q)===0)score+=150;
+  else if(title.indexOf(q)!==-1)score+=110;
+
+  if(source===q)score+=90;
+  else if(source.indexOf(q)!==-1)score+=45;
+  if(keywords.indexOf(q)!==-1)score+=65;
+  if(subtitle.indexOf(q)!==-1)score+=40;
+
+  var allWords=true;
+  words.forEach(function(w){
+    if(title.split(' ').indexOf(w)!==-1)score+=35;
+    else if(title.indexOf(w)!==-1)score+=24;
+    else if(keywords.indexOf(w)!==-1)score+=16;
+    else if(subtitle.indexOf(w)!==-1)score+=10;
+    else if(source.indexOf(w)!==-1)score+=8;
+    else allWords=false;
+  });
+  if(allWords&&words.length>1)score+=35;
+
+  expanded.forEach(function(term){
+    if(term===q)return;
+    if(title.indexOf(term)!==-1)score+=7;
+    else if(keywords.indexOf(term)!==-1)score+=5;
+    else if(subtitle.indexOf(term)!==-1)score+=3;
+  });
+
+  return score;
+}
+function getLabSearchResults(query){
+  return buildLabSearchIndex()
+    .map(function(item){return {item:item,score:scoreLabSearchItem(item,query)};})
+    .filter(function(x){return x.score>0;})
+    .sort(function(a,b){return b.score-a.score || a.item.title.localeCompare(b.item.title);})
+    .slice(0,9)
+    .map(function(x){return x.item;});
+}
+function openLabSearch(prefill){
+  closeAll();
+  openWin('search-win');
+  var inp=document.getElementById('lab-search-input');
+  if(inp){
+    inp.value=prefill||'';
+    renderLabSearch();
+    setTimeout(function(){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);},30);
+  }
+  if(typeof gtag!=='undefined')gtag('event','lab_search_open');
+}
+function closeLabSearch(){
+  closeWin('search-win');
+}
+function renderLabSearch(){
+  var inp=document.getElementById('lab-search-input');
+  var out=document.getElementById('lab-search-results');
+  var status=document.getElementById('lab-search-status');
+  var quick=document.getElementById('lab-search-quick');
+  if(!inp||!out)return;
+
+  var q=inp.value.trim();
+  labSearchActive=0;
+
+  if(quick){
+    var terms=(typeof LAB_SEARCH_QUICK_TERMS!=='undefined'?LAB_SEARCH_QUICK_TERMS:['ai','art','research','travel']);
+    quick.innerHTML='<span class="lab-search-quick-label">try:</span>'+terms.map(function(t){
+      return '<button class="lab-search-chip" onclick="setLabSearchQuery(\''+t.replace(/'/g,"\\'")+'\')">'+labEsc(t)+'</button>';
+    }).join('');
+  }
+
+  if(!q){
+    var defaults=buildLabSearchIndex().filter(function(item){
+      return ['app-eve','app-archive','app-notes','photos-art','app-work','action-surprise'].indexOf(item.id)!==-1;
+    });
+    labSearchResults=defaults;
+    if(status)status.textContent='find anything in the lab';
+    out.innerHTML='<div class="lab-search-section">quick access</div>'+defaults.map(function(item,i){
+      return labSearchRowHtml(item,i);
+    }).join('');
+    return;
+  }
+
+  var results=getLabSearchResults(q);
+  var eveFallback={
+    id:'ask-eve-search',
+    title:'Ask Eve: “'+q+'”',
+    subtitle:'Get a conversational answer grounded in Ivonne\'s work.',
+    source:'ask_eve.exe',
+    type:'eve',
+    icon:'🌚',
+    keywords:[],
+    action:{kind:'askEve',query:q}
+  };
+
+  // Eve is a fallback, not a substitute for deterministic search results.
+  if(results.length<9)results.push(eveFallback);
+  else results[8]=eveFallback;
+
+  labSearchResults=results;
+  if(status)status.textContent=(results.length-1)+' match'+((results.length-1)!==1?'es':'')+' + ask eve';
+
+  if(results.length===1){
+    out.innerHTML='<div class="lab-search-empty">no direct matches yet.<br>eve can still help you find the thread.</div>'+labSearchRowHtml(eveFallback,0);
+    return;
+  }
+
+  out.innerHTML='<div class="lab-search-section">top matches</div>'+results.map(function(item,i){
+    return labSearchRowHtml(item,i);
+  }).join('');
+}
+function labSearchRowHtml(item,index){
+  return '<div class="lab-search-row'+(index===labSearchActive?' active':'')+'" data-lab-search-index="'+index+'" '+
+    'onmouseenter="setLabSearchActive('+index+')" onclick="runLabSearchAction('+index+')">'+
+    '<div class="lab-search-icon">'+labEsc(item.icon||'📄')+'</div>'+
+    '<div class="lab-search-main"><div class="lab-search-title">'+labEsc(item.title)+'</div>'+
+    '<div class="lab-search-sub">'+labEsc(item.subtitle||'')+'</div></div>'+
+    '<div class="lab-search-source">'+labEsc(item.source||'')+' →</div></div>';
+}
+function setLabSearchActive(index){
+  labSearchActive=Math.max(0,Math.min(index,labSearchResults.length-1));
+  document.querySelectorAll('.lab-search-row').forEach(function(row,i){
+    row.classList.toggle('active',i===labSearchActive);
+  });
+}
+function setLabSearchQuery(q){
+  var inp=document.getElementById('lab-search-input');
+  if(!inp)return;
+  inp.value=q;renderLabSearch();inp.focus();
+}
+function labSearchKey(e){
+  if(e.key==='ArrowDown'){
+    e.preventDefault();setLabSearchActive(labSearchActive+1);
+  }else if(e.key==='ArrowUp'){
+    e.preventDefault();setLabSearchActive(labSearchActive-1);
+  }else if(e.key==='Enter'){
+    e.preventDefault();runLabSearchAction(labSearchActive);
+  }else if(e.key==='Escape'){
+    e.preventDefault();closeLabSearch();
+  }
+}
+function runLabSearchAction(index){
+  var item=labSearchResults[index];
+  if(!item||!item.action)return;
+  var a=item.action;
+  closeLabSearch();
+
+  if(typeof gtag!=='undefined')gtag('event','lab_search_select',{result:item.title,result_type:item.type||''});
+
+  if(a.kind==='window'){openWin(a.target);}
+  else if(a.kind==='archiveFilter'){openWin('arc-win');renderArc(a.filter||'all');}
+  else if(a.kind==='archiveEntry'){
+    var entry=(typeof ARC_DATA!=='undefined')?ARC_DATA[a.index]:null;
+    if(!entry)return;
+    if(entry.url)arcClick(entry);
+    else{
+      openWin('arc-win');
+      renderArc((entry.tags&&entry.tags[0]&&entry.tags[0]!=='featured')?entry.tags[0]:'all');
+    }
+  }
+  else if(a.kind==='note'){openNoteFromSearch(a.cat,a.index);}
+  else if(a.kind==='photoFolder'){openWin('photos-win');phOpenFolder(a.folder);}
+  else if(a.kind==='email'){window.location.href='mailto:hello@ivonnealdaz.com';}
+  else if(a.kind==='external'){window.open(a.url,'_blank');}
+  else if(a.kind==='askEve'){
+    openWin('chat-win');
+    var eveInput=document.getElementById('user-input');
+    if(eveInput){
+      eveInput.value=a.query;
+      setTimeout(function(){eveInput.focus();},30);
+    }
+  }
+  else if(a.kind==='surprise'){surpriseMe();}
+}
+function surpriseMe(){
+  var pool=[];
+
+  if(typeof ARC_DATA!=='undefined'){
+    ARC_DATA.forEach(function(e,i){
+      if(e.url)pool.push({kind:'archive',index:i});
+    });
+  }
+  if(typeof NOTES!=='undefined'){
+    Object.keys(NOTES).forEach(function(cat){
+      (NOTES[cat]||[]).forEach(function(n,i){pool.push({kind:'note',cat:cat,index:i});});
+    });
+  }
+  pool.push({kind:'photo',folder:'art'},{kind:'photo',folder:'travel'},{kind:'window',target:'snake-win'});
+
+  if(!pool.length)return;
+  var pick=pool[Math.floor(Math.random()*pool.length)];
+  if(pick.kind==='archive')arcClick(ARC_DATA[pick.index]);
+  else if(pick.kind==='note')openNoteFromSearch(pick.cat,pick.index);
+  else if(pick.kind==='photo'){openWin('photos-win');phOpenFolder(pick.folder);}
+  else if(pick.kind==='window')openWin(pick.target);
+
+  if(typeof gtag!=='undefined')gtag('event','lab_surprise_me',{kind:pick.kind});
+}
+
+// Make the shortcut discoverable without assuming a Mac keyboard.
+(function(){
+  var isMac=/Mac|iPhone|iPad|iPod/.test(navigator.platform||navigator.userAgent);
+  var label=isMac?'⌘K':'Ctrl K';
+  ['tb-search-key','sm-search-key'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.textContent=label;
+  });
+})();
+
+document.addEventListener('keydown',function(e){
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){
+    e.preventDefault();openLabSearch();
+    return;
+  }
+  if(e.key==='Escape'){
+    var sw=document.getElementById('search-win');
+    if(sw&&sw.style.display!=='none')closeLabSearch();
+  }
+});
 
 // ── CHAT ──
 var msgs=[];
@@ -2111,6 +2482,7 @@ function renderNotes(cat){
   notes.forEach(function(n,i){
     var item=document.createElement('div');
     item.className='note-item'+(i===0?' active':'');
+    item.dataset.noteIndex=String(i);
     var preview=n.c.split('\n')[0].substring(0,50)+(n.c.length>50?'...':'');
     item.innerHTML='<div class="note-title-row">'+n.t+'</div><div class="note-preview-row">'+preview+'</div><div class="note-date-row">'+(n.d||'')+'</div>';
     // Use touchend for mobile, click for desktop — not both (avoids double-fire)
@@ -2128,6 +2500,20 @@ function renderNotes(cat){
   }
   if(notes.length===0){
     viewer.innerHTML='<div style="color:var(--dim);padding-top:20px;text-align:center;">no notes here yet.</div>';
+  }
+}
+function openNoteFromSearch(cat,index){
+  openWin('notes-win');
+  renderNotes(cat);
+  var list=document.getElementById('notes-list');
+  if(!list)return;
+  var item=list.querySelector('[data-note-index="'+index+'"]');
+  if(!item)return;
+
+  if('ontouchstart' in window){
+    item.dispatchEvent(new Event('touchend',{bubbles:true,cancelable:true}));
+  }else{
+    item.click();
   }
 }
 function nmViewerBack(){notesMobileBack();}
