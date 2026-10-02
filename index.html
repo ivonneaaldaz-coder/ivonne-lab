@@ -2374,12 +2374,19 @@ function labEsc(v){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
   });
 }
+function labHasWholeTerm(text,term){
+  var hay=' '+labNorm(text)+' ';
+  var needle=labNorm(term);
+  return !!needle && hay.indexOf(' '+needle+' ')!==-1;
+}
 function labExpandedTerms(query){
   var q=labNorm(query),terms=q.split(/\s+/).filter(Boolean),expanded=terms.slice();
   if(typeof LAB_SEARCH_ALIASES!=='undefined'){
     Object.keys(LAB_SEARCH_ALIASES).forEach(function(key){
       var nk=labNorm(key);
-      if(q.indexOf(nk)!==-1){
+      // Whole-word / whole-phrase matching only. "art" must not match
+      // "artificial", and "ai" must not match arbitrary letter pairs.
+      if(labHasWholeTerm(q,nk)){
         LAB_SEARCH_ALIASES[key].forEach(function(alias){
           var na=labNorm(alias);
           if(na&&expanded.indexOf(na)===-1)expanded.push(na);
@@ -2452,20 +2459,19 @@ function scoreLabSearchItem(item,query){
 
   var allWords=true;
   words.forEach(function(w){
-    if(title.split(' ').indexOf(w)!==-1)score+=35;
-    else if(title.indexOf(w)!==-1)score+=24;
-    else if(keywords.indexOf(w)!==-1)score+=16;
-    else if(subtitle.indexOf(w)!==-1)score+=10;
-    else if(source.indexOf(w)!==-1)score+=8;
+    if(labHasWholeTerm(title,w))score+=35;
+    else if(labHasWholeTerm(keywords,w))score+=16;
+    else if(labHasWholeTerm(subtitle,w))score+=10;
+    else if(labHasWholeTerm(source,w))score+=8;
     else allWords=false;
   });
   if(allWords&&words.length>1)score+=35;
 
   expanded.forEach(function(term){
     if(term===q)return;
-    if(title.indexOf(term)!==-1)score+=7;
-    else if(keywords.indexOf(term)!==-1)score+=5;
-    else if(subtitle.indexOf(term)!==-1)score+=3;
+    if(labHasWholeTerm(title,term))score+=7;
+    else if(labHasWholeTerm(keywords,term))score+=5;
+    else if(labHasWholeTerm(subtitle,term))score+=3;
   });
 
   return score;
