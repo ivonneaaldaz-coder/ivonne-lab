@@ -543,7 +543,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 }
 #tb-search-btn:hover{background:#fff;color:var(--text);}
 #tb-search-btn .tb-search-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-#tb-search-btn .tb-search-key{margin-left:auto;color:var(--dimmer);font-size:11px;white-space:nowrap;}
+#tb-search-btn .tb-search-key{margin-left:auto;color:var(--dim);font-size:14px;font-weight:700;letter-spacing:.01em;white-space:nowrap;}
 
 .lab-search-shell{display:flex;flex-direction:column;height:100%;background:var(--win);}
 .lab-search-input-wrap{
@@ -592,7 +592,7 @@ textarea.nf-input{resize:vertical;min-height:70px;}
 .sm-start-title{padding:7px 10px 2px;font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;}
 .sm-start-sub{padding:0 10px 7px;font-size:11px;color:var(--dim);line-height:1.35;border-bottom:1px solid var(--border);margin-bottom:2px;}
 .sm-search-row{display:flex;align-items:center;}
-.sm-search-key{margin-left:auto;color:var(--dim);font-size:11px;}
+.sm-search-key{margin-left:auto;color:var(--dim);font-size:14px;font-weight:700;letter-spacing:.01em;}
 .si:hover .sm-search-key{color:#fff;}
 
 /* ── TASKBAR ── */
@@ -2039,13 +2039,19 @@ setInterval(rotateStickyNote,5000);
 // ── FIRST VISIT ──
 var firstVisitActive=false;
 var firstVisitTimers=[];
+function firstVisitForced(){
+  try{return new URLSearchParams(window.location.search).get('tour')==='1';}catch(e){return false;}
+}
 function firstVisitSeen(){
+  if(firstVisitForced())return false;
   try{return localStorage.getItem('ivonne_lab_first_visit_seen')==='1';}catch(e){return false;}
 }
 function firstVisitMarkSeen(){
   if(!firstVisitActive)return;
   firstVisitActive=false;
-  try{localStorage.setItem('ivonne_lab_first_visit_seen','1');}catch(e){}
+  if(!firstVisitForced()){
+    try{localStorage.setItem('ivonne_lab_first_visit_seen','1');}catch(e){}
+  }
   firstVisitTimers.forEach(function(t){clearTimeout(t);});
   firstVisitTimers=[];
   var sticky=document.getElementById('sticky');
