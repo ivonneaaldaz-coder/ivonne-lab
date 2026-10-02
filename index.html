@@ -2869,6 +2869,9 @@ var musicVizMode=(function(){
 })();
 var musicVizStarted=false;
 var musicVizTick=0;
+var musicPlaybackPosition=0;
+var musicPlaybackDuration=0;
+var musicPlaybackUpdatedAt=Date.now();
 var spotifyEmbedController=null;
 var spotifyEmbedLoading=false;
 var spotifyEmbedLoadedUrl='';
@@ -3199,6 +3202,7 @@ function musicEnsureSpotifyEmbed(){
       controller.addListener('playback_started',function(e){
         var uri=e&&e.data?e.data.playingURI:'';
         musicIsPaused=false;
+        musicPlaybackUpdatedAt=Date.now();
         if(uri)musicSyncPlayingUri(uri);
         if(musicPendingPlay)musicPendingPlay=null;
       });
@@ -3213,6 +3217,9 @@ function musicEnsureSpotifyEmbed(){
         var right=document.getElementById('music-progress-right');
 
         musicIsPaused=Boolean(data.isPaused);
+        musicPlaybackPosition=position;
+        musicPlaybackDuration=duration;
+        musicPlaybackUpdatedAt=Date.now();
         if(data.playingURI&&data.playingURI!==musicPlayingUri)musicSyncPlayingUri(data.playingURI);
         else if(musicPlayingUri)musicRenderNowPlaying();
 
@@ -3290,7 +3297,32 @@ function musicFitCanvas(canvas){
   return {ctx:ctx,w:rect.width,h:rect.height};
 }
 
-function musicDrawOne(canvas,t,offset){
+function musicVizSeed(uri){
+  var str=String(uri||'ivonne-lab');
+  var hash=2166136261;
+  for(var i=0;i<str.length;i++){
+    hash^=str.charCodeAt(i);
+    hash=Math.imul(hash,16777619);
+  }
+  return (hash>>>0);
+}
+
+function musicVizEnvelope(t,seed){
+  // Spotify's iframe does not expose raw audio. This creates a deterministic
+  // musical pulse anchored to the real playback position instead of free-running.
+  var bpm=82+(seed%63);
+  var beat=t*(bpm/60);
+  var beatPhase=beat-Math.floor(beat);
+  var halfPhase=(beat*2)-Math.floor(beat*2);
+  var barPhase=(beat/4)-Math.floor(beat/4);
+  var kick=Math.exp(-beatPhase*7.5);
+  var subdivision=Math.exp(-halfPhase*10)*.34;
+  var swell=.5+.5*Math.sin((t*.37)+(seed%17));
+  var barLift=.5+.5*Math.sin(barPhase*Math.PI*2-Math.PI/2);
+  return Math.min(1,.16+kick*.52+subdivision+swell*.12+barLift*.10);
+}
+
+function musicDrawOne(canvas,t,offset,energy,seed){
   var fit=musicFitCanvas(canvas);if(!fit)return;
   var ctx=fit.ctx,w=fit.w,h=fit.h;
   ctx.clearRect(0,0,w,h);
@@ -3306,11 +3338,14 @@ function musicDrawOne(canvas,t,offset){
   for(var gx=0;gx<w;gx+=18){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,h);ctx.stroke();}
   for(var gy=0;gy<h;gy+=18){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(w,gy);ctx.stroke();}
 
+  var drive=.22+energy*.78;
+  var songDrift=(seed%29)*.013;
+
   if(musicVizMode===1){
     for(var i=0;i<52;i++){
-      var x=(i*37+t*22+offset*41)%w;
-      var y=h/2+Math.sin(i*.73+t*1.1+offset)*h*.28;
-      var r=1.5+(i%5)*.55;
+      var x=(i*37+t*(10+18*drive)+offset*41)%w;
+      var y=h/2+Math.sin(i*.73+t*(.55+drive*1.15)+offset+songDrift)*h*(.12+.18*drive);
+      var r=(1.2+(i%5)*.42)*(1+energy*.32);
       ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
       ctx.fillStyle=i%3===0?'rgba(255,54,135,.72)':(i%3===1?'rgba(93,198,255,.7)':'rgba(184,87,255,.65)');
       ctx.fill();
@@ -3318,7 +3353,9 @@ function musicDrawOne(canvas,t,offset){
   }else if(musicVizMode===2){
     var bars=Math.max(18,Math.floor(w/18));
     for(var b=0;b<bars;b++){
-      var bh=(.2+.8*Math.abs(Math.sin(t*1.7+b*.52+offset)))*h*.72;
+      var local=.35+.65*Math.abs(Math.sin(t*(1.05+drive*.95)+b*(.37+songDrift)+offset));
+      var accent=.55+.45*Math.abs(Math.sin((b+seed%11)*.61+t*.33));
+      var bh=(.10+local*accent*(.36+.64*energy))*h*.78;
       var bg=ctx.createLinearGradient(0,h-bh,0,h);
       bg.addColorStop(0,'rgba(255,51,151,.75)');
       bg.addColorStop(.55,'rgba(110,71,255,.72)');
@@ -3331,12 +3368,13 @@ function musicDrawOne(canvas,t,offset){
     colors.forEach(function(color,line){
       ctx.beginPath();
       for(var x=0;x<=w;x+=4){
+        var amp=h*(.045+drive*(.055+line*.015));
         var y=h*.5+
-          Math.sin(x*.018+t*(1.2+line*.12)+line*1.7+offset)*h*(.11+line*.025)+
-          Math.sin(x*.051-t*.55+line)*h*.035;
+          Math.sin(x*.018+t*(.72+drive*.9+line*.08)+line*1.7+offset+songDrift)*amp+
+          Math.sin(x*.051-t*(.24+.44*drive)+line)*h*(.018+.028*energy);
         if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
       }
-      ctx.strokeStyle=color;ctx.lineWidth=2+line*.4;ctx.shadowBlur=12;ctx.shadowColor=color;ctx.stroke();ctx.shadowBlur=0;
+      ctx.strokeStyle=color;ctx.lineWidth=1.6+line*.35+energy*.7;ctx.shadowBlur=8+energy*8;ctx.shadowColor=color;ctx.stroke();ctx.shadowBlur=0;
     });
   }
 
@@ -3348,11 +3386,17 @@ function musicDrawOne(canvas,t,offset){
 setTimeout(musicEnsureSpotifyEmbed,0);
 
 function musicDrawVisualizers(ts){
-  musicVizTick=ts/1000;
+  var elapsed=musicIsPaused?0:Math.max(0,Date.now()-musicPlaybackUpdatedAt);
+  var playbackMs=musicPlaybackPosition+elapsed;
+  if(musicPlaybackDuration)playbackMs=Math.min(playbackMs,musicPlaybackDuration);
+  musicVizTick=playbackMs/1000;
+
+  var seed=musicVizSeed(musicPlayingUri);
+  var energy=musicPlayingUri?musicVizEnvelope(musicVizTick,seed):.18;
   var win=document.getElementById('music-win');
   if(win&&win.style.display!=='none'){
-    musicDrawOne(document.getElementById('music-viz'),musicVizTick,0);
-    musicDrawOne(document.getElementById('music-radio-viz'),musicVizTick,.9);
+    musicDrawOne(document.getElementById('music-viz'),musicVizTick,0,energy,seed);
+    musicDrawOne(document.getElementById('music-radio-viz'),musicVizTick,.9,energy,seed+97);
   }
   requestAnimationFrame(musicDrawVisualizers);
 }
