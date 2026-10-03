@@ -2134,17 +2134,19 @@ function initFirstVisit(){
 }
 function initLabDeepLink(){
   var hash=(window.location.hash||'').toLowerCase();
-  if(hash==='#ask-eve'){
-    try{localStorage.setItem('ivonne_lab_first_visit_seen','1');}catch(e){}
-    firstVisitActive=false;
-    firstVisitTimers.forEach(function(t){clearTimeout(t);});
-    firstVisitTimers=[];
-    var toast=document.getElementById('first-visit-toast');
-    if(toast)toast.remove();
-    document.body.classList.remove('first-visit-toast-visible');
-    closeAll();
-    openWin('chat-win');
-  }
+  var target=null;
+  if(hash==='#ask-eve')target='chat-win';
+  if(hash==='#snake')target='snake-win';
+  if(!target)return;
+  try{localStorage.setItem('ivonne_lab_first_visit_seen','1');}catch(e){}
+  firstVisitActive=false;
+  firstVisitTimers.forEach(function(t){clearTimeout(t);});
+  firstVisitTimers=[];
+  var toast=document.getElementById('first-visit-toast');
+  if(toast)toast.remove();
+  document.body.classList.remove('first-visit-toast-visible');
+  closeAll();
+  openWin(target);
 }
 setTimeout(initFirstVisit,350);
 setTimeout(initLabDeepLink,500);
