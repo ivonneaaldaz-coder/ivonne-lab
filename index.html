@@ -2731,6 +2731,12 @@ var pendingEveSearchContext=null;
 function ask(text){document.getElementById('user-input').value=text;var p=document.getElementById('prompts');if(p)p.style.display='none';sendMessage();}
 function quickAsk(text){closeAll();ask(text);}
 function newChat(){document.getElementById('chat-area').innerHTML='<div class="mrow eve"><div class="mhead"><span class="he">eve ✦</span> '+getT()+'</div><div class="mbody">new chat. what would you like to know?</div></div>';msgs.length=0;var p=document.getElementById('prompts');if(p)p.style.display='block';}
+// Render Eve's light markdown safely: escape HTML, then **bold** and *italic*.
+function eveFormat(t){
+  var e=String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  e=e.replace(/\*\*([^*\n]+?)\*\*/g,'<strong>$1</strong>').replace(/(^|[^*])\*([^*\n]+?)\*(?!\*)/g,'$1<em>$2</em>');
+  return e.replace(/\n/g,'<br>');
+}
 function addMsg(role,content,thinking,labLinks){
   thinking=thinking||false;var ca=document.getElementById('chat-area');
   var row=document.createElement('div');row.className='mrow '+role;
@@ -2738,6 +2744,7 @@ function addMsg(role,content,thinking,labLinks){
   head.innerHTML=(role==='user'?'<span class="hu">you</span>':'<span class="he">eve ✦</span>')+' '+getT();
   var body=document.createElement('div');body.className='mbody';
   if(thinking){body.innerHTML='<span class="typing-txt">eve is thinking ✦</span>';row.id='tr';}
+  else if(role==='eve')body.innerHTML=eveFormat(content);
   else body.textContent=content;
   row.appendChild(head);row.appendChild(body);
 
@@ -3820,6 +3827,7 @@ async function loadPhotosFromFolder(folderId){
 }
 function reloadPhotos(){if(phCurrentFolder)phOpenFolder(phCurrentFolder);else phBackToFolders();}
 function tryLoadPhotos(){phBackToFolders();}
+function loadPhotos(){phBackToFolders();}
 function loadDrivePhotos(){phBackToFolders();}
 
 // LIGHTBOX
